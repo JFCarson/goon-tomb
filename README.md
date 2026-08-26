@@ -1,3 +1,4 @@
 # Project: Goon Tomb
 
-Greetings, gamers.
+### Technical Specifications
+*Engine Version:* Godot v4.7.1.stable
