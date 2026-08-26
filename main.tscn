@@ -1,6 +1,27 @@
 [gd_scene format=3 uid="uid://d32gnsmlpkkyd"]
 
 [ext_resource type="Script" uid="uid://dvsacyvv4yvh3" path="res://src/main.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://blgrex2f54a82" path="res://src/player/player.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://co6ogl3x4hqhd" path="res://assets/mesh/tmp/Greybox.fbx" id="3_1bvp3"]
 
-[node name="Node3D" type="Node3D" unique_id=733769266]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_272bh"]
+
+[sub_resource type="Sky" id="Sky_7mycd"]
+sky_material = SubResource("ProceduralSkyMaterial_272bh")
+
+[sub_resource type="Environment" id="Environment_lquwl"]
+background_mode = 2
+sky = SubResource("Sky_7mycd")
+
+[node name="TestGarden" type="Node3D" unique_id=251127410]
 script = ExtResource("1_ig7tw")
+
+[node name="Player" parent="." unique_id=865188573 instance=ExtResource("2_h2yge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3258705, 0, 11.287518)
+
+[node name="Greybox" parent="." unique_id=1441917533 instance=ExtResource("3_1bvp3")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1496487248]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=71855961]
+environment = SubResource("Environment_lquwl")
