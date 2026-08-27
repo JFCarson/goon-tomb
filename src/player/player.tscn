@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://blgrex2f54a82"]
 
 [ext_resource type="Script" uid="uid://iqkm3onig8v1" path="res://src/player/scripts/player.gd" id="1_4anbu"]
+[ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/hud/hud.tscn" id="2_rxibo"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
 radius = 0.3
@@ -23,6 +24,10 @@ sprint_multiplier = 2.0
 backward_speed_multiplier = 0.65
 air_movement_speed_percentage = 0.35
 jump_height = 10.0
+max_stamina = 100.0
+stamina_sprint_drain_rate = 15.0
+stamina_regeneration_rate = 15.0
+stamina_regeneration_delay = 1.5
 metadata/_custom_type_script = "uid://iqkm3onig8v1"
 
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=1038574759]
@@ -38,3 +43,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
 
 [node name="Camera" type="Camera3D" parent="CameraHolder" unique_id=1103311905]
 current = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=506668441]
+
+[node name="HUD" parent="CanvasLayer" unique_id=190508894 instance=ExtResource("2_rxibo")]
+mouse_filter = 2
