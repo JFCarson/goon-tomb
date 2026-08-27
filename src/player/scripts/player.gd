@@ -25,6 +25,18 @@ var current_headbob_frequency_multiplier : float = 1.0
 @export var air_movement_speed_percentage : float
 @export var jump_height : float
 var is_sprinting : bool = false
+var is_sprint_locked : bool = false
+
+@export_group("Stamina")
+@export var max_stamina : float
+@export var stamina_sprint_drain_rate : float
+@export var stamina_regeneration_rate : float
+@export var stamina_regeneration_delay : float
+@onready var stamina : float = max_stamina
+var stamina_regeneration_timer : float = 0.0
+
+@export_group("Misc.")
+@onready var hud : HUD = $CanvasLayer/HUD
 
 
 func _ready() -> void:
@@ -43,7 +55,7 @@ func _unhandled_input(event : InputEvent) -> void:
 
 
 func _physics_process(delta : float) -> void:
-	# Apply gravity & momentum while airborne.
+	# Apply gravity while airborne.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	
@@ -57,33 +69,44 @@ func _physics_process(delta : float) -> void:
 	var forwardness : float = (-input_vector.y + 1.0) / 2.0
 	
 	# Update the player's sprint state.
-	if Input.is_action_pressed("sprint") and forwardness > 0.5 and not input_vector.is_zero_approx():
-		is_sprinting = true
-	elif input_vector.is_zero_approx() or not Input.is_action_pressed("sprint"):
-		is_sprinting = false
+	var can_sprint : bool = forwardness > 0.5 and not input_vector.is_zero_approx() and stamina > 0.0 and not is_sprint_locked
+	is_sprinting = Input.is_action_pressed("sprint") and can_sprint
+	
+	# Remove sprint lock once sprint input is no longer pressed.
+	if not Input.is_action_pressed("sprint") and stamina != 0:
+		is_sprint_locked = false
 	
 	# Calculate speed multipliers.
-	var speed_multiplier: float = lerp(backward_speed_multiplier, 1.0, forwardness)
+	var speed_multiplier : float = lerp(backward_speed_multiplier, 1.0, forwardness)
 	if is_sprinting:
 		speed_multiplier = sprint_multiplier
-		
+	
 	# Calculate the final movement speed and control state.
 	var speed : float = movement_speed * speed_multiplier
 	var control : float = 1.0 if is_on_floor() else air_movement_speed_percentage
-		
+	
 	# Handle acceleration/deceleration.
 	if direction:
 		var target_velocity : Vector3 = direction * speed
 		var horizontal_velocity : Vector3 = Vector3(velocity.x, 0.0, velocity.z)
 		var acceleration_rate : float = acceleration
 		
-		if horizontal_velocity.dot(target_velocity) < 0.0:
-			acceleration_rate = turn_acceleration
-		
-		if horizontal_velocity.length_squared() < 0.01:
-			horizontal_velocity = target_velocity
+		if is_on_floor():
+			if horizontal_velocity.dot(target_velocity) < 0.0:
+				acceleration_rate = turn_acceleration
+			
+			if horizontal_velocity.length_squared() < 0.01:
+				horizontal_velocity = target_velocity
+			else:
+				horizontal_velocity = horizontal_velocity.move_toward(
+					target_velocity,
+					acceleration_rate * delta
+				)
 		else:
-			horizontal_velocity = horizontal_velocity.move_toward(target_velocity, acceleration_rate * control * delta)
+			horizontal_velocity = horizontal_velocity.move_toward(
+				direction * horizontal_velocity.length(),
+				acceleration * control * delta
+			)
 		
 		velocity.x = horizontal_velocity.x
 		velocity.z = horizontal_velocity.z
@@ -96,10 +119,11 @@ func _physics_process(delta : float) -> void:
 		velocity.y = sqrt(2.0 * jump_height)
 	
 	move_and_slide()
+	_handle_stamina(delta)
 	_headbob(delta)
 
 
-# Handles Headbob
+# Handles Headbob.
 func _headbob(delta : float) -> void:
 	var headbob_position : Vector3 = Vector3.ZERO
 	var frequency_multiplier : float = headbob_sprint_frequency_multiplier if is_sprinting else 1.0
@@ -110,4 +134,23 @@ func _headbob(delta : float) -> void:
 	headbob_position.y = sin(headbob_time * headbob_frequency) * headbob_amplitude
 	
 	camera.transform.origin = headbob_position
-	
+
+
+# Handles Stamina Updates on Delta.
+func _handle_stamina(delta : float) -> void:
+	if is_sprinting:
+		stamina -= stamina_sprint_drain_rate * delta
+		stamina_regeneration_timer = stamina_regeneration_delay
+		
+		if stamina <= 0.0:
+			stamina = 0.0
+			is_sprinting = false
+			is_sprint_locked = true
+	else:
+		if stamina_regeneration_timer > 0.0:
+			stamina_regeneration_timer -= delta
+		else:
+			stamina += stamina_regeneration_rate * delta
+			stamina = min(stamina, max_stamina)
+			
+	hud.update_stamina(stamina, max_stamina)

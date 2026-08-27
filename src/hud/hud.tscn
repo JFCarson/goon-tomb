@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://17agj227064a"]
+
+[ext_resource type="Script" uid="uid://bdfy4jeuktccn" path="res://src/hud/scripts/hud.gd" id="1_t0re6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cj2uf"]
+bg_color = Color(0.52394295, 0.64905894, 0.38123968, 1)
+
+[node name="HUD" type="Control" unique_id=190508894]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_t0re6")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1729135307]
+propagate_maximum_size = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="InfoBars" type="VBoxContainer" parent="MarginContainer" unique_id=1376139586]
+custom_maximum_size = Vector2(320, 180)
+propagate_maximum_size = false
+layout_mode = 2
+size_flags_vertical = 8
+alignment = 2
+
+[node name="Stamina" type="HBoxContainer" parent="MarginContainer/InfoBars" unique_id=711649247]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StaminaLabel" type="Label" parent="MarginContainer/InfoBars/Stamina" unique_id=605959030]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Stamina"
+
+[node name="StaminaBar" type="ProgressBar" parent="MarginContainer/InfoBars/Stamina" unique_id=533884084]
+custom_minimum_size = Vector2(220, 0)
+propagate_maximum_size = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_styles/fill = SubResource("StyleBoxFlat_cj2uf")
+value = 100.0
+show_percentage = false
