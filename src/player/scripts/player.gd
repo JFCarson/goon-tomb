@@ -4,13 +4,19 @@ extends CharacterBody3D
 ## Orchestrator script for the player.
 
 
-# Camera Variables
+@export_group("Camera")
 @export var camera_sensitivity : float
+@export var headbob_frequency : float
+@export var headbob_amplitude : float
+@export var headbob_sprint_frequency_multiplier : float
+@onready var camera : Camera3D = $CameraHolder/Camera
 @onready var camera_holder : Node3D = $CameraHolder
+@onready var camera_holder_default_position : Vector3 = camera_holder.position
 var camera_pitch : float = 0.0
+var headbob_time : float = 0.0
+var current_headbob_frequency_multiplier : float = 1.0
 
-
-# Movement Variables
+@export_group("Movement")
 @export var movement_speed : float
 @export var acceleration : float
 @export var turn_acceleration : float
@@ -90,3 +96,18 @@ func _physics_process(delta : float) -> void:
 		velocity.y = sqrt(2.0 * jump_height)
 	
 	move_and_slide()
+	_headbob(delta)
+
+
+# Handles Headbob
+func _headbob(delta : float) -> void:
+	var headbob_position : Vector3 = Vector3.ZERO
+	var frequency_multiplier : float = headbob_sprint_frequency_multiplier if is_sprinting else 1.0
+	
+	headbob_time += delta * velocity.length() * frequency_multiplier * float(is_on_floor())
+	
+	headbob_position.x = cos(headbob_time * headbob_frequency / 2) * headbob_amplitude
+	headbob_position.y = sin(headbob_time * headbob_frequency) * headbob_amplitude
+	
+	camera.transform.origin = headbob_position
+	

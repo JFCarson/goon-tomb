@@ -13,6 +13,9 @@ height = 1.8
 [node name="Player" type="CharacterBody3D" unique_id=865188573]
 script = ExtResource("1_4anbu")
 camera_sensitivity = 0.002
+headbob_frequency = 5.0
+headbob_amplitude = 0.03
+headbob_sprint_frequency_multiplier = 0.75
 movement_speed = 3.0
 acceleration = 20.0
 turn_acceleration = 100.0
