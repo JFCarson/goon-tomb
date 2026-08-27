@@ -18,12 +18,12 @@ var camera_pitch : float = 0.0
 
 func _ready() -> void:
 	# Capture the mouse.
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Handle looking with mouse motion.
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		# Handle horizontal look.
 		rotate_y(-event.relative.x * camera_sensitivity)
 		
@@ -34,17 +34,17 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var input_vector := Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
-	var direction := transform.basis * Vector3(input_vector.x, 0.0, input_vector.y)
-	
-	direction = direction.normalized()
-
-	velocity.x = direction.x * movement_speed
-	velocity.z = direction.z * movement_speed
-	
 	if not is_on_floor():
-		velocity.y -= gravity * delta
+		velocity += get_gravity() * delta
+	
+	var input_vector := Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
+	var direction := transform.basis * Vector3(input_vector.x, 0.0, input_vector.y).normalized()
+	
+	if direction:
+		velocity.x = direction.x * movement_speed
+		velocity.z = direction.z * movement_speed
 	else:
-		velocity.y = 0.0
+		velocity.x = move_toward(velocity.x, 0, movement_speed)
+		velocity.z = move_toward(velocity.z, 0, movement_speed)
 
 	move_and_slide()
