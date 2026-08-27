@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cqi4150p1065v"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vvwp8"]
+frequency = 0.1
+fractal_type = 2
+fractal_lacunarity = 5.0
+fractal_gain = 1.5
+fractal_weighted_strength = 0.2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2eelt"]
+noise = SubResource("FastNoiseLite_vvwp8")
+seamless = true
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_jgrjp"]
+noise = SubResource("FastNoiseLite_vvwp8")
+
+[resource]
+albedo_color = Color(0.5807686, 0.4779994, 0.36472186, 1)
+albedo_texture = SubResource("NoiseTexture2D_2eelt")
+metallic_specular = 0.2
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_jgrjp")
+uv1_triplanar = true
