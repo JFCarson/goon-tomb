@@ -22,6 +22,12 @@ window/size/mode=3
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[importer_defaults]
+
+animation_library={
+&"gltf/embedded_image_handling": 0
+}
+
 [input]
 
 move_backwards={

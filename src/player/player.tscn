@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://iqkm3onig8v1" path="res://src/player/scripts/player.gd" id="1_4anbu"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
-radius = 0.4
+radius = 0.3
 height = 1.8
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_26let"]
-radius = 0.4
+radius = 0.3
 height = 1.8
 
 [node name="Player" type="CharacterBody3D" unique_id=865188573]
@@ -25,7 +25,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 mesh = SubResource("CapsuleMesh_26let")
 
 [node name="CameraHolder" type="Node3D" parent="." unique_id=1683304578]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.259)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
 
-[node name="Camera3D" type="Camera3D" parent="CameraHolder" unique_id=1103311905]
+[node name="Camera" type="Camera3D" parent="CameraHolder" unique_id=1103311905]
 current = true

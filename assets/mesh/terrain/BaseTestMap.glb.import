@@ -1,15 +1,15 @@
 [remap]
 
-importer="scene"
+importer="ArrayMesh"
 importer_version=1
-type="PackedScene"
-uid="uid://co6ogl3x4hqhd"
-path="res://.godot/imported/Greybox.fbx-a76efa049ac87f9857cc7e40a427ef00.scn"
+type="ArrayMesh"
+uid="uid://crwe2w5b28fa5"
+path="res://.godot/imported/BaseTestMap.glb-2132980723d16f3cea1c5a16259ec472.res"
 
 [deps]
 
-source_file="res://assets/mesh/tmp/Greybox.fbx"
-dest_files=["res://.godot/imported/Greybox.fbx-a76efa049ac87f9857cc7e40a427ef00.scn"]
+source_file="res://assets/mesh/terrain/BaseTestMap.glb"
+dest_files=["res://.godot/imported/BaseTestMap.glb-2132980723d16f3cea1c5a16259ec472.res"]
 
 [params]
 
@@ -32,7 +32,7 @@ meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30
-animation/trimming=true
+animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
 import_script/path=""
@@ -40,7 +40,6 @@ materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
 _subresources={}
-fbx/importer=0
-fbx/allow_geometry_helper_nodes=false
-fbx/embedded_image_handling=1
-fbx/naming_version=2
+gltf/naming_version=2
+gltf/embedded_image_handling=0
+gltf/texture_map_mode=1
