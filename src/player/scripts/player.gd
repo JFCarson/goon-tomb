@@ -30,6 +30,7 @@ var is_sprint_locked : bool = false
 @export_group("Stamina")
 @export var max_stamina : float
 @export var stamina_sprint_drain_rate : float
+@export var stamina_jump_cost : float
 @export var stamina_regeneration_rate : float
 @export var stamina_regeneration_delay : float
 @onready var stamina : float = max_stamina
@@ -69,7 +70,7 @@ func _physics_process(delta : float) -> void:
 	var forwardness : float = (-input_vector.y + 1.0) / 2.0
 	
 	# Update the player's sprint state.
-	var can_sprint : bool = forwardness > 0.5 and not input_vector.is_zero_approx() and stamina > 0.0 and not is_sprint_locked
+	var can_sprint : bool = forwardness > 0.5 and not input_vector.is_zero_approx() and stamina > 0.0 and not is_sprint_locked and is_on_floor()
 	is_sprinting = Input.is_action_pressed("sprint") and can_sprint
 	
 	# Remove sprint lock once sprint input is no longer pressed.
@@ -115,7 +116,10 @@ func _physics_process(delta : float) -> void:
 		velocity.z = move_toward(velocity.z, 0.0, acceleration * control * delta)
 		
 	# Handle jumping.
-	if Input.is_action_just_pressed("jump") and is_on_floor():
+	var can_jump : bool = is_on_floor() and stamina >= stamina_jump_cost
+	if Input.is_action_just_pressed("jump") and can_jump:
+		stamina -= stamina_jump_cost
+		stamina_regeneration_timer = stamina_regeneration_delay
 		velocity.y = sqrt(2.0 * jump_height)
 	
 	move_and_slide()
@@ -134,7 +138,7 @@ func _headbob(delta : float) -> void:
 	headbob_position.y = sin(headbob_time * headbob_frequency) * headbob_amplitude
 	
 	camera.transform.origin = headbob_position
-
+	
 
 # Handles Stamina Updates on Delta.
 func _handle_stamina(delta : float) -> void:
