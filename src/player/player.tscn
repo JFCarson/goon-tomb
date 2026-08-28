@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://blgrex2f54a82"]
 
 [ext_resource type="Script" uid="uid://iqkm3onig8v1" path="res://src/player/scripts/player.gd" id="1_4anbu"]
+[ext_resource type="Script" uid="uid://ipkw05jobgjr" path="res://src/player/scripts/camera_manager.gd" id="2_mf2ua"]
 [ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/hud/hud.tscn" id="2_rxibo"]
+[ext_resource type="Script" uid="uid://c7lcqhjydj4uk" path="res://src/player/resources/player_camera_settings.gd" id="3_244u8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
 radius = 0.3
@@ -11,12 +13,12 @@ height = 1.8
 radius = 0.3
 height = 1.8
 
+[sub_resource type="Resource" id="Resource_mf2ua"]
+script = ExtResource("3_244u8")
+metadata/_custom_type_script = "uid://c7lcqhjydj4uk"
+
 [node name="Player" type="CharacterBody3D" unique_id=865188573]
 script = ExtResource("1_4anbu")
-camera_sensitivity = 0.002
-headbob_frequency = 5.0
-headbob_amplitude = 0.03
-headbob_sprint_frequency_multiplier = 0.75
 movement_speed = 3.0
 acceleration = 20.0
 turn_acceleration = 100.0
@@ -39,10 +41,12 @@ shape = SubResource("CapsuleShape3D_5f2sf")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 mesh = SubResource("CapsuleMesh_26let")
 
-[node name="CameraHolder" type="Node3D" parent="." unique_id=1683304578]
+[node name="CameraManager" type="Node3D" parent="." unique_id=1683304578]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
+script = ExtResource("2_mf2ua")
+camera_settings = SubResource("Resource_mf2ua")
 
-[node name="Camera" type="Camera3D" parent="CameraHolder" unique_id=1103311905]
+[node name="Camera" type="Camera3D" parent="CameraManager" unique_id=1103311905]
 current = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=506668441]
