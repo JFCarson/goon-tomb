@@ -1,9 +1,28 @@
 class_name HUD
 extends Control
 
+
+@export var bar_speed : float
 @onready var stamina_bar : ProgressBar = $MarginContainer/InfoBars/Stamina/StaminaBar
+
+var stamina_bar_initialized : bool = false
+var displayed_stamina : float = 0.0
+var target_stamina : float = 0.0
+
+
+func _process(delta : float) -> void:
+	if not stamina_bar_initialized:
+		return
+	
+	displayed_stamina = move_toward(displayed_stamina, target_stamina, bar_speed * delta)
+	stamina_bar.value = displayed_stamina
 
 
 func update_stamina(current_stamina : float, max_stamina : float) -> void:
-	stamina_bar.max_value = max_stamina
-	stamina_bar.value = current_stamina
+	target_stamina = current_stamina
+	
+	if not stamina_bar_initialized:
+		displayed_stamina = current_stamina
+		stamina_bar.max_value = max_stamina
+		stamina_bar.value = current_stamina
+		stamina_bar_initialized = true
