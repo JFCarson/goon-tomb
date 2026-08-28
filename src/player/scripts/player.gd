@@ -4,17 +4,12 @@ extends CharacterBody3D
 ## Orchestrator script for the player.
 
 
-@export_group("Camera")
-@export var camera_sensitivity : float
-@export var headbob_frequency : float
-@export var headbob_amplitude : float
-@export var headbob_sprint_frequency_multiplier : float
-@onready var camera : Camera3D = $CameraHolder/Camera
-@onready var camera_holder : Node3D = $CameraHolder
-@onready var camera_holder_default_position : Vector3 = camera_holder.position
-var camera_pitch : float = 0.0
-var headbob_time : float = 0.0
-var current_headbob_frequency_multiplier : float = 1.0
+# Components
+@onready var camera_manager : CameraManager = $CameraManager
+
+# Stores various runtime information about the player character.
+var motion_state : PlayerEnums.MotionState
+
 
 @export_group("Movement")
 @export var movement_speed : float
@@ -43,16 +38,15 @@ var stamina_regeneration_timer : float = 0.0
 func _ready() -> void:
 	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+	# Initialise and set the player's motion state.
+	motion_state = PlayerEnums.MotionState.IDLE
 
 
+# Handle camera motion.
 func _unhandled_input(event : InputEvent) -> void:
-	# Handle camera inputs.
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		rotate_y(-event.relative.x * camera_sensitivity)
-
-		camera_pitch -= event.relative.y * camera_sensitivity
-		camera_pitch = clamp(camera_pitch, deg_to_rad(-80.0), deg_to_rad(80.0))
-		camera_holder.rotation.x = camera_pitch
+		rotate_y(camera_manager.handle_camera_motion(event))  # Yaw is returned by handle_camera_motion method.
 
 
 func _physics_process(delta : float) -> void:
@@ -123,21 +117,12 @@ func _physics_process(delta : float) -> void:
 		velocity.y = sqrt(2.0 * jump_height)
 	
 	move_and_slide()
+	
+	motion_state = _determine_motion_state()
+	
 	_handle_stamina(delta)
-	_headbob(delta)
 
-
-# Handles Headbob.
-func _headbob(delta : float) -> void:
-	var headbob_position : Vector3 = Vector3.ZERO
-	var frequency_multiplier : float = headbob_sprint_frequency_multiplier if is_sprinting else 1.0
-	
-	headbob_time += delta * velocity.length() * frequency_multiplier * float(is_on_floor())
-	
-	headbob_position.x = cos(headbob_time * headbob_frequency / 2) * headbob_amplitude
-	headbob_position.y = sin(headbob_time * headbob_frequency) * headbob_amplitude
-	
-	camera.transform.origin = headbob_position
+	camera_manager.do_camera_movement_effects(delta, velocity, motion_state)
 	
 
 # Handles Stamina Updates on Delta.
@@ -158,3 +143,19 @@ func _handle_stamina(delta : float) -> void:
 			stamina = min(stamina, max_stamina)
 			
 	hud.update_stamina(stamina, max_stamina)
+
+
+func _determine_motion_state() -> PlayerEnums.MotionState:
+	if is_on_floor():
+		if Vector3(velocity.x, 0.0, velocity.z).length_squared() > 0.01:
+			if is_sprinting:
+				return PlayerEnums.MotionState.SPRINTING
+			else:
+				return PlayerEnums.MotionState.WALKING
+		else:
+			return PlayerEnums.MotionState.IDLE
+	else:
+		return PlayerEnums.MotionState.AIRBORNE
+	
+		
+	

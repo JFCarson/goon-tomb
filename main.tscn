@@ -38,5 +38,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3258705, 0, 11.287518)
 environment = SubResource("Environment_lquwl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1224495356]
-
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1243433484]
