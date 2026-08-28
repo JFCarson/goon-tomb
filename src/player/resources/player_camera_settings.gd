@@ -10,7 +10,7 @@ extends Resource
 @export var sensitivity : float = 0.002
 
 # Maximum vertical angle the camera can look up or down from its neutral position.
-@export var radius : float = 80.0
+@export var radius : float = 40.0
 
 
 @export_group("Headbob")
