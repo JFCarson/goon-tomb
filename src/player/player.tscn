@@ -60,6 +60,9 @@ camera_settings = SubResource("Resource_mf2ua")
 [node name="Camera" type="Camera3D" parent="CameraManager" unique_id=1103311905]
 current = true
 
+[node name="InteractRay" type="RayCast3D" parent="CameraManager/Camera" unique_id=201963274]
+target_position = Vector3(0, 0, -4)
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=506668441]
 
 [node name="HUD" parent="CanvasLayer" unique_id=190508894 instance=ExtResource("2_rxibo")]
