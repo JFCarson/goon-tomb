@@ -9,9 +9,10 @@ extends CharacterBody3D
 @onready var camera_manager : CameraManager = $CameraManager
 @onready var movement : PlayerMovement = $PlayerMovement
 @onready var stamina : PlayerStamina = $PlayerStamina
+@onready var interactions : PlayerInteractions = $PlayerInteractions
 @onready var hud : HUD = $CanvasLayer/HUD
-
-
+@onready var interact_ray: RayCast3D = $CameraManager/Camera/InteractRay
+@onready var prompt: Label = $CanvasLayer/HUD/InteractPrompt
 # Runtime State
 var motion_state : PlayerEnums.MotionState = PlayerEnums.MotionState.IDLE
 var can_sprint : bool = false
@@ -20,17 +21,21 @@ var can_sprint : bool = false
 @export_group("Jump")
 @export var jump_height : float
 
+func _process(_delta: float) -> void:
+	interactions._update_interaction(interact_ray, prompt)
 
 func _ready() -> void:
 	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-
-# Handle camera motion.
+# Fallback handler
 func _unhandled_input(event : InputEvent) -> void:
+	#Fallback for camera
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		rotate_y(camera_manager.handle_camera_motion(event))
-
+		rotate_y(camera_manager.handle_camera_motion(event))  # Yaw is returned by handle_camera_motion method.
+	#Fallback for interactions
+	if event.is_action_pressed("interact"):
+		interactions._try_interact(interact_ray)
 
 func _physics_process(delta : float) -> void:
 	# Apply gravity while airborne.
@@ -83,7 +88,5 @@ func _determine_motion_state() -> PlayerEnums.MotionState:
 	if Vector3(velocity.x, 0.0, velocity.z).length_squared() > 0.01:
 		if can_sprint and Input.is_action_pressed("sprint"):
 			return PlayerEnums.MotionState.SPRINTING
-		
 		return PlayerEnums.MotionState.WALKING
-	
 	return PlayerEnums.MotionState.IDLE
