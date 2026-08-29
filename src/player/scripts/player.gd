@@ -9,12 +9,10 @@ extends CharacterBody3D
 @onready var camera_manager : CameraManager = $CameraManager
 @onready var movement : PlayerMovement = $PlayerMovement
 @onready var stamina : PlayerStamina = $PlayerStamina
+@onready var interactions : PlayerInteractions = $PlayerInteractions
 @onready var hud : HUD = $CanvasLayer/HUD
-
-@export_group("Interact")
 @onready var interact_ray: RayCast3D = $CameraManager/Camera/InteractRay
 @onready var prompt: Label = $CanvasLayer/HUD/InteractPrompt
-
 # Runtime State
 var motion_state : PlayerEnums.MotionState = PlayerEnums.MotionState.IDLE
 var can_sprint : bool = false
@@ -23,13 +21,12 @@ var can_sprint : bool = false
 @export_group("Jump")
 @export var jump_height : float
 
+func _process(_delta: float) -> void:
+	interactions._update_interaction(interact_ray, prompt)
 
 func _ready() -> void:
 	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-func _process(_delta: float) -> void:
-	_update_interaction()
 
 # Fallback handler
 func _unhandled_input(event : InputEvent) -> void:
@@ -38,8 +35,7 @@ func _unhandled_input(event : InputEvent) -> void:
 		rotate_y(camera_manager.handle_camera_motion(event))  # Yaw is returned by handle_camera_motion method.
 	#Fallback for interactions
 	if event.is_action_pressed("interact"):
-		_try_interact()
-
+		interactions._try_interact(interact_ray)
 
 func _physics_process(delta : float) -> void:
 	# Apply gravity while airborne.
@@ -94,24 +90,3 @@ func _determine_motion_state() -> PlayerEnums.MotionState:
 			return PlayerEnums.MotionState.SPRINTING
 		return PlayerEnums.MotionState.WALKING
 	return PlayerEnums.MotionState.IDLE
-	
-#This code handles updating the prompt
-func _update_interaction() -> void:
-	#detects if the raycast is interacting at with an interactable object and returns the Interactable prompt variable within Interactable.gd
-	prompt.text = ""
-	#early returns if object isn't interactable
-	if not interact_ray.is_colliding():
-		return
-	var collider = interact_ray.get_collider()
-	if collider is Interactable:
-		#uses the get_prompt funcition in Interactable.gd to get the prompt of the interable object and updates the prompt
-		prompt.text = collider.get_prompt()
-
-#This code handles the player pressing interact keybind (default (e))
-func _try_interact() -> void:
-	#early returns if object isn't interactable
-	if not interact_ray.is_colliding():
-		return
-	var collider = interact_ray.get_collider()
-	if collider is Interactable:
-		collider.interact()
