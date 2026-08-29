@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/hud/hud.tscn" id="2_rxibo"]
 [ext_resource type="Script" uid="uid://c7lcqhjydj4uk" path="res://src/player/resources/player_camera_settings.gd" id="3_244u8"]
 [ext_resource type="Script" uid="uid://m3yisb57jxn8" path="res://src/player/resources/player_movement_settings.gd" id="3_jiejy"]
+[ext_resource type="Script" uid="uid://bmnrx4xngblky" path="res://src/player/scripts/player_stamina.gd" id="4_o822w"]
+[ext_resource type="Script" uid="uid://dikerrva0v8a" path="res://src/player/resources/player_stamina_settings.gd" id="5_x42xx"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
 radius = 0.3
@@ -19,6 +21,10 @@ height = 1.8
 script = ExtResource("3_jiejy")
 metadata/_custom_type_script = "uid://m3yisb57jxn8"
 
+[sub_resource type="Resource" id="Resource_o822w"]
+script = ExtResource("5_x42xx")
+metadata/_custom_type_script = "uid://dikerrva0v8a"
+
 [sub_resource type="Resource" id="Resource_mf2ua"]
 script = ExtResource("3_244u8")
 metadata/_custom_type_script = "uid://c7lcqhjydj4uk"
@@ -26,11 +32,6 @@ metadata/_custom_type_script = "uid://c7lcqhjydj4uk"
 [node name="Player" type="CharacterBody3D" unique_id=865188573]
 script = ExtResource("1_4anbu")
 jump_height = 10.0
-max_stamina = 100.0
-stamina_sprint_drain_rate = 15.0
-stamina_jump_cost = 20.0
-stamina_regeneration_rate = 15.0
-stamina_regeneration_delay = 1.5
 metadata/_custom_type_script = "uid://iqkm3onig8v1"
 
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=1038574759]
@@ -45,6 +46,11 @@ mesh = SubResource("CapsuleMesh_26let")
 script = ExtResource("2_5f2sf")
 movement_settings = SubResource("Resource_5f2sf")
 metadata/_custom_type_script = "uid://reyetaehxarr"
+
+[node name="PlayerStamina" type="Node" parent="." unique_id=387038166]
+script = ExtResource("4_o822w")
+stamina_settings = SubResource("Resource_o822w")
+metadata/_custom_type_script = "uid://bmnrx4xngblky"
 
 [node name="CameraManager" type="Node3D" parent="." unique_id=1683304578]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
