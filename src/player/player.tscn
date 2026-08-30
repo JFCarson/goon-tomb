@@ -11,7 +11,8 @@
 [ext_resource type="Script" uid="uid://dnv661j2pjw6k" path="res://src/player/scripts/player_actions/player_jump.gd" id="4_ylhto"]
 [ext_resource type="Script" uid="uid://dft66b0l5wkki" path="res://src/player/resources/settings/player_jump_settings.gd" id="5_cwolq"]
 [ext_resource type="Script" uid="uid://dikerrva0v8a" path="res://src/player/resources/settings/player_stamina_settings.gd" id="5_x42xx"]
-[ext_resource type="Script" uid="uid://d4f3d4d3h8c6t" path="res://src/player/scripts/player_actions/player_interactions.gd" id="6_l271a"]
+[ext_resource type="Script" uid="uid://d4f3d4d3h8c6t" path="res://src/player/scripts/player_actions/player_interaction.gd" id="6_l271a"]
+[ext_resource type="Script" uid="uid://x31bgncyr6lp" path="res://src/player/scripts/controllers/player_resource_controller.gd" id="8_rl62b"]
 [ext_resource type="Script" uid="uid://lm6lnmoya2xg" path="res://src/player/scripts/state/player_motion_state.gd" id="11_cwolq"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
@@ -62,10 +63,14 @@ movement_settings = SubResource("Resource_5f2sf")
 script = ExtResource("4_ylhto")
 jump_settings = SubResource("Resource_26let")
 
-[node name="PlayerInteractions" type="Node" parent="PlayerInputController" unique_id=944911412]
+[node name="PlayerInteraction" type="Node" parent="PlayerInputController" unique_id=944911412]
 script = ExtResource("6_l271a")
 
-[node name="PlayerStamina" type="Node" parent="." unique_id=387038166]
+[node name="PlayerResourceController" type="Node" parent="." unique_id=2009760311]
+script = ExtResource("8_rl62b")
+metadata/_custom_type_script = "uid://x31bgncyr6lp"
+
+[node name="PlayerStamina" type="Node" parent="PlayerResourceController" unique_id=387038166]
 script = ExtResource("4_o822w")
 stamina_settings = SubResource("Resource_o822w")
 metadata/_custom_type_script = "uid://bmnrx4xngblky"

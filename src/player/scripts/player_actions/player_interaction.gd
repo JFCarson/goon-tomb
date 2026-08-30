@@ -1,4 +1,4 @@
-class_name PlayerInteractions
+class_name PlayerInteraction
 extends Node
 
 #This code handles updating the prompt

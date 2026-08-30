@@ -7,7 +7,10 @@ extends Node
 # Components
 @onready var movement : PlayerMovement = $PlayerMovement
 @onready var jump : PlayerJump = $PlayerJump
-@onready var interactions : PlayerInteractions = $PlayerInteractions
+@onready var interaction : PlayerInteraction = $PlayerInteraction
+
+# Runtime State
+var sprint_locked : bool = false
 
 
 ## Public Interface
@@ -25,9 +28,23 @@ func update_movement(delta : float, current_velocity : Vector3, player_basis : B
 	return movement.calculate_horizontal_velocity(delta, current_velocity, direction, input_vector, is_on_floor)
 
 
-# Determines whether sprinting is available.
-func can_sprint(is_on_floor : bool) -> bool:
+func can_sprint(is_on_floor : bool, has_stamina : bool) -> bool:
+	if not Input.is_action_pressed("sprint"):
+		sprint_locked = false
+	
+	if sprint_locked:
+		return false
+	
+	if not has_stamina:
+		sprint_locked = true
+		return false
+	
 	return movement.can_sprint(get_input_vector(), is_on_floor)
+
+
+# Determines whether jumping is available.
+func can_jump(is_on_floor) -> bool:
+	return jump.can_jump(is_on_floor)
 
 
 # Handles jump input and returns a jump velocity.
@@ -47,12 +64,12 @@ func handle_jump(is_on_floor : bool, can_afford_jump : bool) -> float:
 
 # Updates interaction prompts.
 func update_interaction(interact_ray : RayCast3D, prompt : Label) -> void:
-	interactions.update_interaction(interact_ray, prompt)
+	interaction.update_interaction(interact_ray, prompt)
 
 
 # Attempts interaction.
 func try_interact(interact_ray : RayCast3D) -> void:
-	interactions.try_interact(interact_ray)
+	interaction.try_interact(interact_ray)
 
 
 # Passes motion state through to movement.
