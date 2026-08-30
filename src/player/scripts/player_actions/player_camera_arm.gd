@@ -1,4 +1,4 @@
-class_name CameraManager
+class_name CameraArm
 extends Node3D
 
 ## Manages camera movement and visual effects for the player.
