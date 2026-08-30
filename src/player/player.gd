@@ -11,6 +11,7 @@ extends CharacterBody3D
 @onready var resources : PlayerResourceController = $PlayerResourceController
 @onready var state : PlayerStateController = $PlayerStateController
 
+
 # Components
 @onready var hud : HUD = $CanvasLayer/HUD
 
@@ -25,9 +26,7 @@ func _process(_delta: float) -> void:
 
 
 func _ready() -> void:
-	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	
 	input.initialise(camera.get_interact_ray(), hud.get_interact_prompt())
 
 
@@ -72,6 +71,10 @@ func _physics_process(delta : float) -> void:
 	
 	# Update stamina using the resolved movement state.
 	resources.update(delta, motion_state)
+	
+	if motion_state == PlayerEnums.MotionState.SPRINTING and not resources.can_sprint():
+		input.lock_sprint()
+	
 	hud.update_stamina(resources.get_stamina(), resources.get_max_stamina())
 	
 	# Trigger camera movement effects processing.

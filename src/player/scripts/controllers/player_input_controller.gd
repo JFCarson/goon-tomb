@@ -2,8 +2,6 @@ class_name PlayerInputController
 extends Node
 
 ## Coordinates player input-driven components.
-## Provides a single interface between the player orchestrator
-## and movement, jump and interaction components.
 
 
 # Components
@@ -12,14 +10,16 @@ extends Node
 @onready var interaction : PlayerInteraction = $PlayerInteraction
 
 
-## Runtime State
+# Runtime State
 var motion_state : PlayerEnums.MotionState = PlayerEnums.MotionState.IDLE
+var sprint_locked : bool = false
 
 
 ## Public Interface
-# Initialises the components contained within this controller's composition.
+# Initialises input-driven components with their required references.
 func initialise(interact_ray : RayCast3D, prompt : Label) -> void:
 	interaction.initialise(interact_ray, prompt)
+
 
 # Returns the current movement input.
 func get_input_vector() -> Vector2:
@@ -36,7 +36,22 @@ func update_movement(delta : float, current_velocity : Vector3, player_basis : B
 
 # Determines whether sprinting is available.
 func can_sprint(is_on_floor : bool, has_stamina : bool) -> bool:
-	return movement.can_sprint(get_input_vector(), is_on_floor) and has_stamina
+	if not Input.is_action_pressed("sprint"):
+		sprint_locked = false
+		return false
+	
+	if sprint_locked:
+		return false
+	
+	if not movement.can_sprint(get_input_vector(), is_on_floor):
+		return false
+	
+	return has_stamina
+
+
+# Locks sprinting until the sprint key is released.
+func lock_sprint() -> void:
+	sprint_locked = true
 
 
 # Handles jump input and returns a jump velocity.
