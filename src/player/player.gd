@@ -11,6 +11,7 @@ extends CharacterBody3D
 @onready var jump : PlayerJump = $PlayerJump
 @onready var stamina : PlayerStamina = $PlayerStamina
 @onready var interactions : PlayerInteractions = $PlayerInteractions
+@onready var motion_state_manager : PlayerMotionState = $PlayerMotionState
 @onready var hud : HUD = $CanvasLayer/HUD
 @onready var interact_ray: RayCast3D = $CameraManager/Camera/InteractRay
 @onready var prompt: Label = $CanvasLayer/HUD/InteractPrompt
@@ -53,7 +54,7 @@ func _physics_process(delta : float) -> void:
 	can_sprint = movement.can_sprint(input_vector, is_on_floor()) and stamina.can_sprint()
 	
 	# Determine the movement state used by the movement component.
-	motion_state = _determine_motion_state()
+	motion_state = motion_state_manager.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
 	movement.set_motion_state(motion_state)
 	
 	# Calculate and apply horizontal movement.
@@ -70,7 +71,7 @@ func _physics_process(delta : float) -> void:
 	move_and_slide()
 	
 	# Recalculate the state after movement has been resolved.
-	motion_state = _determine_motion_state()
+	motion_state = motion_state_manager.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
 	movement.set_motion_state(motion_state)
 	
 	# Update stamina using the resolved movement state.
@@ -79,14 +80,3 @@ func _physics_process(delta : float) -> void:
 	
 	# Trigger camera movement effects processing.
 	camera_manager.do_camera_movement_effects(delta, velocity, motion_state)
-
-
-func _determine_motion_state() -> PlayerEnums.MotionState:
-	if not is_on_floor():
-		return PlayerEnums.MotionState.AIRBORNE
-	
-	if Vector3(velocity.x, 0.0, velocity.z).length_squared() > 0.01:
-		if can_sprint and Input.is_action_pressed("sprint"):
-			return PlayerEnums.MotionState.SPRINTING
-		return PlayerEnums.MotionState.WALKING
-	return PlayerEnums.MotionState.IDLE
