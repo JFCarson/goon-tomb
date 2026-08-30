@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://d4f3d4d3h8c6t" path="res://src/player/scripts/player_actions/player_interaction.gd" id="6_l271a"]
 [ext_resource type="Script" uid="uid://x31bgncyr6lp" path="res://src/player/scripts/controllers/player_resource_controller.gd" id="8_rl62b"]
 [ext_resource type="Script" uid="uid://lm6lnmoya2xg" path="res://src/player/scripts/state/player_motion_state.gd" id="11_cwolq"]
+[ext_resource type="Script" uid="uid://dba440vaw672h" path="res://src/player/scripts/controllers/player_state_controller.gd" id="11_wlj80"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
 radius = 0.3
@@ -75,6 +76,14 @@ script = ExtResource("4_o822w")
 stamina_settings = SubResource("Resource_o822w")
 metadata/_custom_type_script = "uid://bmnrx4xngblky"
 
+[node name="PlayerStateController" type="Node" parent="." unique_id=1871493187]
+script = ExtResource("11_wlj80")
+metadata/_custom_type_script = "uid://dba440vaw672h"
+
+[node name="PlayerMotionState" type="Node" parent="PlayerStateController" unique_id=790688311]
+script = ExtResource("11_cwolq")
+metadata/_custom_type_script = "uid://lm6lnmoya2xg"
+
 [node name="CameraArm" type="Node3D" parent="." unique_id=1683304578]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
 script = ExtResource("2_mf2ua")
@@ -85,10 +94,6 @@ current = true
 
 [node name="InteractRay" type="RayCast3D" parent="CameraArm/Camera" unique_id=201963274]
 target_position = Vector3(0, 0, -4)
-
-[node name="PlayerMotionState" type="Node" parent="." unique_id=790688311]
-script = ExtResource("11_cwolq")
-metadata/_custom_type_script = "uid://lm6lnmoya2xg"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=506668441]
 

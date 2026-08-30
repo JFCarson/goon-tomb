@@ -8,10 +8,10 @@ extends CharacterBody3D
 # Controllers
 @onready var input : PlayerInputController = $PlayerInputController
 @onready var resources : PlayerResourceController = $PlayerResourceController
+@onready var state : PlayerStateController = $PlayerStateController
 
 # Components
 @onready var camera_arm : CameraArm = $CameraArm
-@onready var motion_state_manager : PlayerMotionState = $PlayerMotionState
 @onready var hud : HUD = $CanvasLayer/HUD
 @onready var interact_ray: RayCast3D = $CameraArm/Camera/InteractRay
 @onready var prompt: Label = $CanvasLayer/HUD/InteractPrompt
@@ -48,7 +48,7 @@ func _physics_process(delta : float) -> void:
 	can_sprint = input.can_sprint(is_on_floor(), resources.can_sprint())
 	
 	# Determine the player's current motion state.
-	motion_state = motion_state_manager.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
+	state.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
 	input.set_motion_state(motion_state)
 	
 	var horizontal_velocity : Vector3 = input.update_movement(delta, velocity, transform.basis, is_on_floor())
@@ -66,7 +66,7 @@ func _physics_process(delta : float) -> void:
 	move_and_slide()
 	
 	# Recalculate the state after movement has been resolved.
-	motion_state = motion_state_manager.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
+	motion_state = state.get_motion_state()
 	input.set_motion_state(motion_state)
 	
 	# Update stamina using the resolved movement state.
