@@ -1,14 +1,16 @@
 [gd_scene format=3 uid="uid://blgrex2f54a82"]
 
-[ext_resource type="Script" uid="uid://iqkm3onig8v1" path="res://src/player/scripts/player.gd" id="1_4anbu"]
-[ext_resource type="Script" uid="uid://reyetaehxarr" path="res://src/player/scripts/player_movement.gd" id="2_5f2sf"]
+[ext_resource type="Script" uid="uid://iqkm3onig8v1" path="res://src/player/player.gd" id="1_4anbu"]
+[ext_resource type="Script" uid="uid://reyetaehxarr" path="res://src/player/scripts/player_actions/player_movement.gd" id="2_5f2sf"]
 [ext_resource type="Script" uid="uid://ipkw05jobgjr" path="res://src/player/scripts/camera_manager.gd" id="2_mf2ua"]
 [ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/hud/hud.tscn" id="2_rxibo"]
-[ext_resource type="Script" uid="uid://c7lcqhjydj4uk" path="res://src/player/resources/player_camera_settings.gd" id="3_244u8"]
-[ext_resource type="Script" uid="uid://m3yisb57jxn8" path="res://src/player/resources/player_movement_settings.gd" id="3_jiejy"]
-[ext_resource type="Script" uid="uid://bmnrx4xngblky" path="res://src/player/scripts/player_stamina.gd" id="4_o822w"]
-[ext_resource type="Script" uid="uid://dikerrva0v8a" path="res://src/player/resources/player_stamina_settings.gd" id="5_x42xx"]
-[ext_resource type="Script" uid="uid://d4f3d4d3h8c6t" path="res://src/player/scripts/player_interactions.gd" id="6_l271a"]
+[ext_resource type="Script" uid="uid://c7lcqhjydj4uk" path="res://src/player/resources/settings/player_camera_settings.gd" id="3_244u8"]
+[ext_resource type="Script" uid="uid://m3yisb57jxn8" path="res://src/player/resources/settings/player_movement_settings.gd" id="3_jiejy"]
+[ext_resource type="Script" uid="uid://bmnrx4xngblky" path="res://src/player/scripts/player_resources/player_stamina.gd" id="4_o822w"]
+[ext_resource type="Script" uid="uid://dnv661j2pjw6k" path="res://src/player/scripts/player_actions/player_jump.gd" id="4_ylhto"]
+[ext_resource type="Script" uid="uid://dft66b0l5wkki" path="res://src/player/resources/settings/player_jump_settings.gd" id="5_cwolq"]
+[ext_resource type="Script" uid="uid://dikerrva0v8a" path="res://src/player/resources/settings/player_stamina_settings.gd" id="5_x42xx"]
+[ext_resource type="Script" uid="uid://d4f3d4d3h8c6t" path="res://src/player/scripts/player_actions/player_interactions.gd" id="6_l271a"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
 radius = 0.3
@@ -22,6 +24,10 @@ height = 1.8
 script = ExtResource("3_jiejy")
 metadata/_custom_type_script = "uid://m3yisb57jxn8"
 
+[sub_resource type="Resource" id="Resource_26let"]
+script = ExtResource("5_cwolq")
+metadata/_custom_type_script = "uid://dft66b0l5wkki"
+
 [sub_resource type="Resource" id="Resource_o822w"]
 script = ExtResource("5_x42xx")
 metadata/_custom_type_script = "uid://dikerrva0v8a"
@@ -32,7 +38,6 @@ metadata/_custom_type_script = "uid://c7lcqhjydj4uk"
 
 [node name="Player" type="CharacterBody3D" unique_id=865188573]
 script = ExtResource("1_4anbu")
-jump_height = 10.0
 metadata/_custom_type_script = "uid://iqkm3onig8v1"
 
 [node name="CollisionShape" type="CollisionShape3D" parent="." unique_id=1038574759]
@@ -47,6 +52,11 @@ mesh = SubResource("CapsuleMesh_26let")
 script = ExtResource("2_5f2sf")
 movement_settings = SubResource("Resource_5f2sf")
 metadata/_custom_type_script = "uid://reyetaehxarr"
+
+[node name="PlayerJump" type="Node" parent="." unique_id=1656451700]
+script = ExtResource("4_ylhto")
+jump_settings = SubResource("Resource_26let")
+metadata/_custom_type_script = "uid://dnv661j2pjw6k"
 
 [node name="PlayerStamina" type="Node" parent="." unique_id=387038166]
 script = ExtResource("4_o822w")
