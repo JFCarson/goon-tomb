@@ -14,7 +14,7 @@ extends CharacterBody3D
 
 
 # Components
-@onready var hud : HUD = $CanvasLayer/HUD
+@onready var hud : HUD
 
 
 # Runtime State
@@ -29,7 +29,6 @@ func _process(_delta: float) -> void:
 # Initialises the player's input dependencies and captures the mouse.
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	input.initialise(camera.get_interact_ray(), hud.get_interact_prompt())
 
 
 # Handle camera movement.
@@ -63,6 +62,12 @@ func _physics_process(delta : float) -> void:
 	
 	# Apply camera effects using the resolved player movement state.
 	_update_camera(delta)
+
+
+## Public Interface
+func initialise_hud(player_hud : HUD) -> void:
+	hud = player_hud
+	input.initialise(camera.get_interact_ray(), hud.get_interact_prompt())
 
 
 ## Private Methods

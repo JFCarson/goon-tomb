@@ -2,7 +2,7 @@ class_name HUD
 extends Control
 
 
-@export var bar_speed : float
+@export var bar_speed : float = 100.0
 
 @onready var stamina_bar : ProgressBar = $MarginContainer/InfoBars/Stamina/StaminaBar
 @onready var interact_prompt : Label = $InteractPrompt
@@ -11,6 +11,10 @@ extends Control
 var stamina_bar_initialized : bool = false
 var displayed_stamina : float = 0.0
 var target_stamina : float = 0.0
+
+
+func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _process(delta : float) -> void:

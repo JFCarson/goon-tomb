@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://cncw4k7rerb2n" path="res://src/player/scripts/controllers/player_input_controller.gd" id="2_2smqc"]
 [ext_resource type="Script" uid="uid://reyetaehxarr" path="res://src/player/scripts/player_actions/player_movement.gd" id="2_5f2sf"]
 [ext_resource type="Script" uid="uid://ipkw05jobgjr" path="res://src/player/scripts/player_actions/player_camera_arm.gd" id="2_mf2ua"]
-[ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/hud/hud.tscn" id="2_rxibo"]
 [ext_resource type="Script" uid="uid://c7lcqhjydj4uk" path="res://src/player/resources/settings/player_camera_settings.gd" id="3_244u8"]
 [ext_resource type="Script" uid="uid://m3yisb57jxn8" path="res://src/player/resources/settings/player_movement_settings.gd" id="3_jiejy"]
 [ext_resource type="Script" uid="uid://bmnrx4xngblky" path="res://src/player/scripts/player_resources/player_stamina.gd" id="4_o822w"]
@@ -99,9 +98,3 @@ metadata/_custom_type_script = "uid://dba440vaw672h"
 [node name="PlayerMotionState" type="Node" parent="PlayerStateController" unique_id=790688311]
 script = ExtResource("11_cwolq")
 metadata/_custom_type_script = "uid://lm6lnmoya2xg"
-
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=506668441]
-
-[node name="HUD" parent="CanvasLayer" unique_id=190508894 instance=ExtResource("2_rxibo")]
-mouse_filter = 2
-bar_speed = 100.0
