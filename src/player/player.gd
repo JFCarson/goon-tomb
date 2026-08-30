@@ -8,18 +8,18 @@ extends CharacterBody3D
 # Components
 @onready var camera_manager : CameraManager = $CameraManager
 @onready var movement : PlayerMovement = $PlayerMovement
+@onready var jump : PlayerJump = $PlayerJump
 @onready var stamina : PlayerStamina = $PlayerStamina
 @onready var interactions : PlayerInteractions = $PlayerInteractions
 @onready var hud : HUD = $CanvasLayer/HUD
 @onready var interact_ray: RayCast3D = $CameraManager/Camera/InteractRay
 @onready var prompt: Label = $CanvasLayer/HUD/InteractPrompt
+
+
 # Runtime State
 var motion_state : PlayerEnums.MotionState = PlayerEnums.MotionState.IDLE
 var can_sprint : bool = false
 
-# Configuration
-@export_group("Jump")
-@export var jump_height : float
 
 func _process(_delta: float) -> void:
 	interactions._update_interaction(interact_ray, prompt)
@@ -36,6 +36,7 @@ func _unhandled_input(event : InputEvent) -> void:
 	#Fallback for interactions
 	if event.is_action_pressed("interact"):
 		interactions._try_interact(interact_ray)
+
 
 func _physics_process(delta : float) -> void:
 	# Apply gravity while airborne.
@@ -62,10 +63,9 @@ func _physics_process(delta : float) -> void:
 	velocity.z = horizontal_velocity.z
 	
 	# Handle jumping.
-	var can_jump : bool = is_on_floor() and stamina.can_afford(stamina.stamina_settings.jump_cost)
-	if Input.is_action_just_pressed("jump") and can_jump:
-		stamina.consume(stamina.stamina_settings.jump_cost)
-		velocity.y = sqrt(2.0 * jump_height)
+	if Input.is_action_just_pressed("jump") and jump.can_jump(is_on_floor()) and stamina.can_jump():
+		if stamina.consume_jump():
+			velocity.y = jump.calculate_jump_velocity()
 	
 	move_and_slide()
 	
