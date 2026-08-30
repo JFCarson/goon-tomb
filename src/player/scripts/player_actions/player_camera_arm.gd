@@ -1,4 +1,4 @@
-class_name CameraManager
+class_name CameraArm
 extends Node3D
 
 ## Manages camera movement and visual effects for the player.
@@ -20,6 +20,7 @@ const SWAY_CLAMP_MAX : float = 1.0
 
 # Node References
 @onready var camera : Camera3D = $Camera
+@onready var interact_ray : RayCast3D = $Camera/InteractRay
 @onready var camera_default_position : Vector3 = camera.position
 
 
@@ -56,6 +57,11 @@ func do_camera_movement_effects(delta : float, player_velocity : Vector3, motion
 	camera.rotation.z = target_sway.z
 
 
+# Returns the ray used for player interaction.
+func get_interact_ray() -> RayCast3D:
+	return interact_ray
+
+
 ## Internal Calculations
 # Calculates the target positional offset produced by the headbob effect.
 # Returns a neutral position when the player is stationary or airborne.
@@ -66,6 +72,7 @@ func _calculate_headbob(delta : float,player_velocity : Vector3, motion_state : 
 		return Vector3.ZERO
 	
 	var frequency_multiplier : float = DEFAULT_HEADBOB_FREQUENCY_MULTIPLIER
+	
 	if motion_state == PlayerEnums.MotionState.SPRINTING:
 		frequency_multiplier = camera_settings.headbob_sprint_frequency_multiplier
 	

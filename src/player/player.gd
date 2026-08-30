@@ -2,81 +2,117 @@ class_name Player
 extends CharacterBody3D
 
 ## Orchestrator script for the player.
-## Coordinates player components and owns the player's high-level state.
+## Coordinates player controllers and owns the player's high-level
+## CharacterBody3D responsibilities.
+
+
+# Controllers
+@onready var input : PlayerInputController = $PlayerInputController
+@onready var camera : PlayerCameraController = $PlayerCameraController
+@onready var resources : PlayerResourceController = $PlayerResourceController
+@onready var state : PlayerStateController = $PlayerStateController
 
 
 # Components
-@onready var camera_manager : CameraManager = $CameraManager
-@onready var movement : PlayerMovement = $PlayerMovement
-@onready var jump : PlayerJump = $PlayerJump
-@onready var stamina : PlayerStamina = $PlayerStamina
-@onready var interactions : PlayerInteractions = $PlayerInteractions
-@onready var motion_state_manager : PlayerMotionState = $PlayerMotionState
-@onready var hud : HUD = $CanvasLayer/HUD
-@onready var interact_ray: RayCast3D = $CameraManager/Camera/InteractRay
-@onready var prompt: Label = $CanvasLayer/HUD/InteractPrompt
+@onready var hud : HUD
 
 
 # Runtime State
 var motion_state : PlayerEnums.MotionState = PlayerEnums.MotionState.IDLE
-var can_sprint : bool = false
 
 
+# Updates systems that operate independently of the physics simulation.
 func _process(_delta: float) -> void:
-	interactions._update_interaction(interact_ray, prompt)
+	input.update_interaction()
 
+
+# Initialises the player's input dependencies and captures the mouse.
 func _ready() -> void:
-	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-# Fallback handler
+
+# Handle camera movement.
 func _unhandled_input(event : InputEvent) -> void:
-	#Fallback for camera
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		rotate_y(camera_manager.handle_camera_motion(event))  # Yaw is returned by handle_camera_motion method.
-	#Fallback for interactions
-	if event.is_action_pressed("interact"):
-		interactions._try_interact(interact_ray)
+		rotate_y(camera.handle_input(event))
 
 
+# Updates the player's physical movement and coordinates the player controllers.
 func _physics_process(delta : float) -> void:
-	# Apply gravity while airborne.
-	if not is_on_floor():
-		velocity += get_gravity() * delta
+	# Apply gravity before resolving movement for the current frame.
+	_apply_gravity(delta)
 	
-	# Read the player's movement input.
-	var input_vector : Vector2 = Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
-	
-	# Convert input into a world-space movement direction based on player rotation.
-	var direction : Vector3 = (transform.basis * Vector3(input_vector.x, 0.0, input_vector.y)).normalized()
-	
-	# Determine whether the current input is eligible for sprinting.
-	can_sprint = movement.can_sprint(input_vector, is_on_floor()) and stamina.can_sprint()
-	
-	# Determine the movement state used by the movement component.
-	motion_state = motion_state_manager.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
-	movement.set_motion_state(motion_state)
+	# Resolve the current motion state before movement is calculated.
+	_update_motion_state()
 	
 	# Calculate and apply horizontal movement.
-	var horizontal_velocity : Vector3 = movement.calculate_horizontal_velocity(delta, velocity, direction, input_vector, is_on_floor())
+	_apply_movement(delta)
+	
+	# Handle jump input and apply vertical jump velocity when permitted.
+	_handle_jump()
+	
+	# Resolve the player's movement through CharacterBody3D physics.
+	move_and_slide()
+	
+	# Recalculate the motion state using the resolved physics state.
+	_update_motion_state()
+	
+	# Update resource systems and their associated HUD elements.
+	_update_resources(delta)
+	
+	# Apply camera effects using the resolved player movement state.
+	_update_camera(delta)
+
+
+## Public Interface
+func initialise_hud(player_hud : HUD) -> void:
+	hud = player_hud
+	input.initialise(camera.get_interact_ray(), hud.get_interact_prompt())
+
+
+## Private Methods
+# Applies gravity while the player is airborne.
+func _apply_gravity(delta : float) -> void:
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+
+# Determines and propagates the player's current motion state.
+func _update_motion_state() -> void:
+	# Sprinting requires both valid movement conditions and available stamina.
+	var can_sprint : bool = input.can_sprint(is_on_floor(), resources.can_sprint())
+	
+	# Resolve the player's motion state from the current physical and input state.
+	state.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
+	
+	# Store the resolved state locally and pass it to movement-dependent components.
+	motion_state = state.get_motion_state()
+	input.set_motion_state(motion_state)
+
+
+# Calculates and applies the player's horizontal movement velocity.
+func _apply_movement(delta : float) -> void:
+	var horizontal_velocity : Vector3 = input.update_movement(delta, velocity, transform.basis, is_on_floor())
 	
 	velocity.x = horizontal_velocity.x
 	velocity.z = horizontal_velocity.z
+
+
+# Handles jump input and applies the resulting vertical velocity.
+func _handle_jump() -> void:
+	var jump_velocity : float = input.handle_jump(is_on_floor(), resources.can_jump())
 	
-	# Handle jumping.
-	if Input.is_action_just_pressed("jump") and jump.can_jump(is_on_floor()) and stamina.can_jump():
-		if stamina.consume_jump():
-			velocity.y = jump.calculate_jump_velocity()
-	
-	move_and_slide()
-	
-	# Recalculate the state after movement has been resolved.
-	motion_state = motion_state_manager.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
-	movement.set_motion_state(motion_state)
-	
-	# Update stamina using the resolved movement state.
-	stamina.update(delta, motion_state == PlayerEnums.MotionState.SPRINTING)
-	hud.update_stamina(stamina.get_stamina(), stamina.get_max_stamina())
-	
-	# Trigger camera movement effects processing.
-	camera_manager.do_camera_movement_effects(delta, velocity, motion_state)
+	if jump_velocity > 0.0:
+		if resources.consume_jump():
+			velocity.y = jump_velocity
+
+
+# Updates player resources and synchronises the stamina display.
+func _update_resources(delta : float) -> void:
+	resources.update(delta, motion_state, Input.is_action_pressed("sprint"))
+	hud.update_stamina(resources.get_stamina(), resources.get_max_stamina())
+
+
+# Updates camera movement effects using the player's resolved state and velocity.
+func _update_camera(delta : float) -> void:
+	camera.update(delta, velocity, motion_state)
