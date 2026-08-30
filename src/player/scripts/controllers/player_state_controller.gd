@@ -2,8 +2,6 @@ class_name PlayerStateController
 extends Node
 
 ## Coordinates the player's state components.
-## Provides a single interface for the player orchestrator to
-## access and update the player's different state categories.
 
 
 # Components

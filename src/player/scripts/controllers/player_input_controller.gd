@@ -75,11 +75,9 @@ func set_motion_state(state : PlayerEnums.MotionState) -> void:
 	movement.set_motion_state(state)
 
 
-# Updates the interaction prompt.
+# Updates the interaction prompt and handles interaction input.
 func update_interaction() -> void:
 	interaction.update_interaction()
-
-
-# Attempts to interact with the object currently targeted.
-func try_interact() -> void:
-	interaction.try_interact()
+	
+	if Input.is_action_just_pressed("interact"):
+		interaction.try_interact()

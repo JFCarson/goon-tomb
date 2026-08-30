@@ -8,12 +8,18 @@ extends Node3D
 @onready var camera_arm : CameraArm = $CameraArm
 
 
-## Public Interface
-# Handles mouse input and returns the yaw rotation for the player.
-func handle_camera_motion(event : InputEvent) -> float:
+# Handles camera-related input and returns the resulting player yaw.
+func handle_input(event : InputEvent) -> float:
+	if not event is InputEventMouseMotion:
+		return 0.0
+	
+	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+		return 0.0
+	
 	return camera_arm.handle_camera_motion(event)
 
 
+## Public Interface
 # Returns the interaction ray used by the camera.
 func get_interact_ray() -> RayCast3D:
 	return camera_arm.get_interact_ray()

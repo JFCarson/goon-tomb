@@ -18,6 +18,7 @@ func _process(delta : float) -> void:
 		return
 	
 	displayed_stamina = move_toward(displayed_stamina, target_stamina, bar_speed * delta)
+	
 	stamina_bar.value = displayed_stamina
 
 
