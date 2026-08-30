@@ -2,6 +2,8 @@ class_name PlayerInputController
 extends Node
 
 ## Coordinates player input-driven components.
+## Provides a single interface between the player orchestrator
+## and movement, jump and interaction components.
 
 
 # Components
@@ -9,11 +11,16 @@ extends Node
 @onready var jump : PlayerJump = $PlayerJump
 @onready var interaction : PlayerInteraction = $PlayerInteraction
 
-# Runtime State
-var sprint_locked : bool = false
+
+## Runtime State
+var motion_state : PlayerEnums.MotionState = PlayerEnums.MotionState.IDLE
 
 
 ## Public Interface
+# Initialises the components contained within this controller's composition.
+func initialise(interact_ray : RayCast3D, prompt : Label) -> void:
+	interaction.initialise(interact_ray, prompt)
+
 # Returns the current movement input.
 func get_input_vector() -> Vector2:
 	return Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
@@ -22,29 +29,14 @@ func get_input_vector() -> Vector2:
 # Calculates the player's horizontal movement.
 func update_movement(delta : float, current_velocity : Vector3, player_basis : Basis, is_on_floor : bool) -> Vector3:
 	var input_vector : Vector2 = get_input_vector()
-	
 	var direction : Vector3 = (player_basis * Vector3(input_vector.x, 0.0, input_vector.y)).normalized()
-	
+
 	return movement.calculate_horizontal_velocity(delta, current_velocity, direction, input_vector, is_on_floor)
 
 
+# Determines whether sprinting is available.
 func can_sprint(is_on_floor : bool, has_stamina : bool) -> bool:
-	if not Input.is_action_pressed("sprint"):
-		sprint_locked = false
-	
-	if sprint_locked:
-		return false
-	
-	if not has_stamina:
-		sprint_locked = true
-		return false
-	
-	return movement.can_sprint(get_input_vector(), is_on_floor)
-
-
-# Determines whether jumping is available.
-func can_jump(is_on_floor) -> bool:
-	return jump.can_jump(is_on_floor)
+	return movement.can_sprint(get_input_vector(), is_on_floor) and has_stamina
 
 
 # Handles jump input and returns a jump velocity.
@@ -62,16 +54,17 @@ func handle_jump(is_on_floor : bool, can_afford_jump : bool) -> float:
 	return jump.calculate_jump_velocity()
 
 
-# Updates interaction prompts.
-func update_interaction(interact_ray : RayCast3D, prompt : Label) -> void:
-	interaction.update_interaction(interact_ray, prompt)
-
-
-# Attempts interaction.
-func try_interact(interact_ray : RayCast3D) -> void:
-	interaction.try_interact(interact_ray)
-
-
-# Passes motion state through to movement.
+# Passes the current motion state through to movement.
 func set_motion_state(state : PlayerEnums.MotionState) -> void:
+	motion_state = state
 	movement.set_motion_state(state)
+
+
+# Updates the interaction prompt.
+func update_interaction() -> void:
+	interaction.update_interaction()
+
+
+# Attempts to interact with the object currently targeted.
+func try_interact() -> void:
+	interaction.try_interact()

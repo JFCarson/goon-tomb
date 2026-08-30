@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://dft66b0l5wkki" path="res://src/player/resources/settings/player_jump_settings.gd" id="5_cwolq"]
 [ext_resource type="Script" uid="uid://dikerrva0v8a" path="res://src/player/resources/settings/player_stamina_settings.gd" id="5_x42xx"]
 [ext_resource type="Script" uid="uid://d4f3d4d3h8c6t" path="res://src/player/scripts/player_actions/player_interaction.gd" id="6_l271a"]
+[ext_resource type="Script" uid="uid://cyxwcvodlx34s" path="res://src/player/scripts/controllers/player_camera_controller.gd" id="8_6bm8s"]
 [ext_resource type="Script" uid="uid://x31bgncyr6lp" path="res://src/player/scripts/controllers/player_resource_controller.gd" id="8_rl62b"]
 [ext_resource type="Script" uid="uid://lm6lnmoya2xg" path="res://src/player/scripts/state/player_motion_state.gd" id="11_cwolq"]
 [ext_resource type="Script" uid="uid://dba440vaw672h" path="res://src/player/scripts/controllers/player_state_controller.gd" id="11_wlj80"]
@@ -32,13 +33,13 @@ metadata/_custom_type_script = "uid://m3yisb57jxn8"
 script = ExtResource("5_cwolq")
 metadata/_custom_type_script = "uid://dft66b0l5wkki"
 
-[sub_resource type="Resource" id="Resource_o822w"]
-script = ExtResource("5_x42xx")
-metadata/_custom_type_script = "uid://dikerrva0v8a"
-
 [sub_resource type="Resource" id="Resource_mf2ua"]
 script = ExtResource("3_244u8")
 metadata/_custom_type_script = "uid://c7lcqhjydj4uk"
+
+[sub_resource type="Resource" id="Resource_o822w"]
+script = ExtResource("5_x42xx")
+metadata/_custom_type_script = "uid://dikerrva0v8a"
 
 [node name="Player" type="CharacterBody3D" unique_id=865188573]
 script = ExtResource("1_4anbu")
@@ -67,6 +68,21 @@ jump_settings = SubResource("Resource_26let")
 [node name="PlayerInteraction" type="Node" parent="PlayerInputController" unique_id=944911412]
 script = ExtResource("6_l271a")
 
+[node name="PlayerCameraController" type="Node3D" parent="." unique_id=727630885]
+script = ExtResource("8_6bm8s")
+metadata/_custom_type_script = "uid://cyxwcvodlx34s"
+
+[node name="CameraArm" type="Node3D" parent="PlayerCameraController" unique_id=1683304578]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
+script = ExtResource("2_mf2ua")
+camera_settings = SubResource("Resource_mf2ua")
+
+[node name="Camera" type="Camera3D" parent="PlayerCameraController/CameraArm" unique_id=1103311905]
+current = true
+
+[node name="InteractRay" type="RayCast3D" parent="PlayerCameraController/CameraArm/Camera" unique_id=201963274]
+target_position = Vector3(0, 0, -3)
+
 [node name="PlayerResourceController" type="Node" parent="." unique_id=2009760311]
 script = ExtResource("8_rl62b")
 metadata/_custom_type_script = "uid://x31bgncyr6lp"
@@ -83,17 +99,6 @@ metadata/_custom_type_script = "uid://dba440vaw672h"
 [node name="PlayerMotionState" type="Node" parent="PlayerStateController" unique_id=790688311]
 script = ExtResource("11_cwolq")
 metadata/_custom_type_script = "uid://lm6lnmoya2xg"
-
-[node name="CameraArm" type="Node3D" parent="." unique_id=1683304578]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
-script = ExtResource("2_mf2ua")
-camera_settings = SubResource("Resource_mf2ua")
-
-[node name="Camera" type="Camera3D" parent="CameraArm" unique_id=1103311905]
-current = true
-
-[node name="InteractRay" type="RayCast3D" parent="CameraArm/Camera" unique_id=201963274]
-target_position = Vector3(0, 0, -4)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=506668441]
 

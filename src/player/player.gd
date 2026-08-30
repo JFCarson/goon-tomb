@@ -7,14 +7,12 @@ extends CharacterBody3D
 
 # Controllers
 @onready var input : PlayerInputController = $PlayerInputController
+@onready var camera : PlayerCameraController = $PlayerCameraController
 @onready var resources : PlayerResourceController = $PlayerResourceController
 @onready var state : PlayerStateController = $PlayerStateController
 
 # Components
-@onready var camera_arm : CameraArm = $CameraArm
 @onready var hud : HUD = $CanvasLayer/HUD
-@onready var interact_ray: RayCast3D = $CameraArm/Camera/InteractRay
-@onready var prompt: Label = $CanvasLayer/HUD/InteractPrompt
 
 
 # Runtime State
@@ -23,22 +21,25 @@ var can_sprint : bool = false
 
 
 func _process(_delta: float) -> void:
-	input.update_interaction(interact_ray, prompt)
+	input.update_interaction()
 
 
 func _ready() -> void:
 	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+	input.initialise(camera.get_interact_ray(), hud.get_interact_prompt())
 
 
 # Fallback handler
 func _unhandled_input(event : InputEvent) -> void:
-	#Fallback for camera
+	# Fallback for camera.
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		rotate_y(camera_arm.handle_camera_motion(event))  # Yaw is returned by handle_camera_motion method.
-	#Fallback for interactions
+		rotate_y(camera.handle_camera_motion(event))
+	
+	# Fallback for interactions.
 	if event.is_action_pressed("interact"):
-		input.try_interact(interact_ray)
+		input.try_interact()
 
 
 func _physics_process(delta : float) -> void:
@@ -74,4 +75,4 @@ func _physics_process(delta : float) -> void:
 	hud.update_stamina(resources.get_stamina(), resources.get_max_stamina())
 	
 	# Trigger camera movement effects processing.
-	camera_arm.do_camera_movement_effects(delta, velocity, motion_state)
+	camera.update(delta, velocity, motion_state)

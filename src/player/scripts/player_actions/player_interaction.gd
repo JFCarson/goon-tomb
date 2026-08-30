@@ -1,23 +1,39 @@
 class_name PlayerInteraction
 extends Node
 
-#This code handles updating the prompt
-#detects if the raycast is interacting with an interactable object and returns the Interactable prompt variable within Interactable.gd
-func update_interaction(interact_ray : RayCast3D, prompt : Label) -> void:
+## Handles interaction detection, prompts and interaction execution.
+
+
+# Runtime References
+var interact_ray : RayCast3D
+var prompt : Label
+
+
+func initialise(ray : RayCast3D, interaction_prompt : Label) -> void:
+	interact_ray = ray
+	prompt = interaction_prompt
+
+
+## Public Interface
+# Updates the interaction prompt based on the object currently targeted.
+func update_interaction() -> void:
 	prompt.text = ""
-	#early returns if object isn't interactable
+	
 	if not interact_ray.is_colliding():
 		return
+	
 	var collider = interact_ray.get_collider()
+	
 	if collider is Interactable:
-		#uses the get_prompt funcition in Interactable.gd to get the prompt of the interable object and updates the prompt
 		prompt.text = collider.get_prompt()
 
-#This code handles the player pressing interact keybind (default (e))
-func try_interact(interact_ray : RayCast3D) -> void:
-	#early returns if object isn't interactable
+
+# Attempts to interact with the object currently targeted.
+func try_interact() -> void:
 	if not interact_ray.is_colliding():
 		return
+	
 	var collider = interact_ray.get_collider()
+	
 	if collider is Interactable:
 		collider.interact()
