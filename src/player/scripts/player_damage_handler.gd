@@ -9,10 +9,13 @@ var resources : PlayerResourceController
 var state : PlayerStateController
 
 
+# Components
+@onready var fall_damage : PlayerFallDamageHandler = $PlayerFallDamageHandler
+
+
 # Signals
 signal damage_taken(amount : float)
 signal health_restored(amount : float)
-signal died
 
 
 ## Public Interface
@@ -64,3 +67,8 @@ func heal(amount : float) -> void:
 		return
 	
 	health_restored.emit(actual_healing)
+
+
+# Triggers fall damage if necessary.
+func update_fall_damage(is_on_floor : bool, velocity : Vector3) -> void:
+	fall_damage.update(is_on_floor, velocity)

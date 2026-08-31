@@ -43,3 +43,15 @@ extends Resource
 
 # Speed at which movement sway interpolates towards its target rotation.
 @export var movement_sway_speed : float = 4.0
+
+
+@export_group("Damage Feedback")
+
+# Maximum offset of damage feedback.
+@export var damage_feedback_max_rotation : float = 0.5
+
+# Speed at which damage feedback motion builds.
+@export var damage_feedback_build_speed : float = 1.25
+
+# Speed at which damage feedback motion resets.
+@export var damage_feedback_decay_speed : float = 0.75

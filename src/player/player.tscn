@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://cjd0tw1h31ni0" path="res://src/player/resources/settings/player_health_settings.gd" id="13_oyld2"]
 [ext_resource type="Script" uid="uid://bdsi48isy7pm" path="res://src/player/scripts/player_damage_handler.gd" id="18_oyld2"]
 [ext_resource type="Script" uid="uid://x5uhwydwu5ik" path="res://src/player/scripts/state/player_lifecycle_state.gd" id="18_vwsmr"]
+[ext_resource type="Script" uid="uid://q650sif262kf" path="res://src/player/scripts/player_fall_damage_handler.gd" id="20_jcdrv"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
 radius = 0.3
@@ -121,3 +122,9 @@ metadata/_custom_type_script = "uid://x5uhwydwu5ik"
 [node name="PlayerDamageHandler" type="Node" parent="." unique_id=271921644]
 script = ExtResource("18_oyld2")
 metadata/_custom_type_script = "uid://bdsi48isy7pm"
+
+[node name="PlayerFallDamageHandler" type="Node" parent="PlayerDamageHandler" unique_id=1821299153]
+script = ExtResource("20_jcdrv")
+minimum_fall_velocity = 8.0
+damage_per_velocity = 10.0
+metadata/_custom_type_script = "uid://q650sif262kf"

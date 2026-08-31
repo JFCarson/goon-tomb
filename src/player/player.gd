@@ -16,7 +16,7 @@ extends CharacterBody3D
 @onready var damage : PlayerDamageHandler = $PlayerDamageHandler
 
 # Components
-@onready var hud : HUD
+var hud : HUD
 
 
 # Updates systems that operate independently of the physics simulation.
@@ -72,6 +72,9 @@ func _physics_process(delta : float) -> void:
 		# Resolve the player's movement through CharacterBody3D physics.
 		move_and_slide()
 		
+		# Perform calculations for fall damage.
+		damage.update_fall_damage(is_on_floor(), velocity)
+		
 		# Recalculate the motion state using the resolved physics state.
 		_update_motion_state()
 		
@@ -86,16 +89,24 @@ func _physics_process(delta : float) -> void:
 
 
 ## Public Interface
-# Initialises the player HUD.
+# Initialises the player.
 func initialise(player_hud : HUD) -> void:
+	# Initialise the HUD with the player's resource values and current lifecycle state.
 	hud = player_hud
 	hud.initialise(resources.get_max_health(), resources.get_max_stamina())
+	hud.update_lifecycle(state.get_lifecycle_state())
 	
+	# Initialise the damage handler with the controllers it coordinates.
 	damage.initialise(resources, state)
 	damage.damage_taken.connect(_on_damage_taken)
 	damage.health_restored.connect(_on_health_restored)
 	
+	# Propagate lifecycle state changes to the HUD.
+	state.lifecycle.state_changed.connect(_on_lifecycle_state_changed)
+	
+	# Initialise player input with the camera interaction ray and HUD prompt.
 	input.initialise(camera.get_interact_ray(), hud.get_interact_prompt())
+
 
 
 # Resets & respawns the player in its initial gameplay state.
@@ -186,3 +197,8 @@ func _on_health_restored(amount : float) -> void:
 	var magnitude : float = amount / resources.get_max_health()
 	
 	hud.health_feedback(magnitude, HUD.HEALING_FEEDBACK_COLOUR)
+
+
+# Triggered when lifecycle state is changed. 
+func _on_lifecycle_state_changed(new_state : PlayerEnums.LifecycleState) -> void:
+	hud.update_lifecycle(new_state)

@@ -12,8 +12,6 @@ const DEFAULT_HEADBOB_FREQUENCY_MULTIPLIER : float = 1.0
 const HEADBOB_HORIZONTAL_FREQUENCY_DIVISOR : float = 2.0
 const SWAY_CLAMP_MIN : float = -1.0
 const SWAY_CLAMP_MAX : float = 1.0
-const DAMAGE_FEEDBACK_MAX_ROTATION : float = 0.075
-const DAMAGE_FEEDBACK_DECAY_SPEED : float = 0.15
 
 
 # Configuration
@@ -32,6 +30,7 @@ var headbob_time : float = 0.0
 var headbob_position : Vector3 = Vector3.ZERO
 var movement_sway : Vector3 = Vector3.ZERO
 var damage_feedback_rotation : float = 0.0
+var target_damage_feedback_rotation : float = 0.0
 var previous_velocity : Vector3 = Vector3.ZERO
 
 
@@ -53,7 +52,15 @@ func do_camera_movement_effects(delta : float, player_velocity : Vector3, motion
 	var target_sway : Vector3 = _calculate_movement_sway(delta, player_velocity)
 	
 	headbob_position = headbob_position.lerp(target_headbob_position, camera_settings.headbob_reset_speed * delta)
-	damage_feedback_rotation = move_toward(damage_feedback_rotation, 0.0, DAMAGE_FEEDBACK_DECAY_SPEED * delta)
+	
+	var damage_feedback_speed : float = camera_settings.damage_feedback_decay_speed
+	
+	if target_damage_feedback_rotation > damage_feedback_rotation:
+		damage_feedback_speed = camera_settings.damage_feedback_build_speed
+	
+	damage_feedback_rotation = move_toward(damage_feedback_rotation, target_damage_feedback_rotation, damage_feedback_speed * delta)
+	
+	target_damage_feedback_rotation = move_toward(target_damage_feedback_rotation, 0.0, camera_settings.damage_feedback_decay_speed * delta)
 	
 	camera.position = camera_default_position + headbob_position
 	
@@ -63,8 +70,9 @@ func do_camera_movement_effects(delta : float, player_velocity : Vector3, motion
 
 # Applies offset to the camera as a response to the magnitude of a damage event.
 func damage_feedback(magnitude : float) -> void:
-	damage_feedback_rotation += magnitude * DAMAGE_FEEDBACK_MAX_ROTATION
-	damage_feedback_rotation = min(damage_feedback_rotation, DAMAGE_FEEDBACK_MAX_ROTATION)
+	var feedback_amount : float = magnitude * camera_settings.damage_feedback_max_rotation
+	
+	target_damage_feedback_rotation = min(target_damage_feedback_rotation + feedback_amount, camera_settings.damage_feedback_max_rotation)
 
 
 # Returns the ray used for player interaction.
