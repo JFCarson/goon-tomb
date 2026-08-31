@@ -12,3 +12,10 @@ enum MotionState {
 	SPRINTING,
 	AIRBORNE
 }
+
+# Describes the player's current lifecycle state.
+enum LifecycleState {
+	ALIVE,
+	DOWNED,
+	DEAD
+}

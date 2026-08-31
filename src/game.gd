@@ -6,8 +6,7 @@ extends Node3D
 
 
 func _ready() -> void:
-	player.initialise_hud(hud)
-
+	player.initialise(hud)
 
 # DEBUG CODE: Closes the active game window on ESC.
 func _input(event: InputEvent) -> void:

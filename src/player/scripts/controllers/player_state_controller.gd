@@ -6,6 +6,7 @@ extends Node
 
 # Components
 @onready var motion : PlayerMotionState = $PlayerMotionState
+@onready var lifecycle : PlayerLifecycleState = $PlayerLifecycleState
 
 
 ## Public Interface
@@ -28,3 +29,44 @@ func is_sprinting() -> bool:
 # Returns whether the player is currently airborne.
 func is_airborne() -> bool:
 	return motion.is_airborne()
+
+
+## Public Interface: Lifecycle State
+# Returns the player's current lifecycle state.
+func get_lifecycle_state() -> PlayerEnums.LifecycleState:
+	return lifecycle.get_state()
+
+
+# Returns whether the player is alive.
+func is_alive() -> bool:
+	return lifecycle.is_alive()
+
+
+# Returns whether the player is downed.
+func is_downed() -> bool:
+	return lifecycle.is_downed()
+
+
+# Returns whether the player is dead.
+func is_dead() -> bool:
+	return lifecycle.is_dead()
+
+
+# Transitions the player into the downed state.
+func down() -> void:
+	lifecycle.down()
+
+
+# Transitions the player into the dead state.
+func die() -> void:
+	lifecycle.die()
+
+
+# Recovers the player from the downed state.
+func recover() -> void:
+	lifecycle.recover()
+
+
+# Resets the player from dead to alive.
+func reset() -> void:
+	lifecycle.reset()

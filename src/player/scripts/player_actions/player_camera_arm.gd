@@ -12,6 +12,8 @@ const DEFAULT_HEADBOB_FREQUENCY_MULTIPLIER : float = 1.0
 const HEADBOB_HORIZONTAL_FREQUENCY_DIVISOR : float = 2.0
 const SWAY_CLAMP_MIN : float = -1.0
 const SWAY_CLAMP_MAX : float = 1.0
+const DAMAGE_FEEDBACK_MAX_ROTATION : float = 0.075
+const DAMAGE_FEEDBACK_DECAY_SPEED : float = 0.15
 
 
 # Configuration
@@ -29,6 +31,7 @@ var camera_pitch : float = 0.0
 var headbob_time : float = 0.0
 var headbob_position : Vector3 = Vector3.ZERO
 var movement_sway : Vector3 = Vector3.ZERO
+var damage_feedback_rotation : float = 0.0
 var previous_velocity : Vector3 = Vector3.ZERO
 
 
@@ -50,11 +53,18 @@ func do_camera_movement_effects(delta : float, player_velocity : Vector3, motion
 	var target_sway : Vector3 = _calculate_movement_sway(delta, player_velocity)
 	
 	headbob_position = headbob_position.lerp(target_headbob_position, camera_settings.headbob_reset_speed * delta)
+	damage_feedback_rotation = move_toward(damage_feedback_rotation, 0.0, DAMAGE_FEEDBACK_DECAY_SPEED * delta)
 	
 	camera.position = camera_default_position + headbob_position
 	
-	camera.rotation.x = camera_pitch + target_sway.x
+	camera.rotation.x = target_sway.x + damage_feedback_rotation
 	camera.rotation.z = target_sway.z
+
+
+# Applies offset to the camera as a response to the magnitude of a damage event.
+func damage_feedback(magnitude : float) -> void:
+	damage_feedback_rotation += magnitude * DAMAGE_FEEDBACK_MAX_ROTATION
+	damage_feedback_rotation = min(damage_feedback_rotation, DAMAGE_FEEDBACK_MAX_ROTATION)
 
 
 # Returns the ray used for player interaction.
