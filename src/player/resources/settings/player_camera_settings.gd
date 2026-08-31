@@ -16,13 +16,13 @@ extends Resource
 @export_group("Headbob")
 
 # Number of headbob cycles experienced per unit of horizontal movement.
-@export var headbob_frequency : float = 5.0
+@export var headbob_frequency : float = 4.25
 
 # Maximum positional displacement applied by the headbob effect.
-@export var headbob_amplitude : float = 0.03
+@export var headbob_amplitude : float = 0.055
 
 # Frequency multiplier applied to headbob while sprinting.
-@export var headbob_sprint_frequency_multiplier : float = 0.75
+@export var headbob_sprint_frequency_multiplier : float = 0.65
 
 # Speed at which the headbob returns to its neutral position when the player 
 # stops moving or becomes airborne.
@@ -33,16 +33,16 @@ extends Resource
 
 # Horizontal acceleration required to reach the maximum movement sway.
 # Higher values make the effect less sensitive to acceleration.
-@export var movement_sway_acceleration : float = 8.0
+@export var movement_sway_acceleration : float = 95.0
 
 # Maximum pitch rotation applied by forward and backward acceleration.
-@export var movement_sway_pitch : float = 1.0
+@export var movement_sway_pitch : float = 34.0
 
 # Maximum roll rotation applied by lateral acceleration.
-@export var movement_sway_roll : float = 1.5
+@export var movement_sway_roll : float = 85.0
 
 # Speed at which movement sway interpolates towards its target rotation.
-@export var movement_sway_speed : float = 4.0
+@export var movement_sway_speed : float = 0.19
 
 
 @export_group("Damage Feedback")

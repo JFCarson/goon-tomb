@@ -7,13 +7,14 @@ extends Resource
 
 
 # Base movement speed while walking.
-@export var movement_speed : float = 3.0
+@export var movement_speed : float = 2.5
 
-# Rate at which the player accelerates towards the target velocity.
-@export var acceleration : float = 20.0
+# Rate at which the player accelerates towards the target velocity, and
+# decelerates to a stop.
+@export var acceleration : float = 8.0
 
 # Acceleration used when changing direction.
-@export var turn_acceleration : float = 150.0
+@export var turn_acceleration : float = 85.0
 
 # Multiplier applied to movement speed while sprinting.
 @export var sprint_multiplier : float = 2
@@ -22,4 +23,4 @@ extends Resource
 @export var backward_speed_multiplier : float = 0.65
 
 # Percentage of normal movement control available while airborne.
-@export var air_movement_speed_percentage : float = 0.35
+@export var air_movement_speed_percentage : float = 0.75

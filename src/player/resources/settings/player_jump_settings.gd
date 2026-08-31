@@ -5,4 +5,4 @@ extends Resource
 
 
 ## Height the player reaches when jumping from a stationary vertical state.
-@export var jump_height : float = 10
+@export var jump_height : float = 7.5
