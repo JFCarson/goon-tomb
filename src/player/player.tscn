@@ -15,6 +15,11 @@
 [ext_resource type="Script" uid="uid://x31bgncyr6lp" path="res://src/player/scripts/controllers/player_resource_controller.gd" id="8_rl62b"]
 [ext_resource type="Script" uid="uid://lm6lnmoya2xg" path="res://src/player/scripts/state/player_motion_state.gd" id="11_cwolq"]
 [ext_resource type="Script" uid="uid://dba440vaw672h" path="res://src/player/scripts/controllers/player_state_controller.gd" id="11_wlj80"]
+[ext_resource type="Script" uid="uid://bysif6unychs6" path="res://src/player/scripts/player_resources/player_health.gd" id="12_hrerp"]
+[ext_resource type="Script" uid="uid://cjd0tw1h31ni0" path="res://src/player/resources/settings/player_health_settings.gd" id="13_oyld2"]
+[ext_resource type="Script" uid="uid://bdsi48isy7pm" path="res://src/player/scripts/player_damage_handler.gd" id="18_oyld2"]
+[ext_resource type="Script" uid="uid://x5uhwydwu5ik" path="res://src/player/scripts/state/player_lifecycle_state.gd" id="18_vwsmr"]
+[ext_resource type="Script" uid="uid://q650sif262kf" path="res://src/player/scripts/player_fall_damage_handler.gd" id="20_jcdrv"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5f2sf"]
 radius = 0.3
@@ -35,6 +40,10 @@ metadata/_custom_type_script = "uid://dft66b0l5wkki"
 [sub_resource type="Resource" id="Resource_mf2ua"]
 script = ExtResource("3_244u8")
 metadata/_custom_type_script = "uid://c7lcqhjydj4uk"
+
+[sub_resource type="Resource" id="Resource_cj2uf"]
+script = ExtResource("13_oyld2")
+metadata/_custom_type_script = "uid://cjd0tw1h31ni0"
 
 [sub_resource type="Resource" id="Resource_o822w"]
 script = ExtResource("5_x42xx")
@@ -86,6 +95,11 @@ target_position = Vector3(0, 0, -3)
 script = ExtResource("8_rl62b")
 metadata/_custom_type_script = "uid://x31bgncyr6lp"
 
+[node name="PlayerHealth" type="Node" parent="PlayerResourceController" unique_id=2014615602]
+script = ExtResource("12_hrerp")
+health_settings = SubResource("Resource_cj2uf")
+metadata/_custom_type_script = "uid://bysif6unychs6"
+
 [node name="PlayerStamina" type="Node" parent="PlayerResourceController" unique_id=387038166]
 script = ExtResource("4_o822w")
 stamina_settings = SubResource("Resource_o822w")
@@ -98,3 +112,19 @@ metadata/_custom_type_script = "uid://dba440vaw672h"
 [node name="PlayerMotionState" type="Node" parent="PlayerStateController" unique_id=790688311]
 script = ExtResource("11_cwolq")
 metadata/_custom_type_script = "uid://lm6lnmoya2xg"
+
+[node name="PlayerLifecycleState" type="Node" parent="PlayerStateController" unique_id=771199064]
+script = ExtResource("18_vwsmr")
+downed_enabled = true
+bleed_out_duration = 10.0
+metadata/_custom_type_script = "uid://x5uhwydwu5ik"
+
+[node name="PlayerDamageHandler" type="Node" parent="." unique_id=271921644]
+script = ExtResource("18_oyld2")
+metadata/_custom_type_script = "uid://bdsi48isy7pm"
+
+[node name="PlayerFallDamageHandler" type="Node" parent="PlayerDamageHandler" unique_id=1821299153]
+script = ExtResource("20_jcdrv")
+minimum_fall_velocity = 8.0
+damage_per_velocity = 10.0
+metadata/_custom_type_script = "uid://q650sif262kf"

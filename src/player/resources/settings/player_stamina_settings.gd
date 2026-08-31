@@ -9,13 +9,13 @@ extends Resource
 @export var max_stamina : float = 100.0
 
 ## Amount of stamina consumed per second while sprinting.
-@export var sprint_drain_rate : float = 15.0
+@export var sprint_drain_rate : float = 10.0
 
 ## Amount of stamina consumed when performing a jump.
 @export var jump_cost : float = 20.0
 
 ## Amount of stamina restored per second when regenerating.
-@export var regeneration_rate : float = 15.0
+@export var regeneration_rate : float = 20.0
 
 ## Time in seconds after consuming stamina before regeneration begins.
-@export var regeneration_delay : float = 1.5
+@export var regeneration_delay : float = 2.0

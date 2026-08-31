@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://bdfy4jeuktccn" path="res://src/hud/scripts/hud.gd" id="1_t0re6"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t0re6"]
+bg_color = Color(0.7176471, 0, 0, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cj2uf"]
 bg_color = Color(0.52394295, 0.64905894, 0.38123968, 1)
 
@@ -12,6 +15,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_t0re6")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1729135307]
@@ -34,6 +38,26 @@ layout_mode = 2
 size_flags_vertical = 8
 alignment = 2
 
+[node name="Health" type="HBoxContainer" parent="MarginContainer/InfoBars" unique_id=1742956564]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HealthLabel" type="Label" parent="MarginContainer/InfoBars/Health" unique_id=64081737]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Health"
+
+[node name="HealthBar" type="ProgressBar" parent="MarginContainer/InfoBars/Health" unique_id=1691027925]
+custom_minimum_size = Vector2(220, 0)
+propagate_maximum_size = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_styles/fill = SubResource("StyleBoxFlat_t0re6")
+step = 0.1
+value = 100.0
+show_percentage = false
+
 [node name="Stamina" type="HBoxContainer" parent="MarginContainer/InfoBars" unique_id=711649247]
 layout_mode = 2
 size_flags_vertical = 3
@@ -50,6 +74,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_styles/fill = SubResource("StyleBoxFlat_cj2uf")
+step = 0.1
 value = 100.0
 show_percentage = false
 
@@ -65,3 +90,36 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="HealthChangeFlash" type="ColorRect" parent="." unique_id=1651599474]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0, 0, 1)
+
+[node name="DownedScreen" type="ColorRect" parent="." unique_id=1118783590]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.11372549, 0, 0, 0.73333335)
+
+[node name="DeathScreen" type="ColorRect" parent="." unique_id=1185356705]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

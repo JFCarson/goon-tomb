@@ -5,6 +5,7 @@ extends Node
 
 
 # Components
+@onready var health : PlayerHealth = $PlayerHealth
 @onready var stamina : PlayerStamina = $PlayerStamina
 
 
@@ -23,9 +24,37 @@ func update(delta : float, motion_state : PlayerEnums.MotionState, sprint_presse
 		sprint_locked = true
 
 
-# Returns whether the player is currently allowed to sprint.
-func can_sprint() -> bool:
-	return stamina.can_sprint() and not sprint_locked
+# Resets all player resources to their configured defaults.
+func reset() -> void:
+	health.reset()
+	stamina.reset()
+	sprint_locked = false
+
+
+## Public Interface: Health
+# Returns the player's current health.
+func get_health() -> float:
+	return health.get_health()
+
+
+# Returns the player's maximum health.
+func get_max_health() -> float:
+	return health.get_max_health()
+
+
+# Returns whether the player is currently alive.
+func is_alive() -> bool:
+	return health.is_alive()
+
+
+# Applies damage to the player's health.
+func take_damage(amount : float) -> void:
+	health.take_damage(amount)
+
+
+# Restores the player's health.
+func heal(amount : float) -> void:
+	health.heal(amount)
 
 
 ## Public Interface: Stamina
@@ -38,6 +67,11 @@ func get_stamina() -> float:
 func get_max_stamina() -> float:
 	return stamina.get_max_stamina()
 
+
+# Returns whether the player is currently allowed to sprint.
+func can_sprint() -> bool:
+	return stamina.can_sprint() and not sprint_locked
+	
 
 # Returns whether the player has enough stamina to jump.
 func can_jump() -> bool:

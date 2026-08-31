@@ -69,6 +69,12 @@ func update(delta : float, is_sprinting : bool) -> void:
 		_regenerate(delta)
 
 
+# Resets health to its configured maximum.
+func reset() -> void:
+	stamina = stamina_settings.max_stamina
+	stamina_regeneration_timer = 0.0
+
+
 ## Internal Calculations
 # Regenerates missing stamina once the regeneration delay has elapsed.
 func _regenerate(delta : float) -> void:
