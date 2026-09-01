@@ -4,9 +4,7 @@
 [ext_resource type="ArrayMesh" uid="uid://crwe2w5b28fa5" path="res://assets/mesh/terrain/BaseTestMap.glb" id="2_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://blgrex2f54a82" path="res://src/player/player.tscn" id="2_h2yge"]
 [ext_resource type="Material" uid="uid://cqi4150p1065v" path="res://assets/materials/ground.tres" id="3_1bvp3"]
-[ext_resource type="Script" uid="uid://ch77b7x8isf5b" path="res://src/interactable/button.gd" id="5_7mycd"]
-[ext_resource type="Texture2D" uid="uid://cd6h7m6ct2y0" path="res://assets/test_models/Textures/Stop Button Mat_Base_Color.png" id="6_272bh"]
-[ext_resource type="ArrayMesh" uid="uid://boi2kvc7cfpc5" path="res://assets/test_models/Stop Button.obj" id="7_kek77"]
+[ext_resource type="PackedScene" uid="uid://dj56q1kceain" path="res://src/interactable/Lever.tscn" id="6_7mycd"]
 [ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/hud/hud.tscn" id="8_5vw27"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_lquwl"]
@@ -20,16 +18,6 @@ sky_material = SubResource("ProceduralSkyMaterial_272bh")
 [sub_resource type="Environment" id="Environment_lquwl"]
 background_mode = 2
 sky = SubResource("Sky_7mycd")
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_amx8r"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5vw27"]
-albedo_texture = ExtResource("6_272bh")
-
-[sub_resource type="Skin" id="Skin_272bh"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_amx8r"]
-size = Vector3(1.9987946, 2.0009632, 1.6044769)
 
 [node name="Game" type="Node3D" unique_id=251127410]
 script = ExtResource("1_ig7tw")
@@ -53,21 +41,9 @@ environment = SubResource("Environment_lquwl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1224495356]
 
-[node name="Button" type="StaticBody3D" parent="." unique_id=799725685]
-transform = Transform3D(0.155, 0, 0, 0, 0.030106321, 0.15204805, 0, -0.15204805, 0.030106321, -2.879481, 0.40636897, 5.237518)
-physics_material_override = SubResource("PhysicsMaterial_amx8r")
-script = ExtResource("5_7mycd")
-
-[node name="Button" type="MeshInstance3D" parent="Button" unique_id=1082892262]
-transform = Transform3D(1, 0, 0, 0, 0.9981523, -0.060761467, 0, 0.060761467, 0.9981523, 0, 0.0007286072, 0.0036745071)
-material_override = SubResource("StandardMaterial3D_5vw27")
-mesh = ExtResource("7_kek77")
-skin = SubResource("Skin_272bh")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Button" unique_id=2114707514]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.017555237, 1.0034313, 0.8578577)
-shape = SubResource("BoxShape3D_amx8r")
-
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1243433484]
 
 [node name="HUD" parent="CanvasLayer" unique_id=190508894 instance=ExtResource("8_5vw27")]
+
+[node name="Lever" parent="." unique_id=1413355395 instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1001916, 1.4235692, 16.255245)

@@ -3,12 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cduax5sdhjm8l"
-valid=false
+uid="uid://carp1e6cyye6h"
+path="res://.godot/imported/Lever.glb-1c6a974a97b85d0f184ba7e477418fa3.scn"
 
 [deps]
 
-source_file="res://assets/test_models/Door.gltf"
+source_file="res://assets/models/Lever/Lever.glb"
+dest_files=["res://.godot/imported/Lever.glb-1c6a974a97b85d0f184ba7e477418fa3.scn"]
 
 [params]
 

@@ -2,20 +2,24 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dsd8vq7iqr5nm"
-path="res://.godot/imported/Stop Button Mat_Roughness.png-ee3b7338903fa53e18d5705fb0bb747d.ctex"
+uid="uid://r5i0i3yu2jdo"
+path.s3tc="res://.godot/imported/Lever_Lever_Lever_BaseColor.png-4133e5e0cba481cb52dbca6aee7e84a8.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "8ca792ba53ba4f6f321de72f6d887c26"
 }
 
 [deps]
 
-source_file="res://assets/test_models/Textures/Stop Button Mat_Roughness.png"
-dest_files=["res://.godot/imported/Stop Button Mat_Roughness.png-ee3b7338903fa53e18d5705fb0bb747d.ctex"]
+source_file="res://assets/models/Lever/Lever_Lever_Lever_BaseColor.png"
+dest_files=["res://.godot/imported/Lever_Lever_Lever_BaseColor.png-4133e5e0cba481cb52dbca6aee7e84a8.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -23,7 +27,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -37,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
