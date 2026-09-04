@@ -5,8 +5,8 @@ extends Node
 
 
 # Configuration
-@export var minimum_fall_velocity : float = 12.0
-@export var damage_per_velocity : float = 5.0
+@export var minimum_fall_velocity : float = 8.0
+@export var damage_per_velocity : float = 10.0
 
 
 # Runtime State

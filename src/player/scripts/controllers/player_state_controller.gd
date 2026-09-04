@@ -11,8 +11,8 @@ extends Node
 
 ## Public Interface
 # Updates all state components for the current frame.
-func update(velocity : Vector3, is_on_floor : bool, can_sprint : bool, sprint_pressed : bool) -> void:
-	motion.update(velocity, is_on_floor, can_sprint, sprint_pressed)
+func update(velocity : Vector3, is_on_floor : bool, can_sprint : bool, sprint_pressed : bool, crouch_pressed : bool) -> void:
+	motion.update(velocity, is_on_floor, can_sprint, sprint_pressed, crouch_pressed)
 
 
 ## Public Interface: Motion State

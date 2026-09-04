@@ -35,6 +35,7 @@ size = Vector3(1.9987946, 2.0009632, 1.6044769)
 script = ExtResource("1_ig7tw")
 
 [node name="Ground" type="MeshInstance3D" parent="." unique_id=786188762]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.005962372, -0.01701641, 0.005396366)
 mesh = ExtResource("2_1bvp3")
 surface_material_override/0 = ExtResource("3_1bvp3")
 

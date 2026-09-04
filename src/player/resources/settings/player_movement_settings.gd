@@ -17,7 +17,10 @@ extends Resource
 @export var turn_acceleration : float = 85.0
 
 # Multiplier applied to movement speed while sprinting.
-@export var sprint_multiplier : float = 2
+@export var sprint_multiplier : float = 2.0
+
+# Multiplier applied to movement speed while crouching.
+@export var crouch_multiplier : float = 0.8
 
 # Multiplier applied to movement speed while moving backwards.
 @export var backward_speed_multiplier : float = 0.65

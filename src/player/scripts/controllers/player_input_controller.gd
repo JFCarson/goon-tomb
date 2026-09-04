@@ -7,6 +7,7 @@ extends Node
 # Components
 @onready var movement : PlayerMovement = $PlayerMovement
 @onready var jump : PlayerJump = $PlayerJump
+@onready var crouch : PlayerCrouch = $PlayerCrouch
 @onready var interaction : PlayerInteraction = $PlayerInteraction
 
 
@@ -17,7 +18,8 @@ var sprint_locked : bool = false
 
 ## Public Interface
 # Initialises input-driven components with their required references.
-func initialise(interact_ray : RayCast3D, prompt : Label) -> void:
+func initialise(collision : CollisionShape3D, interact_ray : RayCast3D, prompt : Label) -> void:
+	crouch.initialise(collision)
 	interaction.initialise(interact_ray, prompt)
 
 
