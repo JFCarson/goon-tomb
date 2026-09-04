@@ -24,6 +24,9 @@ extends Resource
 # Frequency multiplier applied to headbob while sprinting.
 @export var headbob_sprint_frequency_multiplier : float = 0.65
 
+# Frequency multiplier applied to headbob while crouching.
+@export var headbob_crouch_frequency_multiplier : float = 0.9
+
 # Speed at which the headbob returns to its neutral position when the player 
 # stops moving or becomes airborne.
 @export var headbob_reset_speed : float = 12.0

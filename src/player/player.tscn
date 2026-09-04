@@ -11,6 +11,8 @@
 [ext_resource type="Script" uid="uid://dft66b0l5wkki" path="res://src/player/resources/settings/player_jump_settings.gd" id="5_cwolq"]
 [ext_resource type="Script" uid="uid://dikerrva0v8a" path="res://src/player/resources/settings/player_stamina_settings.gd" id="5_x42xx"]
 [ext_resource type="Script" uid="uid://d4f3d4d3h8c6t" path="res://src/player/scripts/player_actions/player_interaction.gd" id="6_l271a"]
+[ext_resource type="Script" uid="uid://pksx855biv6j" path="res://src/player/scripts/player_actions/player_crouch.gd" id="7_hja65"]
+[ext_resource type="Script" uid="uid://dvkpdemeaxbcm" path="res://src/player/resources/settings/player_crouch_settings.gd" id="8_5shm8"]
 [ext_resource type="Script" uid="uid://cyxwcvodlx34s" path="res://src/player/scripts/controllers/player_camera_controller.gd" id="8_6bm8s"]
 [ext_resource type="Script" uid="uid://x31bgncyr6lp" path="res://src/player/scripts/controllers/player_resource_controller.gd" id="8_rl62b"]
 [ext_resource type="Script" uid="uid://lm6lnmoya2xg" path="res://src/player/scripts/state/player_motion_state.gd" id="11_cwolq"]
@@ -36,6 +38,10 @@ metadata/_custom_type_script = "uid://m3yisb57jxn8"
 [sub_resource type="Resource" id="Resource_26let"]
 script = ExtResource("5_cwolq")
 metadata/_custom_type_script = "uid://dft66b0l5wkki"
+
+[sub_resource type="Resource" id="Resource_hja65"]
+script = ExtResource("8_5shm8")
+metadata/_custom_type_script = "uid://dvkpdemeaxbcm"
 
 [sub_resource type="Resource" id="Resource_mf2ua"]
 script = ExtResource("3_244u8")
@@ -72,6 +78,11 @@ movement_settings = SubResource("Resource_5f2sf")
 [node name="PlayerJump" type="Node" parent="PlayerInputController" unique_id=1656451700]
 script = ExtResource("4_ylhto")
 jump_settings = SubResource("Resource_26let")
+
+[node name="PlayerCrouch" type="Node" parent="PlayerInputController" unique_id=1461542061]
+script = ExtResource("7_hja65")
+crouch_settings = SubResource("Resource_hja65")
+metadata/_custom_type_script = "uid://pksx855biv6j"
 
 [node name="PlayerInteraction" type="Node" parent="PlayerInputController" unique_id=944911412]
 script = ExtResource("6_l271a")
@@ -125,6 +136,4 @@ metadata/_custom_type_script = "uid://bdsi48isy7pm"
 
 [node name="PlayerFallDamageHandler" type="Node" parent="PlayerDamageHandler" unique_id=1821299153]
 script = ExtResource("20_jcdrv")
-minimum_fall_velocity = 8.0
-damage_per_velocity = 10.0
 metadata/_custom_type_script = "uid://q650sif262kf"
