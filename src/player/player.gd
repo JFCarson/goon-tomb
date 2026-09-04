@@ -16,6 +16,7 @@ extends CharacterBody3D
 @onready var damage : PlayerDamageHandler = $PlayerDamageHandler
 
 # Components
+@onready var collision : CollisionShape3D = $CollisionShape
 var hud : HUD
 
 
@@ -105,7 +106,7 @@ func initialise(player_hud : HUD) -> void:
 	state.lifecycle.state_changed.connect(_on_lifecycle_state_changed)
 	
 	# Initialise player input with the camera interaction ray and HUD prompt.
-	input.initialise(camera.get_interact_ray(), hud.get_interact_prompt())
+	input.initialise(collision, camera.get_interact_ray(), hud.get_interact_prompt())
 
 
 
@@ -137,7 +138,7 @@ func _update_motion_state() -> void:
 	var can_sprint : bool = input.can_sprint(is_on_floor(), resources.can_sprint())
 	
 	# Resolve the player's motion state from the current physical and input state.
-	state.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"))
+	state.update(velocity, is_on_floor(), can_sprint, Input.is_action_pressed("sprint"), Input.is_action_pressed("crouch"))
 	
 	# Store the resolved state locally and pass it to movement-dependent components.
 	input.set_motion_state(state.get_motion_state())

@@ -92,7 +92,9 @@ func _calculate_headbob(delta : float,player_velocity : Vector3, motion_state : 
 	var frequency_multiplier : float = DEFAULT_HEADBOB_FREQUENCY_MULTIPLIER
 	
 	if motion_state == PlayerEnums.MotionState.SPRINTING:
-		frequency_multiplier = camera_settings.headbob_sprint_frequency_multiplier
+		frequency_multiplier *= camera_settings.headbob_sprint_frequency_multiplier
+	elif motion_state == PlayerEnums.MotionState.CROUCHING:
+		frequency_multiplier *= camera_settings.headbob_crouch_frequency_multiplier
 	
 	headbob_time += delta * horizontal_speed * frequency_multiplier
 	

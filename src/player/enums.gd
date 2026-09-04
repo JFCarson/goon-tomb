@@ -10,6 +10,7 @@ enum MotionState {
 	IDLE,
 	WALKING,
 	SPRINTING,
+	CROUCHING,
 	AIRBORNE
 }
 
