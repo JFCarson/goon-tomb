@@ -122,7 +122,7 @@ func respawn(spawn_position : Vector3) -> void:
 	hud.update_health(resources.get_health())
 	hud.update_stamina(resources.get_stamina())
 	
-	input.set_motion_state(PlayerEnums.MotionState.IDLE)
+	input.set_motion_state(PlayerEnumsOld.MotionState.IDLE)
 
 
 ## Private Methods
@@ -201,5 +201,5 @@ func _on_health_restored(amount : float) -> void:
 
 
 # Triggered when lifecycle state is changed. 
-func _on_lifecycle_state_changed(new_state : PlayerEnums.LifecycleState) -> void:
+func _on_lifecycle_state_changed(new_state : PlayerEnumsOld.LifecycleState) -> void:
 	hud.update_lifecycle(new_state)

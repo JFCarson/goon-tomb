@@ -12,7 +12,7 @@ extends Node
 
 
 # Runtime State
-var motion_state : PlayerEnums.MotionState = PlayerEnums.MotionState.IDLE
+var motion_state : PlayerEnumsOld.MotionState = PlayerEnumsOld.MotionState.IDLE
 var sprint_locked : bool = false
 
 
@@ -72,7 +72,7 @@ func handle_jump(is_on_floor : bool, can_afford_jump : bool) -> float:
 
 
 # Passes the current motion state through to movement.
-func set_motion_state(state : PlayerEnums.MotionState) -> void:
+func set_motion_state(state : PlayerEnumsOld.MotionState) -> void:
 	motion_state = state
 	movement.set_motion_state(state)
 

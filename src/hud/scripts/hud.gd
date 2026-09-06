@@ -71,17 +71,17 @@ func update_stamina(current_stamina : float) -> void:
 
 
 # Updates the HUD presentation to reflect the player's lifecycle state.
-func update_lifecycle(lifecycle_state : PlayerEnums.LifecycleState) -> void:
+func update_lifecycle(lifecycle_state : PlayerEnumsOld.LifecycleState) -> void:
 	match lifecycle_state:
-		PlayerEnums.LifecycleState.ALIVE:
+		PlayerEnumsOld.LifecycleState.ALIVE:
 			downed_screen.visible = false
 			death_screen.visible = false
 		
-		PlayerEnums.LifecycleState.DOWNED:
+		PlayerEnumsOld.LifecycleState.DOWNED:
 			downed_screen.visible = true
 			death_screen.visible = false
 		
-		PlayerEnums.LifecycleState.DEAD:
+		PlayerEnumsOld.LifecycleState.DEAD:
 			downed_screen.visible = false
 			death_screen.visible = true
 

@@ -15,12 +15,12 @@ var sprint_locked : bool = false
 
 ## Public Interface
 # Updates all resource components for the current frame.
-func update(delta : float, motion_state : PlayerEnums.MotionState, sprint_pressed : bool) -> void:
-	stamina.update(delta, motion_state == PlayerEnums.MotionState.SPRINTING)
+func update(delta : float, motion_state : PlayerEnumsOld.MotionState, sprint_pressed : bool) -> void:
+	stamina.update(delta, motion_state == PlayerEnumsOld.MotionState.SPRINTING)
 	
 	if not sprint_pressed:
 		sprint_locked = false
-	if motion_state == PlayerEnums.MotionState.SPRINTING and not stamina.can_sprint():
+	if motion_state == PlayerEnumsOld.MotionState.SPRINTING and not stamina.can_sprint():
 		sprint_locked = true
 
 

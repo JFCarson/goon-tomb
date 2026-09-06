@@ -1,7 +1,7 @@
 extends Node3D
 
 
-@onready var player : Player = $Player
+@onready var player : PlayerOrchestrator = $Player
 @onready var hud : HUD = $CanvasLayer/HUD
 
 

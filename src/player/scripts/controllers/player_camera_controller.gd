@@ -26,7 +26,7 @@ func get_interact_ray() -> RayCast3D:
 
 
 # Updates all camera movement effects for the current frame.
-func update(delta : float, player_velocity : Vector3, motion_state : PlayerEnums.MotionState) -> void:
+func update(delta : float, player_velocity : Vector3, motion_state : PlayerEnumsOld.MotionState) -> void:
 	camera_arm.do_camera_movement_effects(delta, player_velocity, motion_state)
 
 

@@ -16,12 +16,12 @@ const FORWARDNESS_THRESHOLD : float = 0.5
 
 
 # Runtime State
-var motion_state : PlayerEnums.MotionState = PlayerEnums.MotionState.IDLE
+var motion_state : PlayerEnumsOld.MotionState = PlayerEnumsOld.MotionState.IDLE
 
 
 ## Public Interface
 # Updates the movement state used by this component.
-func set_motion_state(state : PlayerEnums.MotionState) -> void:
+func set_motion_state(state : PlayerEnumsOld.MotionState) -> void:
 	motion_state = state
 
 
@@ -74,9 +74,9 @@ func _calculate_speed_multiplier(input_vector : Vector2) -> float:
 	var forwardness : float = (-input_vector.y + 1.0) / 2.0
 	var speed_multiplier : float = lerp(movement_settings.backward_speed_multiplier, 1.0, forwardness)
 	
-	if motion_state == PlayerEnums.MotionState.SPRINTING:
+	if motion_state == PlayerEnumsOld.MotionState.SPRINTING:
 		speed_multiplier *= movement_settings.sprint_multiplier
-	elif motion_state == PlayerEnums.MotionState.CROUCHING:
+	elif motion_state == PlayerEnumsOld.MotionState.CROUCHING:
 		speed_multiplier *= movement_settings.crouch_multiplier
 	
 	return speed_multiplier
