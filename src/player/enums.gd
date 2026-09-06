@@ -1,4 +1,4 @@
-class_name PlayerEnums
+class_name PlayerEnumsOld
 extends RefCounted
 
 ## Shared enumerations used by the player component and its children.

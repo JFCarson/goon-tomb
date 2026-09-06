@@ -47,7 +47,7 @@ func handle_camera_motion(event : InputEvent) -> float:
 
 
 # Calculates and applies all camera movement effects for the current frame.
-func do_camera_movement_effects(delta : float, player_velocity : Vector3, motion_state : PlayerEnums.MotionState) -> void:
+func do_camera_movement_effects(delta : float, player_velocity : Vector3, motion_state : PlayerEnumsOld.MotionState) -> void:
 	var target_headbob_position : Vector3 = _calculate_headbob(delta, player_velocity, motion_state)
 	var target_sway : Vector3 = _calculate_movement_sway(delta, player_velocity)
 	
@@ -83,17 +83,17 @@ func get_interact_ray() -> RayCast3D:
 ## Internal Calculations
 # Calculates the target positional offset produced by the headbob effect.
 # Returns a neutral position when the player is stationary or airborne.
-func _calculate_headbob(delta : float,player_velocity : Vector3, motion_state : PlayerEnums.MotionState) -> Vector3:
+func _calculate_headbob(delta : float,player_velocity : Vector3, motion_state : PlayerEnumsOld.MotionState) -> Vector3:
 	var horizontal_speed : float = Vector2(player_velocity.x, player_velocity.z).length()
 	
-	if motion_state == PlayerEnums.MotionState.AIRBORNE or horizontal_speed <= MOVEMENT_THRESHOLD:
+	if motion_state == PlayerEnumsOld.MotionState.AIRBORNE or horizontal_speed <= MOVEMENT_THRESHOLD:
 		return Vector3.ZERO
 	
 	var frequency_multiplier : float = DEFAULT_HEADBOB_FREQUENCY_MULTIPLIER
 	
-	if motion_state == PlayerEnums.MotionState.SPRINTING:
+	if motion_state == PlayerEnumsOld.MotionState.SPRINTING:
 		frequency_multiplier *= camera_settings.headbob_sprint_frequency_multiplier
-	elif motion_state == PlayerEnums.MotionState.CROUCHING:
+	elif motion_state == PlayerEnumsOld.MotionState.CROUCHING:
 		frequency_multiplier *= camera_settings.headbob_crouch_frequency_multiplier
 	
 	headbob_time += delta * horizontal_speed * frequency_multiplier

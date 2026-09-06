@@ -1,0 +1,94 @@
+[gd_scene format=3 uid="uid://bwf5s0q8vnr8b"]
+
+[ext_resource type="Script" uid="uid://0gif5pekrtx3" path="res://src/entity/scripts/player/player.gd" id="1_8sy0d"]
+[ext_resource type="Script" uid="uid://br2w7nocspmwk" path="res://src/entity/scripts/player/controller/camera_controller.gd" id="2_e57x2"]
+[ext_resource type="Resource" uid="uid://bhbbbb38cjipb" path="res://src/entity/resources/definitions/DEFAULT_PLAYER.tres" id="2_t62fx"]
+[ext_resource type="Script" uid="uid://bcuhr28pctwqc" path="res://src/entity/scripts/player/controller/action_controller.gd" id="3_ebxi0"]
+[ext_resource type="Script" uid="uid://dlhxwp2vaj7c8" path="res://src/entity/scripts/player/controller/movement_controller.gd" id="4_leo7d"]
+[ext_resource type="Script" uid="uid://cxc25nrup8yh" path="res://src/entity/scripts/player/component/camera/camera_look.gd" id="5_ebxi0"]
+[ext_resource type="Script" uid="uid://cpbwsou7dmijr" path="res://src/entity/scripts/generic/component/movement/movement.gd" id="5_x8fvd"]
+[ext_resource type="Script" uid="uid://b46fgtkpqy6f6" path="res://src/entity/scripts/generic/controller/entity_state.gd" id="6_ebxi0"]
+[ext_resource type="Script" uid="uid://b80ih777q6a3w" path="res://src/entity/scripts/generic/component/movement/sprint.gd" id="6_ru2hc"]
+[ext_resource type="Script" uid="uid://culb03vh8t6mj" path="res://src/entity/scripts/generic/component/movement/jump.gd" id="7_0iexf"]
+[ext_resource type="Script" uid="uid://dhd4kq2kuvoa0" path="res://src/entity/scripts/generic/component/movement/crouch.gd" id="8_f7j30"]
+[ext_resource type="Script" uid="uid://bsrhrgolkguoq" path="res://src/entity/scripts/player/component/camera/camera_sway.gd" id="11_a6frn"]
+[ext_resource type="Script" uid="uid://c1n5w6vy3dvmx" path="res://src/entity/scripts/player/component/camera/camera_bob.gd" id="11_ysr7t"]
+[ext_resource type="Script" uid="uid://6nfcogygm4cw" path="res://src/entity/scripts/player/component/interaction.gd" id="12_t3aey"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_8sy0d"]
+radius = 0.3
+height = 1.8
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_68jae"]
+radius = 0.3
+height = 1.8
+
+[node name="Player" type="CharacterBody3D" unique_id=1390332273]
+script = ExtResource("1_8sy0d")
+debug = true
+config = ExtResource("2_t62fx")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1373673167]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_8sy0d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1014867189]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_68jae")
+
+[node name="PlayerActionController" type="Node" parent="." unique_id=1749193609]
+script = ExtResource("3_ebxi0")
+metadata/_custom_type_script = "uid://bcuhr28pctwqc"
+
+[node name="PlayerMovementController" type="Node" parent="." unique_id=1286891233]
+script = ExtResource("4_leo7d")
+metadata/_custom_type_script = "uid://dlhxwp2vaj7c8"
+
+[node name="Movement" type="Node" parent="PlayerMovementController" unique_id=2002181986]
+script = ExtResource("5_x8fvd")
+metadata/_custom_type_script = "uid://cpbwsou7dmijr"
+
+[node name="Sprint" type="Node" parent="PlayerMovementController" unique_id=1201306469]
+script = ExtResource("6_ru2hc")
+metadata/_custom_type_script = "uid://b80ih777q6a3w"
+
+[node name="Jump" type="Node" parent="PlayerMovementController" unique_id=351191322]
+script = ExtResource("7_0iexf")
+metadata/_custom_type_script = "uid://culb03vh8t6mj"
+
+[node name="Crouch" type="Node" parent="PlayerMovementController" unique_id=1700896710]
+script = ExtResource("8_f7j30")
+metadata/_custom_type_script = "uid://dhd4kq2kuvoa0"
+
+[node name="GameCameraController" type="Node3D" parent="." unique_id=851555973]
+script = ExtResource("2_e57x2")
+metadata/_custom_type_script = "uid://br2w7nocspmwk"
+
+[node name="CameraBob" type="Node" parent="GameCameraController" unique_id=1612084066]
+script = ExtResource("11_ysr7t")
+metadata/_custom_type_script = "uid://c1n5w6vy3dvmx"
+
+[node name="CameraSway" type="Node" parent="GameCameraController" unique_id=1167985656]
+script = ExtResource("11_a6frn")
+metadata/_custom_type_script = "uid://bsrhrgolkguoq"
+
+[node name="PlayerCameraHead" type="Node3D" parent="GameCameraController" unique_id=1386402277]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
+
+[node name="CameraLook" type="Node" parent="GameCameraController/PlayerCameraHead" unique_id=2102891149]
+script = ExtResource("5_ebxi0")
+metadata/_custom_type_script = "uid://cxc25nrup8yh"
+
+[node name="Camera3D" type="Camera3D" parent="GameCameraController/PlayerCameraHead" unique_id=1754155918]
+current = true
+
+[node name="InteractRay" type="RayCast3D" parent="GameCameraController/PlayerCameraHead/Camera3D" unique_id=1713439758]
+target_position = Vector3(0, 0, -3)
+
+[node name="EntityStateController" type="Node" parent="." unique_id=1562529546]
+script = ExtResource("6_ebxi0")
+metadata/_custom_type_script = "uid://b46fgtkpqy6f6"
+
+[node name="Interaction" type="Node" parent="." unique_id=1543456354]
+script = ExtResource("12_t3aey")
+metadata/_custom_type_script = "uid://6nfcogygm4cw"

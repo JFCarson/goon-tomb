@@ -17,7 +17,7 @@ func update(velocity : Vector3, is_on_floor : bool, can_sprint : bool, sprint_pr
 
 ## Public Interface: Motion State
 # Returns the player's current motion state.
-func get_motion_state() -> PlayerEnums.MotionState:
+func get_motion_state() -> PlayerEnumsOld.MotionState:
 	return motion.get_state()
 
 
@@ -33,7 +33,7 @@ func is_airborne() -> bool:
 
 ## Public Interface: Lifecycle State
 # Returns the player's current lifecycle state.
-func get_lifecycle_state() -> PlayerEnums.LifecycleState:
+func get_lifecycle_state() -> PlayerEnumsOld.LifecycleState:
 	return lifecycle.get_state()
 
 
