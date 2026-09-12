@@ -56,6 +56,7 @@ func initialise(max_health : float, max_stamina : float) -> void:
 	stamina_bar.max_value = max_stamina
 	stamina_bar.value = max_stamina
 	
+	update_lifecycle(EntityStateEnums.Lifecycle.ALIVE)
 	reset_feedback()
 
 
@@ -70,18 +71,18 @@ func update_stamina(current_stamina : float) -> void:
 	target_stamina = current_stamina
 
 
-# Updates the HUD presentation to reflect the player's lifecycle state.
-func update_lifecycle(lifecycle_state : PlayerEnums.LifecycleState) -> void:
+# Updates the HUD presentation to reflect the entity's lifecycle state.
+func update_lifecycle(lifecycle_state : EntityStateEnums.Lifecycle) -> void:
 	match lifecycle_state:
-		PlayerEnums.LifecycleState.ALIVE:
+		EntityStateEnums.Lifecycle.ALIVE:
 			downed_screen.visible = false
 			death_screen.visible = false
 		
-		PlayerEnums.LifecycleState.DOWNED:
+		EntityStateEnums.Lifecycle.DOWNED:
 			downed_screen.visible = true
 			death_screen.visible = false
 		
-		PlayerEnums.LifecycleState.DEAD:
+		EntityStateEnums.Lifecycle.DEAD:
 			downed_screen.visible = false
 			death_screen.visible = true
 
