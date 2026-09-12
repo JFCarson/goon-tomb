@@ -14,6 +14,13 @@
 [ext_resource type="Script" uid="uid://bsrhrgolkguoq" path="res://src/entity/scripts/player/component/camera/camera_sway.gd" id="11_a6frn"]
 [ext_resource type="Script" uid="uid://c1n5w6vy3dvmx" path="res://src/entity/scripts/player/component/camera/camera_bob.gd" id="11_ysr7t"]
 [ext_resource type="Script" uid="uid://6nfcogygm4cw" path="res://src/entity/scripts/player/component/interaction.gd" id="12_t3aey"]
+[ext_resource type="Script" uid="uid://cq3nj4g08g7c4" path="res://src/entity/scripts/player/component/camera/camera_feedback.gd" id="13_fny7t"]
+[ext_resource type="Script" uid="uid://dq4tevijwlxi2" path="res://src/entity/scripts/generic/controller/entity_resources.gd" id="15_k3p6q"]
+[ext_resource type="Script" uid="uid://w82fatykhd8n" path="res://src/entity/scripts/generic/component/resource/health.gd" id="16_p5i57"]
+[ext_resource type="Script" uid="uid://mt0wg5uyrbxu" path="res://src/entity/scripts/generic/component/resource/stamina.gd" id="17_lt6yj"]
+[ext_resource type="Script" uid="uid://bbaq3p4pqgipp" path="res://src/entity/scripts/generic/controller/entity_damage.gd" id="18_lt6yj"]
+[ext_resource type="Script" uid="uid://dj8s2aemax4ic" path="res://src/entity/scripts/generic/component/damage/death.gd" id="19_fny7t"]
+[ext_resource type="Script" uid="uid://t1w3ngfbg8oi" path="res://src/entity/scripts/generic/component/damage/fall_damage.gd" id="19_s2okv"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_8sy0d"]
 radius = 0.3
@@ -35,6 +42,10 @@ mesh = SubResource("CapsuleMesh_8sy0d")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1014867189]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_68jae")
+
+[node name="Interaction" type="Node" parent="." unique_id=1543456354]
+script = ExtResource("12_t3aey")
+metadata/_custom_type_script = "uid://6nfcogygm4cw"
 
 [node name="PlayerActionController" type="Node" parent="." unique_id=1749193609]
 script = ExtResource("3_ebxi0")
@@ -72,6 +83,10 @@ metadata/_custom_type_script = "uid://c1n5w6vy3dvmx"
 script = ExtResource("11_a6frn")
 metadata/_custom_type_script = "uid://bsrhrgolkguoq"
 
+[node name="CameraDamageFeedback" type="Node" parent="GameCameraController" unique_id=2014669344]
+script = ExtResource("13_fny7t")
+metadata/_custom_type_script = "uid://cq3nj4g08g7c4"
+
 [node name="PlayerCameraHead" type="Node3D" parent="GameCameraController" unique_id=1386402277]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -0.2)
 
@@ -89,6 +104,27 @@ target_position = Vector3(0, 0, -3)
 script = ExtResource("6_ebxi0")
 metadata/_custom_type_script = "uid://b46fgtkpqy6f6"
 
-[node name="Interaction" type="Node" parent="." unique_id=1543456354]
-script = ExtResource("12_t3aey")
-metadata/_custom_type_script = "uid://6nfcogygm4cw"
+[node name="EntityResourceController" type="Node" parent="." unique_id=2135704907]
+script = ExtResource("15_k3p6q")
+metadata/_custom_type_script = "uid://dq4tevijwlxi2"
+
+[node name="EntityHealth" type="Node" parent="EntityResourceController" unique_id=1738497981]
+script = ExtResource("16_p5i57")
+metadata/_custom_type_script = "uid://w82fatykhd8n"
+
+[node name="EntityStamina" type="Node" parent="EntityResourceController" unique_id=1126720306]
+script = ExtResource("17_lt6yj")
+metadata/_custom_type_script = "uid://mt0wg5uyrbxu"
+
+[node name="EntityDamageController" type="Node" parent="." unique_id=1101488563]
+script = ExtResource("18_lt6yj")
+metadata/_custom_type_script = "uid://bbaq3p4pqgipp"
+
+[node name="EntityDeath" type="Node" parent="EntityDamageController" unique_id=2084313780]
+script = ExtResource("19_fny7t")
+downed_enabled = true
+metadata/_custom_type_script = "uid://dj8s2aemax4ic"
+
+[node name="EntityFallDamage" type="Node" parent="EntityDamageController" unique_id=1168486243]
+script = ExtResource("19_s2okv")
+metadata/_custom_type_script = "uid://t1w3ngfbg8oi"

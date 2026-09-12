@@ -4,13 +4,14 @@ extends EntityController
 ## Controls the player's movement component using player movement actions.
 
 
-# Components
+## Components
 @onready var movement : Movement = $Movement
 @onready var sprint : Sprint = $Sprint
 @onready var jump : Jump = $Jump
 @onready var crouch : Crouch = $Crouch
 
-# Runtime
+
+## Runtime State
 var is_on_floor : bool = true
 
 
@@ -31,8 +32,8 @@ func process_movement(delta : float, current_velocity : Vector3, player_basis : 
 	
 	# Handle requests to sprint.
 	var sprinting : bool = false
-	if requested_actions.has(EntityEnums.Action.SPRINT) and sprint.can_sprint(movement_vector, is_on_floor):
-		speed_multiplier *= sprint.get_speed_multiplier() 
+	if requested_actions.has(EntityEnums.Action.SPRINT) and sprint.can_sprint(movement_vector, is_on_floor) and resource.can_sprint():
+		speed_multiplier *= sprint.get_speed_multiplier()
 		sprinting = true
 	
 	# Handle requests to crouch.
@@ -46,15 +47,26 @@ func process_movement(delta : float, current_velocity : Vector3, player_basis : 
 	# Preserve the entity's existing vertical velocity.
 	new_velocity.y = current_velocity.y
 	
-	# Handle requests to jump.
-	if requested_actions.has(EntityEnums.Action.JUMP) and jump.can_jump(is_on_floor):
-		new_velocity.y = jump.calculate_jump_velocity()
-	
 	# Try to update movement state component if the controller exists.
 	if state != null:
 		_update_movement_state(new_velocity, sprinting, crouching)
 	
 	return new_velocity
+
+
+# Calculates the player's resulting vertical velocity from a jump action.
+func process_jump(current_velocity : Vector3) -> Vector3:
+	var new_velocity : Vector3 = current_velocity
+	
+	if jump.can_jump(is_on_floor):
+		new_velocity.y = jump.calculate_jump_velocity()
+	
+	return new_velocity
+
+
+# Returns whether the player can currently perform a jump.
+func can_jump() -> bool:
+	return jump.can_jump(is_on_floor)
 
 
 # Calculates the player's resulting collision height from a crouch action.
@@ -82,3 +94,20 @@ func _update_movement_state(velocity : Vector3, sprinting : bool, crouching : bo
 	
 	if new_state != state.check(EntityStateEnums.States.MOTION):
 		state.update(EntityStateEnums.States.MOTION, new_state)
+
+
+## Validation
+func _validate() -> void:
+	assert(movement != null, "PlayerMovementController requires a Movement component.")
+	assert(sprint != null, "PlayerMovementController requires a Sprint component.")
+	assert(jump != null, "PlayerMovementController requires a Jump component.")
+	assert(crouch != null, "PlayerMovementController requires a Crouch component.")
+	assert(config.movement != null, "PlayerMovementController requires an EntityMovementConfig.")
+	assert(state != null, "PlayerMovementController requires an EntityStateController.")
+	assert(resource != null, "PlayerMovementController requires an EntityResourceController.")
+	assert(state.check(EntityStateEnums.States.MOTION) != -1, "PlayerMovementController requires the MOTION state to be tracked.")
+	
+	movement.validate()
+	sprint.validate()
+	jump.validate()
+	crouch.validate()

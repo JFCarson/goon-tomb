@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://by2k36y8hjlv6" path="res://src/entity/resources/player.gd" id="1_o6ulq"]
 [ext_resource type="Script" uid="uid://cjl0rqoxkgmuv" path="res://src/entity/resources/generic/movement.gd" id="2_c7prb"]
 [ext_resource type="Script" uid="uid://cl5vfpspxgj5i" path="res://src/entity/resources/generic/state.gd" id="3_eisis"]
+[ext_resource type="Script" uid="uid://dnggvfm5dhydw" path="res://src/entity/resources/generic/stats.gd" id="5_hqqbx"]
 
 [sub_resource type="Resource" id="Resource_frrfc"]
 script = ExtResource("1_frrfc")
@@ -18,9 +19,14 @@ script = ExtResource("3_eisis")
 tracked_states = Array[int]([0, 1])
 metadata/_custom_type_script = "uid://cl5vfpspxgj5i"
 
+[sub_resource type="Resource" id="Resource_k3p6q"]
+script = ExtResource("5_hqqbx")
+metadata/_custom_type_script = "uid://dnggvfm5dhydw"
+
 [resource]
 script = ExtResource("1_o6ulq")
 camera = SubResource("Resource_frrfc")
 state = SubResource("Resource_t62fx")
 movement = SubResource("Resource_ebxi0")
+stats = SubResource("Resource_k3p6q")
 metadata/_custom_type_script = "uid://by2k36y8hjlv6"

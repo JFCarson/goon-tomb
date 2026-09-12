@@ -11,3 +11,6 @@ extends Resource
 
 # Configuration for the entity's movement controller.
 @export var movement : EntityMovementConfig
+
+# Stat sheet for an entity's resource & stat values.
+@export var stats : EntityStatSheet

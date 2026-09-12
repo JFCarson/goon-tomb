@@ -4,7 +4,7 @@ extends Node
 ## Handles jump calculations for the player.
 
 
-# Configuration
+## Configuration
 var movement_settings : EntityMovementConfig
 
 
@@ -17,3 +17,9 @@ func can_jump(is_on_floor : bool) -> bool:
 # Calculates the vertical velocity required to reach the configured jump height.
 func calculate_jump_velocity() -> float:
 	return sqrt(2.0 * movement_settings.jump_height)
+
+
+## Validation
+func validate() -> void:
+	assert(movement_settings != null, "Jump requires an EntityMovementConfig.")
+	assert(movement_settings.jump_height > 0.0, "Jump requires jump_height to be greater than zero.")

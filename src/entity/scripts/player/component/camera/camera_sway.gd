@@ -4,11 +4,11 @@ extends Node
 ## Calculates rotational camera sway from changes in player movement.
 
 
-# Configuration
+## Configuration
 var config : PlayerConfig
 
 
-# Runtime
+## Runtime State
 var previous_velocity : Vector3 = Vector3.ZERO
 var sway_rotation : Vector3 = Vector3.ZERO
 
@@ -36,6 +36,9 @@ func _calculate_target_rotation(delta : float, player_velocity : Vector3, camera
 
 # Calculates horizontal acceleration from the player's change in velocity.
 func _calculate_acceleration(delta : float, player_velocity : Vector3) -> Vector3:
+	if delta <= 0.0:
+		return Vector3.ZERO
+	
 	var horizontal_velocity : Vector3 = Vector3(player_velocity.x, 0.0, player_velocity.z)
 	var previous_horizontal_velocity : Vector3 = Vector3(previous_velocity.x, 0.0, previous_velocity.z)
 	
@@ -73,4 +76,16 @@ func _calculate_roll(acceleration : float) -> float:
 
 # Smoothly moves the current sway rotation towards its target.
 func _interpolate_rotation(delta : float, target_rotation : Vector3) -> Vector3:
-	return sway_rotation.lerp(target_rotation, config.camera.movement_sway_speed * delta)
+	var interpolation_amount : float = clamp(config.camera.movement_sway_speed * delta, 0.0, 1.0)
+	
+	return sway_rotation.lerp(target_rotation, interpolation_amount)
+
+
+## Validation
+func validate() -> void:
+	assert(config != null, "CameraSway requires a PlayerConfig.")
+	assert(config.camera != null, "CameraSway requires a PlayerCameraConfig.")
+	assert(config.camera.movement_sway_acceleration > 0.0, "CameraSway requires movement_sway_acceleration to be greater than zero.")
+	assert(config.camera.movement_sway_speed > 0.0, "CameraSway requires movement_sway_speed to be greater than zero.")
+	assert(config.camera.movement_sway_pitch >= 0.0, "CameraSway requires movement_sway_pitch to be zero or greater.")
+	assert(config.camera.movement_sway_roll >= 0.0, "CameraSway requires movement_sway_roll to be zero or greater.")
