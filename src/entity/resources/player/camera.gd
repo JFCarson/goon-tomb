@@ -12,7 +12,7 @@ extends Resource
 # Maximum vertical look angle in degrees from the camera's neutral position.
 # This limits how far the player can look up or down.
 # Higher values allow a greater vertical look range.
-@export var radius : float = 80.0
+@export var pitch_limit : float = 80.0
 
 # Minimum movement speed/velocity required before movement-based camera
 # effects (such as head bob/sway) are considered active.
@@ -98,15 +98,20 @@ extends Resource
 
 
 @export_group("Damage Feedback")
-# Maximum rotation applied by the damage feedback effect.
+# Minumum & maximum rotation applied by the damage feedback effect.
 # Determines the greatest amount the camera can rotate when reacting to damage.
 # Higher values make getting hit feel more impactful and disorienting.
-@export var damage_feedback_max_rotation : float = 0.5
+@export var damage_feedback_min_rotation : float = 7.5
+@export var damage_feedback_max_rotation : float = 25.0
 
 # Speed at which damage feedback builds towards its maximum intensity.
 # Higher values make the camera react more immediately when damage is received.
-@export var damage_feedback_build_speed : float = 1.25
+@export var damage_feedback_build_speed : float = 0.75
 
 # Speed at which damage feedback returns towards its neutral state.
 # Higher values make the camera recover from the damage effect more quickly.
-@export var damage_feedback_decay_speed : float = 0.75
+@export var damage_feedback_decay_speed : float = 0.6
+
+# Maximum speed multiplier applied to damage feedback based on damage magnitude.
+# Higher values make larger damage reactions build and recover more quickly.
+@export var damage_feedback_max_speed_multiplier : float = 4.0

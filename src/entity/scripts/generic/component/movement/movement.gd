@@ -4,7 +4,7 @@ extends Node
 ## Calculates horizontal movement for an entity.
 
 
-# Configuration
+## Configuration
 var movement_settings : EntityMovementConfig
 
 
@@ -12,24 +12,21 @@ var movement_settings : EntityMovementConfig
 # Calculates the entity's resulting horizontal velocity based on its
 # current velocity, desired movement direction, movement input, and
 # whether it is grounded.
-#
-# The component does not modify the entity directly; it returns the
-# calculated horizontal velocity for the caller to apply.
 func calculate_velocity(delta : float, current_velocity : Vector3, direction : Vector3, input_vector : Vector2, speed_multiplier : float, is_on_floor : bool) -> Vector3:
 	var horizontal_velocity := Vector3(current_velocity.x, 0.0, current_velocity.z)
-
+	
 	# If there is no movement input, gradually decelerate towards a stop.
 	if direction.is_zero_approx():
 		return _apply_deceleration(delta, horizontal_velocity, is_on_floor)
-
+	
 	# Calculate the desired horizontal velocity from the movement direction
 	# and configured movement speed.
 	var target_velocity := _calculate_target_velocity(direction, input_vector, speed_multiplier)
-
+	
 	# Ground movement uses acceleration towards the target velocity.
 	if is_on_floor:
 		return _apply_ground_acceleration(delta, horizontal_velocity, target_velocity)
-
+	
 	# Airborne movement uses reduced air control rather than ground acceleration.
 	return _apply_air_control(delta, horizontal_velocity, direction)
 
@@ -75,8 +72,9 @@ func _get_ground_acceleration(horizontal_velocity : Vector3, target_velocity : V
 # Applies directional control while the entity is airborne.
 func _apply_air_control(delta : float, horizontal_velocity : Vector3, direction : Vector3) -> Vector3:
 	var control_amount : float = movement_settings.air_movement_control_multiplier
+	var acceleration : float = movement_settings.acceleration * control_amount
 	
-	return horizontal_velocity.move_toward(direction * horizontal_velocity.length(), movement_settings.acceleration * control_amount * delta)
+	return horizontal_velocity.move_toward(direction * horizontal_velocity.length(), acceleration * delta)
 
 
 # Gradually reduces horizontal velocity towards zero.
@@ -92,3 +90,14 @@ func _apply_deceleration(delta : float, horizontal_velocity : Vector3, is_on_flo
 	horizontal_velocity.z = move_toward(horizontal_velocity.z, 0.0, deceleration)
 	
 	return horizontal_velocity
+
+
+## Validation
+func validate() -> void:
+	assert(movement_settings != null, "Movement requires an EntityMovementConfig.")
+	assert(movement_settings.movement_speed > 0.0, "Movement requires movement_speed to be greater than zero.")
+	assert(movement_settings.acceleration > 0.0, "Movement requires acceleration to be greater than zero.")
+	assert(movement_settings.turn_acceleration > 0.0, "Movement requires turn_acceleration to be greater than zero.")
+	assert(movement_settings.backward_multiplier >= 0.0, "Movement requires backward_multiplier to be zero or greater.")
+	assert(movement_settings.air_movement_control_multiplier >= 0.0, "Movement requires air_movement_control_multiplier to be zero or greater.")
+	assert(movement_settings.movement_threshold >= 0.0, "Movement requires movement_threshold to be zero or greater.")

@@ -4,12 +4,12 @@ extends Node
 ## Calculates positional camera bob from player movement.
 
 
-# Configuration
+## Configuration
 var config : PlayerConfig
 var state : EntityStateController
 
 
-# Runtime
+## Runtime State
 var headbob_time : float = 0.0
 var headbob_position : Vector3 = Vector3.ZERO
 
@@ -49,7 +49,7 @@ func _should_reset(horizontal_speed : float) -> bool:
 	if state.check(EntityStateEnums.States.MOTION) == EntityStateEnums.Motion.AIRBORNE:
 		return true
 	
-	return horizontal_speed <= config.movement.movement_threshold
+	return horizontal_speed * horizontal_speed <= config.movement.movement_threshold
 
 
 # Returns the headbob frequency multiplier for the current movement state.
@@ -76,4 +76,22 @@ func _calculate_bob_position() -> Vector3:
 
 # Smoothly moves the current headbob position towards its target.
 func _interpolate_position(delta : float, target_position : Vector3) -> Vector3:
-	return headbob_position.lerp(target_position, config.camera.headbob_reset_speed * delta)
+	var interpolation_amount : float = config.camera.headbob_reset_speed * delta
+	
+	return headbob_position.lerp(target_position, interpolation_amount)
+
+
+## Validation
+func validate() -> void:
+	assert(config != null, "CameraBob requires a PlayerConfig.")
+	assert(state != null, "CameraBob requires an EntityStateController.")
+	assert(config.movement != null, "CameraBob requires an EntityMovementConfig.")
+	assert(config.camera != null, "CameraBob requires a PlayerCameraConfig.")
+	assert(config.movement.movement_threshold >= 0.0, "CameraBob requires movement_threshold to be zero or greater.")
+	assert(config.camera.default_headbob_frequency_multiplier >= 0.0, "CameraBob requires default_headbob_frequency_multiplier to be zero or greater.")
+	assert(config.camera.headbob_sprint_frequency_multiplier >= 0.0, "CameraBob requires headbob_sprint_frequency_multiplier to be zero or greater.")
+	assert(config.camera.headbob_crouch_frequency_multiplier >= 0.0, "CameraBob requires headbob_crouch_frequency_multiplier to be zero or greater.")
+	assert(config.camera.headbob_frequency > 0.0, "CameraBob requires headbob_frequency to be greater than zero.")
+	assert(config.camera.headbob_horizontal_frequency_divisor > 0.0, "CameraBob requires headbob_horizontal_frequency_divisor to be greater than zero.")
+	assert(config.camera.headbob_amplitude >= 0.0, "CameraBob requires headbob_amplitude to be zero or greater.")
+	assert(config.camera.headbob_reset_speed > 0.0, "CameraBob requires headbob_reset_speed to be greater than zero.")

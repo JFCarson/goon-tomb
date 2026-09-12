@@ -5,8 +5,9 @@ extends EntityController
 ## The 'create_action_list' method can be used to produce an array of currently
 ## requested actions, which can then be processed throughout the composition.
 
+
 ## Public Interface
-# Declare movement vector based on user input.
+# Returns the movement vector based on user input.
 func get_move_action() -> Vector2:
 	return Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
 
@@ -43,5 +44,5 @@ func create_action_list() -> Array[EntityEnums.Action]:
 		actions_list.append(EntityEnums.Action.CROUCH)
 	if get_interact_action():
 		actions_list.append(EntityEnums.Action.INTERACT)
-		
+	
 	return actions_list
