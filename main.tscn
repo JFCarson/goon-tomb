@@ -71,3 +71,4 @@ shape = SubResource("BoxShape3D_amx8r")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1243433484]
 
 [node name="HUD" parent="CanvasLayer" unique_id=190508894 instance=ExtResource("8_5vw27")]
+metadata/_edit_use_anchors_ = true
