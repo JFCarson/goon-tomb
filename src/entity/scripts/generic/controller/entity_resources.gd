@@ -26,7 +26,7 @@ func _initialise_hook() -> void:
 ## Public Interface
 # Updates all resource components for the current frame.
 func update(delta : float, is_sprinting : bool) -> void:
-	stamina.update(delta, is_sprinting)
+	stamina.update(delta, is_sprinting, state.check(EntityStateEnums.States.MOTION) == EntityStateEnums.Motion.SPRINTING)
 	
 	if not is_sprinting:
 		sprint_locked = false
