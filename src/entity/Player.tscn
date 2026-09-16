@@ -98,7 +98,7 @@ metadata/_custom_type_script = "uid://cxc25nrup8yh"
 current = true
 
 [node name="InteractRay" type="RayCast3D" parent="GameCameraController/PlayerCameraHead/Camera3D" unique_id=1713439758]
-target_position = Vector3(0, 0, -3)
+target_position = Vector3(0, 0, -2)
 
 [node name="EntityStateController" type="Node" parent="." unique_id=1562529546]
 script = ExtResource("6_ebxi0")

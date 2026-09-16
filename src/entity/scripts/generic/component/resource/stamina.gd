@@ -56,8 +56,8 @@ func consume(cost : float) -> bool:
 
 
 # Updates stamina consumption and regeneration for the current frame.
-func update(delta : float, is_sprinting : bool) -> void:
-	if is_sprinting:
+func update(delta : float, is_sprinting : bool, motion_state_is_sprint : bool) -> void:
+	if is_sprinting and motion_state_is_sprint:
 		_drain_stamina(delta)
 		stamina_regeneration_timer = stat_sheet.regeneration_delay
 	else:
