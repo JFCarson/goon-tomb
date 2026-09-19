@@ -35,6 +35,17 @@ script = ExtResource("1_8sy0d")
 debug = true
 config = ExtResource("2_t62fx")
 
+[node name="TEMP LIGHT" type="OmniLight3D" parent="." unique_id=55569172]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6077492, -0.0035186112)
+light_color = Color(1.4831108, 1.1, 0, 1)
+light_energy = 1.5
+light_volumetric_fog_energy = 3.0
+shadow_enabled = true
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_shadow = 60.0
+distance_fade_length = 15.0
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1373673167]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 mesh = SubResource("CapsuleMesh_8sy0d")
