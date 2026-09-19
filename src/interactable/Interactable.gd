@@ -17,3 +17,6 @@ func get_prompt() -> String:
 				key_name = OS.get_keycode_string(event.keycode)
 	#parses a string to the interact prompt
 	return prompt_message + "\n[" + key_name + "]"
+
+func interact() -> void:
+	pass

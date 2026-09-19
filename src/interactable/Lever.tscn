@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://dj56q1kceain"]
+
+[ext_resource type="Script" uid="uid://bbu22hlbaunnh" path="res://src/interactable/Lever.gd" id="1_b8rkn"]
+[ext_resource type="PackedScene" uid="uid://carp1e6cyye6h" path="res://assets/models/Lever/Lever.glb" id="1_ynedn"]
+[ext_resource type="AudioStream" uid="uid://bpml0aieyqqg8" path="res://assets/audio/Lever/down.wav" id="3_kejg8"]
+[ext_resource type="AudioStream" uid="uid://ck0wohnbhqy4h" path="res://assets/audio/Lever/up.wav" id="4_xjut0"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_amx8r"]
+size = Vector3(0.48012924, 0.9951172, 0.4038086)
+
+[node name="Lever" type="Node3D" unique_id=1413355395]
+
+[node name="Lever" type="StaticBody3D" parent="." unique_id=1450255964]
+script = ExtResource("1_b8rkn")
+prompt_message = "Pull"
+
+[node name="LeverModel" parent="Lever" unique_id=362290194 instance=ExtResource("1_ynedn")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lever" unique_id=1680267141]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.057224467, 0, 0)
+shape = SubResource("BoxShape3D_amx8r")
+
+[node name="LeverDownSound" type="AudioStreamPlayer3D" parent="Lever" unique_id=941572933]
+stream = ExtResource("3_kejg8")
+
+[node name="LeverUpSound" type="AudioStreamPlayer3D" parent="Lever" unique_id=688890423]
+stream = ExtResource("4_xjut0")
+
+[editable path="Lever/LeverModel"]
