@@ -48,7 +48,7 @@ environment = SubResource("Environment_lquwl")
 metadata/_edit_use_anchors_ = true
 
 [node name="Lever" parent="." unique_id=1413355395 instance=ExtResource("6_7mycd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1001916, 1.4235692, 16.255245)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.761095, 1.4235692, 16.255245)
 
 [node name="Door" parent="." unique_id=1692050068 instance=ExtResource("7_272bh")]
-transform = Transform3D(-0.999874, 0, -0.015874574, 0, 1, 0, 0.015874574, 0, -0.999874, 1.4668021, -0.013102055, 14.779279)
+transform = Transform3D(-0.999874, 0, -0.015874574, 0, 1, 0, 0.015874574, 0, -0.999874, 0.5709305, -0.013102055, 14.441645)
