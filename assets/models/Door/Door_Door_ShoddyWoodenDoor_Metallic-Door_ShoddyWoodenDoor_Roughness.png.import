@@ -2,17 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cd6h7m6ct2y0"
-path.s3tc="res://.godot/imported/Stop Button Mat_Base_Color.png-012594f23e4462228fdfa5e94e3c750f.s3tc.ctex"
+uid="uid://b11r4terk3ely"
+path.s3tc="res://.godot/imported/Door_Door_ShoddyWoodenDoor_Metallic-Door_ShoddyWoodenDoor_Roughness.png-fef59a6ae8c00e0f8bcc81006a4a42b9.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
+generator_parameters={
+"md5": "2bbc869c029a8544063505c0c16eab55"
+}
 
 [deps]
 
-source_file="res://assets/test_models/Textures/Stop Button Mat_Base_Color.png"
-dest_files=["res://.godot/imported/Stop Button Mat_Base_Color.png-012594f23e4462228fdfa5e94e3c750f.s3tc.ctex"]
+source_file="res://assets/models/Door/Door_Door_ShoddyWoodenDoor_Metallic-Door_ShoddyWoodenDoor_Roughness.png"
+dest_files=["res://.godot/imported/Door_Door_ShoddyWoodenDoor_Metallic-Door_ShoddyWoodenDoor_Roughness.png-fef59a6ae8c00e0f8bcc81006a4a42b9.s3tc.ctex"]
 
 [params]
 

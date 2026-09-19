@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://dcjlgk6chvqv7"]
+
+[ext_resource type="Script" uid="uid://caljfoq3h0abq" path="res://src/interactable/Door/door.gd" id="1_xo6fk"]
+[ext_resource type="PackedScene" uid="uid://irhm7hnwx7r5" path="res://assets/models/Door/Door.glb" id="2_r4ow2"]
+[ext_resource type="AudioStream" uid="uid://o7bsbxa52y05" path="res://assets/audio/Door/open.wav" id="3_sdsw2"]
+[ext_resource type="AudioStream" uid="uid://bnjcyf48iqygi" path="res://assets/audio/Door/close.wav" id="4_pte1u"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_amx8r"]
+size = Vector3(0.17218018, 2.0072064, 0.98883057)
+
+[node name="Door" type="Node3D" unique_id=1692050068]
+
+[node name="AnimatableBody3D" type="AnimatableBody3D" parent="." unique_id=1535761822]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.883, -0.507)
+script = ExtResource("1_xo6fk")
+
+[node name="DoorModel" parent="AnimatableBody3D" unique_id=511604472 instance=ExtResource("2_r4ow2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.883, 0.507)
+
+[node name="Sphere" parent="AnimatableBody3D/DoorModel" index="0" unique_id=2043475446]
+transform = Transform3D(0.074958384, 0, 0, 0, 0.074958384, 0, 0, 0, 0.074958384, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D" unique_id=106858595]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.043162584, 0.4998474)
+shape = SubResource("BoxShape3D_amx8r")
+
+[node name="DoorOpen" type="AudioStreamPlayer3D" parent="AnimatableBody3D" unique_id=1041807460]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.883, 0.507)
+stream = ExtResource("3_sdsw2")
+
+[node name="DoorClose" type="AudioStreamPlayer3D" parent="AnimatableBody3D" unique_id=893263505]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.883, 0.507)
+stream = ExtResource("4_pte1u")
+
+[editable path="AnimatableBody3D/DoorModel"]
