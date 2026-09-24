@@ -11,8 +11,7 @@ extends CharacterBody3D
 ## Components
 @onready var mesh : MeshInstance3D = $MeshInstance3D
 @onready var collision : CollisionShape3D = $CollisionShape3D
-
-var hud : HUD
+@onready var hud : HUD = $ScreenOverlays/HUD
 
 
 ## Runtime State
@@ -38,9 +37,8 @@ const CONTROLLER := PlayerEnums.PlayerControllers
 @export var config : PlayerConfig
 
 
-func initialise(player_hud : HUD) -> void:
-	hud = player_hud
-	
+## Process
+func _ready() -> void:
 	_validate()
 	
 	# Propagate debug flag to children if turned on.
@@ -75,12 +73,11 @@ func initialise(player_hud : HUD) -> void:
 	# Initialise the HUD with the entity's resource values.
 	var resource_controller : EntityResourceController = controller[CONTROLLER.RESOURCE]
 	hud.initialise(resource_controller.get_max_health(), resource_controller.get_max_stamina())
-
-
-## Process
-func _ready() -> void:
+	
+	# Store default height as the standing height.
 	standing_height = collision.shape.height
 	
+	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
@@ -227,7 +224,6 @@ func _validate() -> void:
 	_validate_controller_classes()
 	_validate_controller_dependencies()
 	_validate_config()
-	_validate_hud()
 
 
 # Validates that all required components have been added as children of the
@@ -262,12 +258,6 @@ func _validate_controller_dependencies() -> void:
 func _validate_config() -> void:
 	assert(config != null, "Config must be added via the Player component's inspection window.")
 	_validate_resource(config, "config")
-
-
-# Validates that the required HUD has been supplied.
-func _validate_hud() -> void:
-	assert(hud != null, "The Player component requires a HUD during initialisation.")
-	assert(hud.get_interact_prompt() != null, "The Player HUD requires an interaction prompt.")
 
 
 # Validates all properties recursively in a resource.

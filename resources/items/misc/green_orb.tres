@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3 uid="uid://n5cmrty508pq"]
 
-[ext_resource type="Shader" uid="uid://c8lynvqfysgqq" path="res://shaders/cel/cel_alpha_blend.gdshader" id="1_pb5m6"]
-[ext_resource type="Script" uid="uid://bjxxyexplour5" path="res://src/interactable/resources/item/item.gd" id="2_hnpy4"]
+[ext_resource type="Shader" uid="uid://c8lynvqfysgqq" path="res://shaders/cel/cel_alpha_blend.gdshader" id="1_8kr8d"]
+[ext_resource type="Script" uid="uid://bjxxyexplour5" path="res://src/interactable/resources/item/item.gd" id="2_io5vq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_51u57"]
 render_priority = 0
-shader = ExtResource("1_pb5m6")
+shader = ExtResource("1_8kr8d")
 shader_parameter/normal_strength = 1.0
 shader_parameter/metallic_strength = 0.0
 shader_parameter/roughness_strength = 0.0
@@ -31,7 +31,10 @@ radius = 0.375
 height = 0.75
 
 [resource]
-script = ExtResource("2_hnpy4")
+script = ExtResource("2_io5vq")
 name = "Green Orb"
+description = PackedStringArray("A softly glowing green orb.", "It\'s bulky and heavy.")
+rarity = 2
+weight = 10.0
 mesh = SubResource("SphereMesh_mreh0")
 metadata/_custom_type_script = "uid://bjxxyexplour5"
