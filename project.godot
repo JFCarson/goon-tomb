@@ -25,12 +25,14 @@ window/stretch/aspect="expand"
 [file_customization]
 
 folder_colors={
-"res://src/entity/": "orange",
-"res://src/entity/enum/": "yellow",
-"res://src/entity/resources/": "red",
-"res://src/entity/scripts/": "gray",
-"res://src/entity/scripts/generic/": "pink",
-"res://src/entity/scripts/player/": "green"
+"res://assets/": "yellow",
+"res://dungeon/": "purple",
+"res://resources/": "red",
+"res://shaders/": "blue",
+"res://src/": "gray",
+"res://src/entity/": "yellow",
+"res://src/hud/": "green",
+"res://src/interactable/": "blue"
 }
 
 [filesystem]

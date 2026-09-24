@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://0gif5pekrtx3" path="res://src/entity/scripts/player/player.gd" id="1_8sy0d"]
 [ext_resource type="Script" uid="uid://br2w7nocspmwk" path="res://src/entity/scripts/player/controller/camera_controller.gd" id="2_e57x2"]
-[ext_resource type="Resource" uid="uid://bhbbbb38cjipb" path="res://src/entity/resources/definitions/DEFAULT_PLAYER.tres" id="2_t62fx"]
+[ext_resource type="Resource" uid="uid://bhbbbb38cjipb" path="res://resources/settings/DEFAULT_PLAYER.tres" id="2_t62fx"]
 [ext_resource type="Script" uid="uid://bcuhr28pctwqc" path="res://src/entity/scripts/player/controller/action_controller.gd" id="3_ebxi0"]
 [ext_resource type="Script" uid="uid://dlhxwp2vaj7c8" path="res://src/entity/scripts/player/controller/movement_controller.gd" id="4_leo7d"]
 [ext_resource type="Script" uid="uid://cxc25nrup8yh" path="res://src/entity/scripts/player/component/camera/camera_look.gd" id="5_ebxi0"]
@@ -110,6 +110,7 @@ current = true
 
 [node name="InteractRay" type="RayCast3D" parent="GameCameraController/PlayerCameraHead/Camera3D" unique_id=1713439758]
 target_position = Vector3(0, 0, -2)
+collision_mask = 3
 
 [node name="EntityStateController" type="Node" parent="." unique_id=1562529546]
 script = ExtResource("6_ebxi0")

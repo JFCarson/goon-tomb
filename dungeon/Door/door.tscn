@@ -1,9 +1,10 @@
 [gd_scene format=3 uid="uid://dcjlgk6chvqv7"]
 
-[ext_resource type="Script" uid="uid://caljfoq3h0abq" path="res://src/interactable/Door/door.gd" id="1_xo6fk"]
+[ext_resource type="Script" uid="uid://caljfoq3h0abq" path="res://dungeon/Door/door.gd" id="1_xo6fk"]
 [ext_resource type="PackedScene" uid="uid://irhm7hnwx7r5" path="res://assets/models/Door/Door.glb" id="2_r4ow2"]
 [ext_resource type="AudioStream" uid="uid://o7bsbxa52y05" path="res://assets/audio/Door/open.wav" id="3_sdsw2"]
 [ext_resource type="AudioStream" uid="uid://bnjcyf48iqygi" path="res://assets/audio/Door/close.wav" id="4_pte1u"]
+
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_amx8r"]
 size = Vector3(0.17218018, 2.0072064, 0.98883057)

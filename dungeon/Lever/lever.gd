@@ -12,7 +12,7 @@ extends Interactable
 
 signal toggled(is_on: bool)
 
-func interact() -> void:
+func process_interaction() -> void:
 	is_on = !is_on
 	if is_on:
 		activate()

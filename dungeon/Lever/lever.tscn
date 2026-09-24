@@ -1,9 +1,10 @@
 [gd_scene format=3 uid="uid://dj56q1kceain"]
 
-[ext_resource type="Script" uid="uid://bbu22hlbaunnh" path="res://src/interactable/Lever/lever.gd" id="1_epjge"]
+[ext_resource type="Script" uid="uid://bbu22hlbaunnh" path="res://dungeon/Lever/lever.gd" id="1_epjge"]
 [ext_resource type="PackedScene" uid="uid://carp1e6cyye6h" path="res://assets/models/Lever/Lever.glb" id="2_krmxv"]
 [ext_resource type="AudioStream" uid="uid://bpml0aieyqqg8" path="res://assets/audio/Lever/down.wav" id="3_fcc0r"]
 [ext_resource type="AudioStream" uid="uid://ck0wohnbhqy4h" path="res://assets/audio/Lever/up.wav" id="4_52k85"]
+
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_amx8r"]
 size = Vector3(0.48012924, 0.9951172, 0.4038086)
