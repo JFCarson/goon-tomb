@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bciygdkp3srm4"]
+
+[ext_resource type="Script" uid="uid://v4nprwv04jtj" path="res://src/interactable/scripts/world_item.gd" id="1_psuh8"]
+
+[sub_resource type="PlaceholderMesh" id="PlaceholderMesh_26let"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cxyk1"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Item" type="RigidBody3D" unique_id=1917960286]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_psuh8")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=744591152]
+mesh = SubResource("PlaceholderMesh_26let")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=681469510]
+shape = SubResource("BoxShape3D_cxyk1")

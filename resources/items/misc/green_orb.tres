@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="ItemDefinition" format=3 uid="uid://n5cmrty508pq"]
+
+[ext_resource type="Shader" uid="uid://c8lynvqfysgqq" path="res://shaders/cel/cel_alpha_blend.gdshader" id="1_8kr8d"]
+[ext_resource type="Script" uid="uid://bjxxyexplour5" path="res://src/interactable/resources/item/item.gd" id="2_io5vq"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_51u57"]
+render_priority = 0
+shader = ExtResource("1_8kr8d")
+shader_parameter/normal_strength = 1.0
+shader_parameter/metallic_strength = 0.0
+shader_parameter/roughness_strength = 0.0
+shader_parameter/alpha = 0.400000019
+shader_parameter/tint_colour = Color(0, 1, 0, 1)
+shader_parameter/shadow_tint = Color(0.5, 0.5, 0.6, 1)
+shader_parameter/mid_tint = Color(1, 1, 1, 1)
+shader_parameter/highlight_tint = Color(1, 1, 1, 1)
+shader_parameter/shadow_threshold = 0.25
+shader_parameter/highlight_threshold = 0.9
+shader_parameter/shadow_intensity = 0.1
+shader_parameter/mid_intensity = 0.4
+shader_parameter/highlight_intensity = 0.7
+shader_parameter/specular_tint = Color(1, 1, 1, 1)
+shader_parameter/specular_threshold = 0.8
+shader_parameter/specular_intensity = 0.0
+shader_parameter/emission_tint = Color(0, 0.6627277, 1.540184e-06, 1)
+shader_parameter/emission_strength = 0.2000000095
+
+[sub_resource type="SphereMesh" id="SphereMesh_mreh0"]
+material = SubResource("ShaderMaterial_51u57")
+radius = 0.375
+height = 0.75
+
+[resource]
+script = ExtResource("2_io5vq")
+name = "Green Orb"
+description = PackedStringArray("A softly glowing green orb.", "It\'s bulky and heavy.")
+rarity = 2
+weight = 10.0
+mesh = SubResource("SphereMesh_mreh0")
+metadata/_custom_type_script = "uid://bjxxyexplour5"

@@ -8,7 +8,9 @@ extends RefCounted
 enum PlayerControllers {
 	CAMERA,
 	ACTION,
+	INTERACTION,
 	MOVEMENT,
+	INVENTORY,
 	STATE,
 	RESOURCE,
 	DAMAGE
