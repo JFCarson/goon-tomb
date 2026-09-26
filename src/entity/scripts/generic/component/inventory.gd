@@ -60,10 +60,10 @@ func remove_item(item : ItemDefinition, amount : int) -> bool:
 		inventory.items[index].amount -= amount
 		
 		if inventory.items[index].amount <= 0:
-			inventory.remove_at(index)
+			inventory.items.remove_at(index)
 	else:
 		for i : int in range(amount):
-			inventory.remove_at(_get_index_of(item))
+			inventory.items.remove_at(_get_index_of(item))
 	
 	_signal_inventory_change()
 	
@@ -107,7 +107,7 @@ func _create_new_item(item : ItemDefinition, amount : int = 1) -> void:
 
 # Returns the index of an item in the inventory array, returning -1 if not found.
 func _get_index_of(item : ItemDefinition) -> int:
-	for index : int in inventory.size():
+	for index : int in inventory.items.size():
 		if inventory.items[index].definition == item:
 			return index
 	
