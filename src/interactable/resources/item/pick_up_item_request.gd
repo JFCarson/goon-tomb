@@ -1,12 +1,12 @@
-class_name PickUpItemResponse
-extends InteractionResponse
+class_name PickUpItemRequest
+extends InteractionRequest
 
 ## Declares the data shape required to complete an item pick up request upon
 ## interacting with something.
 
 
 # Reference to the item configuration.
-var data : ItemDefinition
+var item : ItemDefinition
 
 # Amount of the item that is being picked up.
 var amount : int

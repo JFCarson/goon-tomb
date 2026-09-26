@@ -42,5 +42,12 @@ func process_interaction() -> void:
 
 ## Private Methods
 # Creates a request to pick the item up. Called by interact().
-func _create_interaction_request() -> InteractionResponse:
-	return InteractableHelpers.create_pick_up_item_response(data, stack_amount)
+func _create_interaction_request() -> InteractionRequest:
+	var request := PickUpItemRequest.new()
+	
+	request.ref = self
+	request.type = InteractableEnums.ResponseType.PICK_UP
+	request.item = data
+	request.amount = stack_amount
+	
+	return request

@@ -25,7 +25,7 @@ func get_prompt() -> String:
 
 
 # Entry point API method to interact with the instance.
-func interact() -> InteractionResponse:
+func interact() -> InteractionRequest:
 	return _create_interaction_request()
 
 
@@ -38,5 +38,5 @@ func process_interaction() -> void:
 ## Private Methods
 # Provides a hook for a subclass to create an interaction request, which is
 # returned to whatever called the interact() method.
-func _create_interaction_request() -> InteractionResponse:
+func _create_interaction_request() -> InteractionRequest:
 	return null

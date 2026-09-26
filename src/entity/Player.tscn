@@ -12,8 +12,9 @@
 [ext_resource type="Script" uid="uid://culb03vh8t6mj" path="res://src/entity/scripts/generic/component/movement/jump.gd" id="7_0iexf"]
 [ext_resource type="Script" uid="uid://dhd4kq2kuvoa0" path="res://src/entity/scripts/generic/component/movement/crouch.gd" id="8_f7j30"]
 [ext_resource type="Script" uid="uid://bsrhrgolkguoq" path="res://src/entity/scripts/player/component/camera/camera_sway.gd" id="11_a6frn"]
+[ext_resource type="Script" uid="uid://6nk4jndbhv5x" path="res://src/entity/scripts/player/controller/player_inventory_controller.gd" id="11_sn87d"]
 [ext_resource type="Script" uid="uid://c1n5w6vy3dvmx" path="res://src/entity/scripts/player/component/camera/camera_bob.gd" id="11_ysr7t"]
-[ext_resource type="Script" uid="uid://6nfcogygm4cw" path="res://src/entity/scripts/player/component/interaction.gd" id="12_t3aey"]
+[ext_resource type="Script" uid="uid://6nfcogygm4cw" path="res://src/entity/scripts/player/controller/interaction_controller.gd" id="12_t3aey"]
 [ext_resource type="Script" uid="uid://cq3nj4g08g7c4" path="res://src/entity/scripts/player/component/camera/camera_feedback.gd" id="13_fny7t"]
 [ext_resource type="Script" uid="uid://dq4tevijwlxi2" path="res://src/entity/scripts/generic/controller/entity_resources.gd" id="15_k3p6q"]
 [ext_resource type="Script" uid="uid://w82fatykhd8n" path="res://src/entity/scripts/generic/component/resource/health.gd" id="16_p5i57"]
@@ -60,34 +61,6 @@ shape = SubResource("CapsuleShape3D_68jae")
 [node name="HUD" parent="ScreenOverlays" unique_id=190508894 instance=ExtResource("22_iwkrf")]
 metadata/_edit_use_anchors_ = true
 
-[node name="Interaction" type="Node" parent="." unique_id=1543456354]
-script = ExtResource("12_t3aey")
-metadata/_custom_type_script = "uid://6nfcogygm4cw"
-
-[node name="PlayerActionController" type="Node" parent="." unique_id=1749193609]
-script = ExtResource("3_ebxi0")
-metadata/_custom_type_script = "uid://bcuhr28pctwqc"
-
-[node name="PlayerMovementController" type="Node" parent="." unique_id=1286891233]
-script = ExtResource("4_leo7d")
-metadata/_custom_type_script = "uid://dlhxwp2vaj7c8"
-
-[node name="Movement" type="Node" parent="PlayerMovementController" unique_id=2002181986]
-script = ExtResource("5_x8fvd")
-metadata/_custom_type_script = "uid://cpbwsou7dmijr"
-
-[node name="Sprint" type="Node" parent="PlayerMovementController" unique_id=1201306469]
-script = ExtResource("6_ru2hc")
-metadata/_custom_type_script = "uid://b80ih777q6a3w"
-
-[node name="Jump" type="Node" parent="PlayerMovementController" unique_id=351191322]
-script = ExtResource("7_0iexf")
-metadata/_custom_type_script = "uid://culb03vh8t6mj"
-
-[node name="Crouch" type="Node" parent="PlayerMovementController" unique_id=1700896710]
-script = ExtResource("8_f7j30")
-metadata/_custom_type_script = "uid://dhd4kq2kuvoa0"
-
 [node name="GameCameraController" type="Node3D" parent="." unique_id=851555973]
 script = ExtResource("2_e57x2")
 metadata/_custom_type_script = "uid://br2w7nocspmwk"
@@ -117,6 +90,38 @@ current = true
 [node name="InteractRay" type="RayCast3D" parent="GameCameraController/PlayerCameraHead/Camera3D" unique_id=1713439758]
 target_position = Vector3(0, 0, -2)
 collision_mask = 3
+
+[node name="PlayerActionController" type="Node" parent="." unique_id=1749193609]
+script = ExtResource("3_ebxi0")
+metadata/_custom_type_script = "uid://bcuhr28pctwqc"
+
+[node name="PlayerInteractionController" type="Node" parent="." unique_id=1543456354]
+script = ExtResource("12_t3aey")
+metadata/_custom_type_script = "uid://6nfcogygm4cw"
+
+[node name="PlayerMovementController" type="Node" parent="." unique_id=1286891233]
+script = ExtResource("4_leo7d")
+metadata/_custom_type_script = "uid://dlhxwp2vaj7c8"
+
+[node name="Movement" type="Node" parent="PlayerMovementController" unique_id=2002181986]
+script = ExtResource("5_x8fvd")
+metadata/_custom_type_script = "uid://cpbwsou7dmijr"
+
+[node name="Sprint" type="Node" parent="PlayerMovementController" unique_id=1201306469]
+script = ExtResource("6_ru2hc")
+metadata/_custom_type_script = "uid://b80ih777q6a3w"
+
+[node name="Jump" type="Node" parent="PlayerMovementController" unique_id=351191322]
+script = ExtResource("7_0iexf")
+metadata/_custom_type_script = "uid://culb03vh8t6mj"
+
+[node name="Crouch" type="Node" parent="PlayerMovementController" unique_id=1700896710]
+script = ExtResource("8_f7j30")
+metadata/_custom_type_script = "uid://dhd4kq2kuvoa0"
+
+[node name="PlayerInventoryController" type="Node" parent="." unique_id=843971522]
+script = ExtResource("11_sn87d")
+metadata/_custom_type_script = "uid://6nk4jndbhv5x"
 
 [node name="EntityStateController" type="Node" parent="." unique_id=1562529546]
 script = ExtResource("6_ebxi0")

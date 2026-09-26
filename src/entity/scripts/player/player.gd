@@ -20,17 +20,20 @@ var standing_height : float
 
 ## Controllers
 const CONTROLLER := PlayerEnums.PlayerControllers
+# Contains references to all controllers on the player entity.
+#
+# Note: The order of this dictionary determines the order the components are
+# initialised in.
 @onready var controller : Dictionary[CONTROLLER, Node] = {
 	CONTROLLER.STATE: $EntityStateController,
 	CONTROLLER.RESOURCE: $EntityResourceController,
 	CONTROLLER.CAMERA: $GameCameraController,
 	CONTROLLER.ACTION: $PlayerActionController,
+	CONTROLLER.INTERACTION: $PlayerInteractionController,
 	CONTROLLER.MOVEMENT: $PlayerMovementController,
+	CONTROLLER.INVENTORY: $PlayerInventoryController,
 	CONTROLLER.DAMAGE: $EntityDamageController
 }
-
-
-@onready var interact : Interaction = $Interaction
 
 
 ## Configuration
@@ -46,6 +49,10 @@ func _ready() -> void:
 		for child : Node in get_children():
 			_propagate_debug(child)
 	
+	# Connect sibling components to the Interaction component.
+	controller[CONTROLLER.INTERACTION].interact_ray = controller[CONTROLLER.CAMERA].get_interact_ray()
+	controller[CONTROLLER.INTERACTION].prompt = hud.get_interact_prompt()
+	
 	# Initialise each controller.
 	for i in controller:
 		var target : Node = controller[i]
@@ -54,25 +61,20 @@ func _ready() -> void:
 		target.initialise(controller[CONTROLLER.STATE], controller[CONTROLLER.RESOURCE])
 	
 	# Listen for state change signals.
-	var state_controller : EntityStateController = controller[CONTROLLER.STATE]
-	if not state_controller.state_changed.is_connected(_on_state_changed):
-		state_controller.state_changed.connect(_on_state_changed)
+	controller[CONTROLLER.STATE].state_changed.connect(_on_state_changed)
 	
 	# Listen for damage or healing.
-	var damage_controller : EntityDamageController = controller[CONTROLLER.DAMAGE]
-	if not damage_controller.damage_taken.is_connected(_on_damage_taken):
-		damage_controller.damage_taken.connect(_on_damage_taken)
+	controller[CONTROLLER.DAMAGE].damage_taken.connect(_on_damage_taken)
+	controller[CONTROLLER.DAMAGE].health_restored.connect(_on_health_restored)
 	
-	if not damage_controller.health_restored.is_connected(_on_health_restored):
-		damage_controller.health_restored.connect(_on_health_restored)
+	# Listen for unique requests from interactions.
+	controller[CONTROLLER.INTERACTION].interaction_request.connect(_on_interaction_request)
 	
-	# Connect sibling components to the Interaction component.
-	interact.interact_ray = controller[CONTROLLER.CAMERA].get_interact_ray()
-	interact.prompt = hud.get_interact_prompt()
+	# Listen to changes to the player's inventory.
+	controller[CONTROLLER.INVENTORY].inventory.inventory_updated.connect(_on_inventory_updated)
 	
 	# Initialise the HUD with the entity's resource values.
-	var resource_controller : EntityResourceController = controller[CONTROLLER.RESOURCE]
-	hud.initialise(resource_controller.get_max_health(), resource_controller.get_max_stamina())
+	hud.initialise(controller[CONTROLLER.RESOURCE].get_max_health(), controller[CONTROLLER.RESOURCE].get_max_stamina())
 	
 	# Store default height as the standing height.
 	standing_height = collision.shape.height
@@ -89,7 +91,7 @@ func _input(event : InputEvent) -> void:
 
 func _process(delta : float) -> void:
 	controller[CONTROLLER.CAMERA].process_camera_effects(delta, velocity)
-	interact.update_interaction()
+	controller[CONTROLLER.INTERACTION].update_interaction()
 
 
 func _physics_process(delta : float) -> void:
@@ -166,7 +168,7 @@ func _process_resources(delta : float, action_list : Array[EntityEnums.Action]) 
 # Processes interaction requests for the entity.
 func _process_interaction(action_list : Array[EntityEnums.Action]) -> void:
 	if action_list.has(EntityEnums.Action.INTERACT):
-		interact.try_interact()
+		controller[CONTROLLER.INTERACTION].try_interact()
 
 
 # Processes damage detection for the entity.
@@ -185,6 +187,21 @@ func _on_state_changed(target_state : EntityStateEnums.States, value : int) -> v
 	if target_state == EntityStateEnums.States.LIFECYCLE:
 		hud.update_lifecycle(value)
 
+
+# Listen for requests to pick up an item.
+func _on_interaction_request(request : InteractionRequest) -> void:
+	if request is PickUpItemRequest:
+		if controller[CONTROLLER.INVENTORY].add_item(request.item, request.amount):
+			controller[CONTROLLER.INTERACTION].finish_interaction(request.ref)
+
+
+# Listen for changes to the player's inventory.
+func _on_inventory_updated(inventory : Array[InventoryItem], weight : float, max_weight : float) -> void:
+	print("Inventory:")
+	for i in inventory:
+		print("%s x %s" % [i.amount, i.definition.name])
+	print("Current Weight: %s" % weight)
+	print("Max Weight: %s" % max_weight)
 
 # Listen for damage being dealt.
 func _on_damage_taken(amount : float) -> void:
@@ -233,7 +250,6 @@ func _validate_required_children() -> void:
 	assert(collision != null, "The Player component requires a CollisionShape3D component as a direct child.")
 	assert(collision.shape != null, "The Player component requires a Shape resource on its CollisionShape3D component.")
 	assert(collision.shape is CapsuleShape3D, "The Player component requires a CapsuleShape3D collision shape.")
-	assert(interact != null, "The Player component requires an Interaction component as a direct child.")
 
 
 # Validates that all assigned controllers are of the Controller or Controller3D

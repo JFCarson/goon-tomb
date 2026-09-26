@@ -1,5 +1,5 @@
-class_name Interaction
-extends Node
+class_name PlayerInteractionController
+extends EntityController
 
 ## Handles player interaction detection, prompts and interaction execution.
 
@@ -13,11 +13,8 @@ var prompt : Label
 var current_target : Interactable = null
 
 
-## Mapping
-# Maps interaction response types to private methods.
-var response_map : Dictionary[InteractableEnums.ResponseType, Callable] = {
-	InteractableEnums.ResponseType.PICK_UP: _handle_pick_up_item
-}
+## Signals
+signal interaction_request(response : InteractionRequest)
 
 
 ## Public Interface
@@ -31,21 +28,26 @@ func update_interaction() -> void:
 		prompt.text = current_target.get_prompt()
 
 
-# Attempts to interact with the currently targeted object.
+# Attempts to interact with the currently targeted object. If the request
+# returns a response, rather than finishing the interaction, send a signal
+# with the response to be finalised elsewhere.
 func try_interact() -> void:
 	if current_target == null:
 		return
 	
-	var interaction_is_valid : bool = true
-	
-	var response : InteractionResponse = current_target.interact()
+	var response : InteractionRequest = current_target.interact()
 	
 	if response != null:
 		if not response.type == InteractableEnums.ResponseType.UNDEFINED:
-			interaction_is_valid = response_map[response.type].call(response)
+			interaction_request.emit(response)
+			return
 	
-	if interaction_is_valid:
-		current_target.process_interaction()
+	finish_interaction(current_target)
+	
+
+# Finishes the interaction on an interactable.
+func finish_interaction(target : Interactable) -> void:
+	target.process_interaction()
 
 
 ## Private Methods
@@ -58,16 +60,6 @@ func _get_target() -> Interactable:
 			return collider
 	
 	return null
-
-
-## Private Methods: Interaction Responses
-# Handles a pick up item response.
-func _handle_pick_up_item(interaction_response : PickUpItemResponse) -> bool:
-	var interaction_is_valid : bool = true
-	
-	print("Picked up a %s." % interaction_response.data.name)
-	
-	return interaction_is_valid
 
 
 ## Validation
