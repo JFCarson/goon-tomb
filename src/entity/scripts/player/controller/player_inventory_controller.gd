@@ -10,7 +10,7 @@ extends EntityController
 
 ## Public Methods
 # Returns a copy of the current inventory.
-func get_inventory() -> Array[InventoryItem]:
+func get_inventory() -> Inventory:
 	return inventory.get_inventory()
 
 

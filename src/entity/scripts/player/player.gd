@@ -196,9 +196,9 @@ func _on_interaction_request(request : InteractionRequest) -> void:
 
 
 # Listen for changes to the player's inventory.
-func _on_inventory_updated(inventory : Array[InventoryItem], weight : float, max_weight : float) -> void:
+func _on_inventory_updated(inventory : Inventory, weight : float, max_weight : float) -> void:
 	print("Inventory:")
-	for i in inventory:
+	for i in inventory.items:
 		print("%s x %s" % [i.amount, i.definition.name])
 	print("Current Weight: %s" % weight)
 	print("Max Weight: %s" % max_weight)
