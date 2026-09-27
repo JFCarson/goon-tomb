@@ -18,7 +18,10 @@ signal inventory_updated(inventory : Inventory, weight : float, max_weight : flo
 ## Process
 # Create the inventory on init, and validate.
 func _init() -> void:
+	# Create a new inventory resource to track.
 	inventory = Inventory.new()
+	
+	# Validate the integrity of the component before continuing.
 	_validate()
 
 
@@ -27,6 +30,9 @@ func _init() -> void:
 func get_inventory() -> Inventory:
 	return inventory.duplicate()
 
+# Force the inventory to signal an update.
+func force_update() -> void:
+	_signal_inventory_change()
 
 # Adds an item to the inventory, and returns if the operation was a success.
 func add_item(item : ItemDefinition, amount : int) -> bool:

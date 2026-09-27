@@ -13,6 +13,9 @@ extends EntityController
 func get_inventory() -> Inventory:
 	return inventory.get_inventory()
 
+# Force the inventory to signal an update.
+func force_update() -> void:
+	inventory.force_update()
 
 # Try to add a number of items to the controlled inventory, returning whether
 # the operation was a success.

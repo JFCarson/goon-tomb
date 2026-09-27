@@ -12,9 +12,14 @@ extends CharacterBody3D
 @onready var mesh : MeshInstance3D = $MeshInstance3D
 @onready var collision : CollisionShape3D = $CollisionShape3D
 @onready var hud : HUD = $ScreenOverlays/HUD
+@onready var inventory : PlayerInventoryOverlay = $ScreenOverlays/PlayerInventory
 
 
 ## Runtime State
+# Flags whether the player currently can control their character's movement.
+var can_control_self : bool = true
+
+# Stores the height of the player's hitbox when in the standing state.
 var standing_height : float
 
 
@@ -60,21 +65,15 @@ func _ready() -> void:
 		target.config = config
 		target.initialise(controller[CONTROLLER.STATE], controller[CONTROLLER.RESOURCE])
 	
-	# Listen for state change signals.
-	controller[CONTROLLER.STATE].state_changed.connect(_on_state_changed)
-	
-	# Listen for damage or healing.
-	controller[CONTROLLER.DAMAGE].damage_taken.connect(_on_damage_taken)
-	controller[CONTROLLER.DAMAGE].health_restored.connect(_on_health_restored)
-	
-	# Listen for unique requests from interactions.
-	controller[CONTROLLER.INTERACTION].interaction_request.connect(_on_interaction_request)
-	
-	# Listen to changes to the player's inventory.
-	controller[CONTROLLER.INVENTORY].inventory.inventory_updated.connect(_on_inventory_updated)
+	# Connect signals to listener functions.
+	_connect_signals()
 	
 	# Initialise the HUD with the entity's resource values.
 	hud.initialise(controller[CONTROLLER.RESOURCE].get_max_health(), controller[CONTROLLER.RESOURCE].get_max_stamina())
+	
+	# Initialise the inventory with the starting values by forcing an update
+	# signal to be sent.
+	controller[CONTROLLER.INVENTORY].force_update()
 	
 	# Store default height as the standing height.
 	standing_height = collision.shape.height
@@ -84,9 +83,10 @@ func _ready() -> void:
 
 
 func _input(event : InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		var yaw_delta : float = controller[CONTROLLER.CAMERA].process_look(event.relative)
-		rotate_y(yaw_delta)
+	if can_control_self:
+		if event is InputEventMouseMotion:
+			var yaw_delta : float = controller[CONTROLLER.CAMERA].process_look(event.relative)
+			rotate_y(yaw_delta)
 
 
 func _process(delta : float) -> void:
@@ -101,6 +101,9 @@ func _physics_process(delta : float) -> void:
 	_process_resources(delta, action_list)
 	_process_damage()
 	_process_interaction(action_list)
+	
+	if action_list.has(EntityEnums.Action.TOGGLE_INVENTORY):
+		_process_toggle_inventory()
 
 
 ## Private Methods
@@ -108,7 +111,7 @@ func _physics_process(delta : float) -> void:
 func _process_movement(delta : float, action_list : Array[EntityEnums.Action]) -> void:
 	_process_gravity(delta)
 	
-	if _is_alive():
+	if _is_alive() and can_control_self:
 		_process_velocity(delta, action_list)
 		_process_jump(action_list)
 		_process_crouch(delta, action_list)
@@ -176,12 +179,40 @@ func _process_damage() -> void:
 	controller[CONTROLLER.DAMAGE].update_fall_damage(is_on_floor(), velocity)
 
 
+# Processes the toggling of the player's inventory.
+func _process_toggle_inventory() -> void:
+	inventory.toggle_inventory()
+		
+	if inventory.inventory_is_open:
+		can_control_self = false
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	else:
+		can_control_self = true
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+
 # Returns whether the entity is currently alive.
 func _is_alive() -> bool:
 	return controller[CONTROLLER.STATE].check(EntityStateEnums.States.LIFECYCLE) == EntityStateEnums.Lifecycle.ALIVE
 
 
 ## Listeners
+# Connect signals to listener functions.
+func _connect_signals() -> void:
+	# Listen for state change signals.
+	controller[CONTROLLER.STATE].state_changed.connect(_on_state_changed)
+	
+	# Listen for damage or healing.
+	controller[CONTROLLER.DAMAGE].damage_taken.connect(_on_damage_taken)
+	controller[CONTROLLER.DAMAGE].health_restored.connect(_on_health_restored)
+	
+	# Listen for unique requests from interactions.
+	controller[CONTROLLER.INTERACTION].interaction_request.connect(_on_interaction_request)
+	
+	# Listen to changes to the player's inventory.
+	controller[CONTROLLER.INVENTORY].inventory.inventory_updated.connect(_on_inventory_updated)
+	
+
 # Listen for changes to states.
 func _on_state_changed(target_state : EntityStateEnums.States, value : int) -> void:
 	if target_state == EntityStateEnums.States.LIFECYCLE:
@@ -196,12 +227,8 @@ func _on_interaction_request(request : InteractionRequest) -> void:
 
 
 # Listen for changes to the player's inventory.
-func _on_inventory_updated(inventory : Inventory, weight : float, max_weight : float) -> void:
-	print("Inventory:")
-	for i in inventory.items:
-		print("%s x %s" % [i.amount, i.definition.name])
-	print("Current Weight: %s" % weight)
-	print("Max Weight: %s" % max_weight)
+func _on_inventory_updated(inventory_data : Inventory, weight : float, max_weight : float) -> void:
+	inventory.update_inventory(inventory_data, weight, max_weight)
 
 # Listen for damage being dealt.
 func _on_damage_taken(amount : float) -> void:

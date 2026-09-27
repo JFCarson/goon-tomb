@@ -11,6 +11,9 @@ extends Resource
 # Declaration of the cosmetic description for the item.
 @export var description : PackedStringArray
 
+# Declaration of the icon associated to this item.
+@export var icon : Texture2D
+
 
 @export_group("Functional")
 # Declaration of what category of item this is.

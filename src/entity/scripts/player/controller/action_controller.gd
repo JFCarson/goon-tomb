@@ -32,6 +32,11 @@ func get_interact_action() -> bool:
 	return Input.is_action_just_pressed("interact")
 
 
+# Returns whether the player has requested to toggle their inventory.
+func get_toggle_inventory_action() -> bool:
+	return Input.is_action_just_pressed("toggle_inventory")
+
+
 # Creates an array of active boolean actions for processing on the frame.
 func create_action_list() -> Array[EntityEnums.Action]:
 	var actions_list : Array[EntityEnums.Action] = []
@@ -44,5 +49,7 @@ func create_action_list() -> Array[EntityEnums.Action]:
 		actions_list.append(EntityEnums.Action.CROUCH)
 	if get_interact_action():
 		actions_list.append(EntityEnums.Action.INTERACT)
+	if get_toggle_inventory_action():
+		actions_list.append(EntityEnums.Action.TOGGLE_INVENTORY)
 	
 	return actions_list

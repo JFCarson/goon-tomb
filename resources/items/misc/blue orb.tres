@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3 uid="uid://d3vmlp4idqvsy"]
 
+[ext_resource type="Texture2D" uid="uid://dsk4ngwko3mpn" path="res://assets/image/icon/item/Blue Orb.png" id="1_3tkyv"]
 [ext_resource type="Shader" uid="uid://c8lynvqfysgqq" path="res://shaders/cel/cel_alpha_blend.gdshader" id="1_6pjcy"]
 [ext_resource type="Script" uid="uid://bjxxyexplour5" path="res://src/interactable/resources/item/item.gd" id="2_3tkyv"]
 
@@ -34,6 +35,7 @@ height = 0.5
 script = ExtResource("2_3tkyv")
 name = "Blue Orb"
 description = PackedStringArray("A softly glowing blue orb.", "It is quite sizeable, and takes both hands to hold comfortably.")
+icon = ExtResource("1_3tkyv")
 rarity = 1
 weight = 2.5
 mesh = SubResource("SphereMesh_ln4sy")

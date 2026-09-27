@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3 uid="uid://qd1dvcqu5ycx"]
 
+[ext_resource type="Texture2D" uid="uid://buctoi6djwdo3" path="res://assets/image/icon/item/Red Orb.png" id="1_m8fwj"]
 [ext_resource type="Shader" uid="uid://c8lynvqfysgqq" path="res://shaders/cel/cel_alpha_blend.gdshader" id="1_ywoxc"]
 [ext_resource type="Script" uid="uid://bjxxyexplour5" path="res://src/interactable/resources/item/item.gd" id="2_m8fwj"]
 
@@ -34,6 +35,7 @@ height = 0.2
 script = ExtResource("2_m8fwj")
 name = "Red Orb"
 description = PackedStringArray("A softly glowing red orb.", "It is small enough to hold in the palm of your hand.")
+icon = ExtResource("1_m8fwj")
 weight = 0.1
 mesh = SubResource("SphereMesh_kt448")
 metadata/_custom_type_script = "uid://bjxxyexplour5"

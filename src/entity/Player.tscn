@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://bhbbbb38cjipb" path="res://resources/settings/DEFAULT_PLAYER.tres" id="2_t62fx"]
 [ext_resource type="Script" uid="uid://bcuhr28pctwqc" path="res://src/entity/scripts/player/controller/action_controller.gd" id="3_ebxi0"]
 [ext_resource type="Script" uid="uid://dlhxwp2vaj7c8" path="res://src/entity/scripts/player/controller/movement_controller.gd" id="4_leo7d"]
+[ext_resource type="PackedScene" uid="uid://cpqxkg7mffikj" path="res://src/overlays/player_inventory.tscn" id="4_lvook"]
 [ext_resource type="Script" uid="uid://cxc25nrup8yh" path="res://src/entity/scripts/player/component/camera/camera_look.gd" id="5_ebxi0"]
 [ext_resource type="Script" uid="uid://cpbwsou7dmijr" path="res://src/entity/scripts/generic/component/movement/movement.gd" id="5_x8fvd"]
 [ext_resource type="Script" uid="uid://b46fgtkpqy6f6" path="res://src/entity/scripts/generic/controller/entity_state.gd" id="6_ebxi0"]
@@ -22,7 +23,7 @@
 [ext_resource type="Script" uid="uid://bbaq3p4pqgipp" path="res://src/entity/scripts/generic/controller/entity_damage.gd" id="18_lt6yj"]
 [ext_resource type="Script" uid="uid://dj8s2aemax4ic" path="res://src/entity/scripts/generic/component/damage/death.gd" id="19_fny7t"]
 [ext_resource type="Script" uid="uid://t1w3ngfbg8oi" path="res://src/entity/scripts/generic/component/damage/fall_damage.gd" id="19_s2okv"]
-[ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/hud/hud.tscn" id="22_iwkrf"]
+[ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/overlays/hud.tscn" id="22_iwkrf"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_8sy0d"]
 radius = 0.3
@@ -60,6 +61,9 @@ shape = SubResource("CapsuleShape3D_68jae")
 
 [node name="HUD" parent="ScreenOverlays" unique_id=190508894 instance=ExtResource("22_iwkrf")]
 metadata/_edit_use_anchors_ = true
+
+[node name="PlayerInventory" parent="ScreenOverlays" unique_id=168865697 instance=ExtResource("4_lvook")]
+z_index = 1
 
 [node name="GameCameraController" type="Node3D" parent="." unique_id=851555973]
 script = ExtResource("2_e57x2")
