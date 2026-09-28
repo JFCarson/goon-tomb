@@ -101,3 +101,10 @@ text = "/"
 [node name="WeightMax" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Footer/WeightProgressBar/WeightValue" unique_id=204882943]
 layout_mode = 2
 text = "0.0"
+
+[node name="DropTEMP" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Footer" unique_id=1335729291]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_colors/font_color = Color(0.2627451, 0.2627451, 0.2627451, 1)
+theme_override_font_sizes/font_size = 24
+text = "Drop: RMB"

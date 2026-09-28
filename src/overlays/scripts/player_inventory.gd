@@ -9,11 +9,21 @@ extends Control
 @onready var weight_label : Label = $PanelContainer/MarginContainer/VBoxContainer/Footer/WeightProgressBar/WeightValue/Weight
 @onready var weight_max_label : Label = $PanelContainer/MarginContainer/VBoxContainer/Footer/WeightProgressBar/WeightValue/WeightMax
 
+
+## Config
+# Stores reference the the item row scene.
 const ITEM_ROW_SCENE : PackedScene = preload("res://src/overlays/inventory_item.tscn")
+
+
+## Signals
+# Signalled when the player has requested to drop an item.
+signal drop_item(item_definition : ItemDefinition)
+
 
 ## Runtime State
 # Stores whether the inventory is open.
 var inventory_is_open : bool = false
+
 
 # Stores a copy of the inventory, which is displayed by the component.
 # Creates an empty inventory on ready, which can be replaced.
@@ -50,7 +60,8 @@ func update_inventory(inventory_data : Inventory, weight : float, max_weight : f
 	_propogate_state()
 
 ## Private Methods
-# Propogates the state of the component to the visual elements.
+# Propogates the state of the component to the visual elements, and sets up
+# listeners for each item.
 func _propogate_state() -> void:
 	weight_label.text = str(weight_value)
 	weight_max_label.text = str(weight_max_value)
@@ -65,3 +76,17 @@ func _propogate_state() -> void:
 			item_container.add_child(instance)
 		
 			instance.populate(i.definition, i.amount)
+			
+			_connect_row_signals(instance)
+
+
+## Listeners
+# Connect signals to listener functions for item rows.
+func _connect_row_signals(instance : InventoryItemRow) -> void:
+	# Create a listener for item drop requests.
+	instance.request_drop_self.connect(_on_request_item_drop)
+
+
+# Handles a request for an item to be dropped
+func _on_request_item_drop(item_definition : ItemDefinition) -> void:
+	drop_item.emit(item_definition, 1)

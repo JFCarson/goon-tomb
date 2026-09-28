@@ -33,6 +33,8 @@ height = 1.8
 radius = 0.3
 height = 1.8
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_lvook"]
+
 [node name="Player" type="CharacterBody3D" unique_id=1390332273]
 script = ExtResource("1_8sy0d")
 debug = true
@@ -94,6 +96,10 @@ current = true
 [node name="InteractRay" type="RayCast3D" parent="GameCameraController/PlayerCameraHead/Camera3D" unique_id=1713439758]
 target_position = Vector3(0, 0, -2)
 collision_mask = 3
+
+[node name="DropShapeCast" type="ShapeCast3D" parent="GameCameraController/PlayerCameraHead/Camera3D" unique_id=1018629330]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1)
+shape = SubResource("BoxShape3D_lvook")
 
 [node name="PlayerActionController" type="Node" parent="." unique_id=1749193609]
 script = ExtResource("3_ebxi0")

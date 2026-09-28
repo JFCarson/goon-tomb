@@ -23,12 +23,12 @@ extends Resource
 @export var rarity : ItemEnums.Rarity
 
 # Declaration of the weight of the item.
-@export var weight : float 
+@export var weight : float
+
+# Toggles whether the item can form stacks in the world.
+@export var can_stack : bool = false
 
 
 @export_group("World")
 # Declaration of the mesh for the item when in the world.
 @export var mesh : Mesh
-
-# Toggles whether the item can form stacks in the world.
-@export var can_stack : bool = false

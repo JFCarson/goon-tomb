@@ -212,6 +212,9 @@ func _connect_signals() -> void:
 	# Listen to changes to the player's inventory.
 	controller[CONTROLLER.INVENTORY].inventory.inventory_updated.connect(_on_inventory_updated)
 	
+	# Listen for item drop requests from the inventory.
+	inventory.drop_item.connect(_on_drop_item)
+	
 
 # Listen for changes to states.
 func _on_state_changed(target_state : EntityStateEnums.States, value : int) -> void:
@@ -245,6 +248,12 @@ func _on_health_restored(amount : float) -> void:
 	var magnitude : float = amount / max_health
 	
 	hud.health_feedback(magnitude, HUD.HEALING_FEEDBACK_COLOUR)
+
+
+# Listen for requests to drop an item.
+func _on_drop_item(item_definition : ItemDefinition, amount : int) -> void:
+	controller[CONTROLLER.INVENTORY].remove_item(item_definition, amount)
+	controller[CONTROLLER.CAMERA].drop_item_at_shape_cast(item_definition, amount)
 
 
 ## Debug

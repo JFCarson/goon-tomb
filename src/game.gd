@@ -1,4 +1,7 @@
+class_name Game
 extends Node3D
+
+## Root node for all scene trees.
 
 
 # DEBUG CODE: Closes the active game window on ESC.

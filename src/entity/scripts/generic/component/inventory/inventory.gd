@@ -94,7 +94,7 @@ func get_item_count(item : ItemDefinition) -> int:
 	
 	var count : int = 0
 	
-	for inventory_item : InventoryItem in inventory:
+	for inventory_item : InventoryItem in inventory.items:
 		if inventory_item.definition == item:
 			count += 1
 	

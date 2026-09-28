@@ -3,7 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://cf6nkq7vt7hss" path="res://assets/image/icon/item/DEFAULT.png" id="1_cfr5c"]
 [ext_resource type="Script" uid="uid://8pbvlg0g1ck4" path="res://src/overlays/scripts/inventory_item.gd" id="1_h0d7i"]
 
-[node name="Item" type="HBoxContainer" unique_id=1511507202]
+[node name="Item" type="Control" unique_id=1301683046]
+layout_mode = 3
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
@@ -13,34 +14,61 @@ offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
-alignment = 1
 script = ExtResource("1_h0d7i")
 
-[node name="Icon" type="TextureRect" parent="." unique_id=1193778304]
+[node name="Background" type="ColorRect" parent="." unique_id=340236572]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+color = Color(0, 0, 0, 0)
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=2082452431]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Values" type="HBoxContainer" parent="Margin" unique_id=711949437]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="Icon" type="TextureRect" parent="Margin/Values" unique_id=1193778304]
 custom_minimum_size = Vector2(64, 64)
 custom_maximum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 6
+size_flags_vertical = 4
 texture = ExtResource("1_cfr5c")
 
-[node name="Name" type="Label" parent="." unique_id=227978101]
+[node name="Name" type="Label" parent="Margin/Values" unique_id=227978101]
 layout_mode = 2
-size_flags_horizontal = 6
+size_flags_horizontal = 2
 theme_override_colors/font_color = Color(0.2627451, 0.2627451, 0.2627451, 1)
 theme_override_font_sizes/font_size = 32
 text = "Item Name"
 
-[node name="Amount" type="Label" parent="." unique_id=548894131]
+[node name="Amount" type="Label" parent="Margin/Values" unique_id=548894131]
 layout_mode = 2
-size_flags_horizontal = 6
+size_flags_horizontal = 2
 theme_override_colors/font_color = Color(0.2627451, 0.2627451, 0.2627451, 1)
 theme_override_font_sizes/font_size = 32
 text = "1"
 
-[node name="Weight" type="Label" parent="." unique_id=2106202082]
+[node name="Weight" type="Label" parent="Margin/Values" unique_id=2106202082]
 layout_mode = 2
-size_flags_horizontal = 6
+size_flags_horizontal = 2
 theme_override_colors/font_color = Color(0.2627451, 0.2627451, 0.2627451, 1)
 theme_override_font_sizes/font_size = 32
 text = "0.0"
