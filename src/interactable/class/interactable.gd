@@ -6,6 +6,9 @@ extends Node
 ## To integrate this class in a composition, override the 'process' variable in
 ## the parent, and optionally the 'request' and 'prompt_message' variables if
 ## required.
+##
+## Note: This component must be added as a direct child of the parent of the
+## interactable entity.
 
 
 ## Configuration
