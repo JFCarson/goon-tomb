@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://dcjlgk6chvqv7"]
+[gd_scene format=3 uid="uid://cgq3hfd1uekq7"]
 
 [ext_resource type="Script" uid="uid://caljfoq3h0abq" path="res://dungeon/Door/door.gd" id="1_xo6fk"]
+[ext_resource type="Script" uid="uid://yd34qexedoow" path="res://src/interactable/class/interactable.gd" id="2_42vs6"]
 [ext_resource type="PackedScene" uid="uid://irhm7hnwx7r5" path="res://assets/models/Door/Door.glb" id="2_r4ow2"]
 [ext_resource type="AudioStream" uid="uid://o7bsbxa52y05" path="res://assets/audio/Door/open.wav" id="3_sdsw2"]
 [ext_resource type="AudioStream" uid="uid://bnjcyf48iqygi" path="res://assets/audio/Door/close.wav" id="4_pte1u"]
@@ -8,28 +9,29 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_amx8r"]
 size = Vector3(0.17218018, 2.0072064, 0.98883057)
 
-[node name="Door" type="Node3D" unique_id=1692050068]
-
-[node name="AnimatableBody3D" type="AnimatableBody3D" parent="." unique_id=1535761822]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.883, -0.507)
+[node name="Door" type="AnimatableBody3D" unique_id=1648411571]
 script = ExtResource("1_xo6fk")
 
-[node name="DoorModel" parent="AnimatableBody3D" unique_id=511604472 instance=ExtResource("2_r4ow2")]
+[node name="Interactable" type="Node" parent="." unique_id=21495891]
+script = ExtResource("2_42vs6")
+metadata/_custom_type_script = "uid://yd34qexedoow"
+
+[node name="DoorModel" parent="." unique_id=674896134 instance=ExtResource("2_r4ow2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.883, 0.507)
 
-[node name="Sphere" parent="AnimatableBody3D/DoorModel" index="0" unique_id=244456458]
+[node name="Sphere" parent="DoorModel" index="0" unique_id=244456458]
 transform = Transform3D(0.074958384, 0, 0, 0, 0.074958384, 0, 0, 0, 0.074958384, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D" unique_id=106858595]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=771910988]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.043162584, 0.4998474)
 shape = SubResource("BoxShape3D_amx8r")
 
-[node name="DoorOpen" type="AudioStreamPlayer3D" parent="AnimatableBody3D" unique_id=1041807460]
+[node name="DoorOpen" type="AudioStreamPlayer3D" parent="." unique_id=1278126751]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.883, 0.507)
 stream = ExtResource("3_sdsw2")
 
-[node name="DoorClose" type="AudioStreamPlayer3D" parent="AnimatableBody3D" unique_id=893263505]
+[node name="DoorClose" type="AudioStreamPlayer3D" parent="." unique_id=1393194038]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.883, 0.507)
 stream = ExtResource("4_pte1u")
 
-[editable path="AnimatableBody3D/DoorModel"]
+[editable path="DoorModel"]

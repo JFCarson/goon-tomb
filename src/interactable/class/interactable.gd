@@ -1,13 +1,25 @@
 class_name Interactable
-extends PhysicsBody3D
+extends Node
 
-## Base class for all interactable objects, such as items, doors, and NPCs.
+## Marker class for all interactable objects, such as items, doors, and NPCs.
+##
+## To integrate this class in a composition, override the 'process' variable in
+## the parent, and optionally the 'request' and 'prompt_message' variables if
+## required.
 
 
 ## Configuration
+# Stores reference to the name of the interact input.
 const prompt_action : StringName = &"interact"
 
+# Determines the message that is displayed on screen when the interaction
+# RayCast is colliding with the object.
 var prompt_message : String = "Interact"
+
+# Callables for each stage of the interaction process. These should be provided
+# from the parent.
+var request : Callable
+var process : Callable
 
 
 ## Public Interface
@@ -24,19 +36,31 @@ func get_prompt() -> String:
 	return "%s\n[%s]" % [prompt_message, key_name]
 
 
-# Entry point API method to interact with the instance.
+# Sets the process callable to reference the passed-in method.
+func set_process_callback(callback : Callable) -> void:
+	process = callback
+
+
+# Sets the request callable to reference the passed-in method.
+func set_request_callback(callback : Callable) -> void:
+	request = callback
+
+
+# Sets the prompt message to the passed-in string.
+func set_prompt_message(message : String) -> void:
+	prompt_message = message
+
+
+# Begin an interaction with the entity, creating a request if a callback function
+# is defined, or skipping straight to process if not.
 func interact() -> InteractionRequest:
-	return _create_interaction_request()
+	if request.is_valid():
+		return request.call()
+	
+	return
 
 
-# Processes a previously validated interaction. Passes by default; behaviour
-# needs to be defined at the subclass level.
+# Processes a previously validated interaction by calling a callable passed in
+# from the parent.
 func process_interaction() -> void:
-	pass
-
-
-## Private Methods
-# Provides a hook for a subclass to create an interaction request, which is
-# returned to whatever called the interact() method.
-func _create_interaction_request() -> InteractionRequest:
-	return null
+	process.call()

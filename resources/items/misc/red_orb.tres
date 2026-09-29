@@ -37,5 +37,6 @@ name = "Red Orb"
 description = PackedStringArray("A softly glowing red orb.", "It is small enough to hold in the palm of your hand.")
 icon = ExtResource("1_m8fwj")
 weight = 0.1
+can_stack = true
 mesh = SubResource("SphereMesh_kt448")
 metadata/_custom_type_script = "uid://bjxxyexplour5"

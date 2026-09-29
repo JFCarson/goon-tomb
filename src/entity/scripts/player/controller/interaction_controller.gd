@@ -28,18 +28,18 @@ func update_interaction() -> void:
 		prompt.text = current_target.get_prompt()
 
 
-# Attempts to interact with the currently targeted object. If the request
-# returns a response, rather than finishing the interaction, send a signal
-# with the response to be finalised elsewhere.
+# Attempts to interact with the currently targeted object. If the interaction
+# returns a request, rather than finishing the interaction, send a signal
+# with the request to be finalised elsewhere.
 func try_interact() -> void:
 	if current_target == null:
 		return
 	
-	var response : InteractionRequest = current_target.interact()
+	var request : InteractionRequest = current_target.interact()
 	
-	if response != null:
-		if not response.type == InteractableEnums.ResponseType.UNDEFINED:
-			interaction_request.emit(response)
+	if request != null:
+		if not request.type == InteractableEnums.ResponseType.UNDEFINED:
+			interaction_request.emit(request)
 			return
 	
 	finish_interaction(current_target)
@@ -56,8 +56,10 @@ func _get_target() -> Interactable:
 	if interact_ray.is_colliding():
 		var collider : Object = interact_ray.get_collider()
 		
-		if collider is Interactable:
-			return collider
+		if collider is Node:
+			for child : Node in collider.get_children():
+				if child is Interactable:
+					return child
 	
 	return null
 

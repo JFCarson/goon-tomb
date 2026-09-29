@@ -1,28 +1,25 @@
 class_name WorldItem
-extends Interactable
+extends RigidBody3D
 
-
-## Configuration
-@export var data : ItemDefinition
+## Base class for the world item component.
 
 
 ## Components
 @onready var mesh : MeshInstance3D = $MeshInstance3D
 @onready var collision : CollisionShape3D = $CollisionShape3D
-
+@onready var interactable : Interactable = $Interactable
 
 ## Runtime State
-var stack_amount = 1
+@export var data : ItemDefinition
+@export var amount : int
 
 
 ## Process
-# Populates the instance of the class on ready.
 func _ready() -> void:
-	# Set the interaction prompt message.
-	if data.can_stack:
-		prompt_message = "Pick up %s x '%s'" % [stack_amount, data.name]
-	else:
-		prompt_message = "Pick up '%s'" % data.name
+	# Configure the scene's Interactable instance.
+	interactable.set_process_callback(_destroy_scene)
+	interactable.set_request_callback(_create_pickup_request)
+	interactable.set_prompt_message("Pick up %s x '%s'" % [amount, data.name])
 	
 	# Set the mesh from config.
 	mesh.mesh = data.mesh
@@ -33,21 +30,19 @@ func _ready() -> void:
 	collision.shape = collision_shape
 
 
-## Public Interface
-# Once the interaction has been proven valid, handle the despawning of the item
-# from the world.
-func process_interaction() -> void:
-	queue_free()
-	
-
 ## Private Methods
-# Creates a request to pick the item up. Called by interact().
-func _create_interaction_request() -> InteractionRequest:
+# Destroys the scene.
+func _destroy_scene() -> void:
+	queue_free()
+
+
+# Create a request to pick up an item.
+func _create_pickup_request() -> InteractionRequest:
 	var request := PickUpItemRequest.new()
 	
-	request.ref = self
+	request.ref = interactable
 	request.type = InteractableEnums.ResponseType.PICK_UP
 	request.item = data
-	request.amount = stack_amount
+	request.amount = amount
 	
 	return request

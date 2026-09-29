@@ -3,8 +3,7 @@ extends Resource
 
 ## Declares the base data shape required to complete an interaction.
 
-# References the entity which was interacted with. Should be set to 'self' when
-# the resource is created.
+# References the Interactable of the entity which was interacted with.
 var ref : Interactable
 
 # Defines the response type.

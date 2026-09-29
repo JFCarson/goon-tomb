@@ -14,7 +14,7 @@ static func create_item_instance(item : ItemDefinition, amount : int = 1, world_
 	var world_item_instance : WorldItem = WORLD_ITEM_SCENE.instantiate()
 	
 	world_item_instance.data = item
-	world_item_instance.stack_amount = amount
+	world_item_instance.amount = amount
 	world_item_instance.position = world_position
 	
 	return world_item_instance
