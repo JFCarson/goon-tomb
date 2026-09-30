@@ -37,7 +37,8 @@ const CONTROLLER := PlayerEnums.PlayerControllers
 	CONTROLLER.INTERACTION: $PlayerInteractionController,
 	CONTROLLER.MOVEMENT: $PlayerMovementController,
 	CONTROLLER.INVENTORY: $PlayerInventoryController,
-	CONTROLLER.DAMAGE: $EntityDamageController
+	CONTROLLER.DAMAGE: $EntityDamageController,
+	CONTROLLER.STATS: $EntityStatsController
 }
 
 

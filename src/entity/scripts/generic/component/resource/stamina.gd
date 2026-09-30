@@ -5,7 +5,7 @@ extends Node
 
 
 ## Configuration
-var stat_sheet : EntityStatSheet
+var stats : EntityStatsController
 
 
 ## Runtime State
@@ -21,7 +21,7 @@ func get_stamina() -> float:
 
 # Returns the maximum stamina amount defined by the configuration.
 func get_max_stamina() -> float:
-	return stat_sheet.max_stamina
+	return stats.get_max_stamina()
 
 
 # Returns whether the entity has enough stamina to sprint.
@@ -36,12 +36,12 @@ func can_afford(cost : float) -> bool:
 
 # Returns whether the entity has enough stamina to jump.
 func can_jump() -> bool:
-	return can_afford(stat_sheet.jump_cost)
+	return can_afford(stats.jump_cost)
 
 
 # Consumes the stamina cost associated with jumping.
 func consume_jump() -> bool:
-	return consume(stat_sheet.jump_cost)
+	return consume(stats.jump_cost)
 
 
 # Consumes the supplied amount of stamina and starts the regeneration delay.
@@ -50,7 +50,7 @@ func consume(cost : float) -> bool:
 		return false
 	
 	stamina = _clamp_stamina(stamina - cost)
-	stamina_regeneration_timer = stat_sheet.regeneration_delay
+	stamina_regeneration_timer = stats.regeneration_delay
 	
 	return true
 
@@ -59,21 +59,21 @@ func consume(cost : float) -> bool:
 func update(delta : float, is_sprinting : bool, motion_state_is_sprint : bool) -> void:
 	if is_sprinting and motion_state_is_sprint:
 		_drain_stamina(delta)
-		stamina_regeneration_timer = stat_sheet.regeneration_delay
+		stamina_regeneration_timer = stats.regeneration_delay
 	else:
 		_regenerate(delta)
 
 
 # Resets stamina to its configured maximum.
 func reset() -> void:
-	stamina = stat_sheet.max_stamina
+	stamina = stats.get_max_stamina()
 	stamina_regeneration_timer = 0.0
 
 
 ## Internal Calculations
 # Drains stamina while the entity is sprinting.
 func _drain_stamina(delta : float) -> void:
-	var drain : float = stat_sheet.sprint_drain_rate * delta
+	var drain : float = stats.sprint_drain_rate * delta
 	stamina = _clamp_stamina(stamina - drain)
 
 
@@ -83,23 +83,23 @@ func _regenerate(delta : float) -> void:
 		stamina_regeneration_timer = max(stamina_regeneration_timer - delta, 0.0)
 		return
 	
-	if stamina >= stat_sheet.max_stamina:
+	if stamina >= stats.calculate_max_stamina():
 		return
 	
-	var regeneration : float = stat_sheet.regeneration_rate * delta
+	var regeneration : float = stats.regeneration_rate * delta
 	stamina = _clamp_stamina(stamina + regeneration)
 
 
 # Clamps stamina between zero and the configured maximum stamina.
 func _clamp_stamina(value : float) -> float:
-	return clampf(value, 0.0, stat_sheet.max_stamina)
+	return clampf(value, 0.0, stats.calculate_max_stamina())
 
 
 ## Validation
 func validate() -> void:
-	assert(stat_sheet != null, "EntityStamina requires an EntityStatSheet.")
-	assert(stat_sheet.max_stamina > 0.0, "EntityStamina requires max_stamina to be greater than zero.")
-	assert(stat_sheet.jump_cost >= 0.0, "EntityStamina requires jump_cost to be zero or greater.")
-	assert(stat_sheet.sprint_drain_rate >= 0.0, "EntityStamina requires sprint_drain_rate to be zero or greater.")
-	assert(stat_sheet.regeneration_rate >= 0.0, "EntityStamina requires regeneration_rate to be zero or greater.")
-	assert(stat_sheet.regeneration_delay >= 0.0, "EntityStamina requires regeneration_delay to be zero or greater.")
+	assert(stats != null, "EntityStamina requires an EntityStatsController.")
+	assert(stats.calculate_max_stamina() > 0.0, "EntityStamina requires max_stamina to be greater than zero.")
+	assert(stats.get_jump_cost() >= 0.0, "EntityStamina requires jump_cost to be zero or greater.")
+	assert(stats.get_sprint_drain_rate() >= 0.0, "EntityStamina requires sprint_drain_rate to be zero or greater.")
+	assert(stats.get_regeneration_rate() >= 0.0, "EntityStamina requires regeneration_rate to be zero or greater.")
+	assert(stats.get_regeneration_delay() >= 0.0, "EntityStamina requires regeneration_delay to be zero or greater.")
