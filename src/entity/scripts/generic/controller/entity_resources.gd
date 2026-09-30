@@ -8,15 +8,11 @@ extends EntityController
 @onready var health : EntityHealth = $EntityHealth
 @onready var stamina : EntityStamina = $EntityStamina
 
-
 ## Runtime State
 var sprint_locked : bool = false
 
 
 func _initialise_hook() -> void:
-	health.stat_sheet = config.stats
-	stamina.stat_sheet = config.stats
-	
 	_validate_components()
 	
 	health.reset()
@@ -102,7 +98,6 @@ func consume_jump() -> bool:
 func _validate() -> void:
 	assert(health != null, "EntityResourceController requires an EntityHealth component.")
 	assert(stamina != null, "EntityResourceController requires an EntityStamina component.")
-	assert(config.stats != null, "EntityResourceController requires an EntityStatSheet.")
 	
 	_validate_components()
 

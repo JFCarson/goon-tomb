@@ -22,6 +22,7 @@
 [ext_resource type="Script" uid="uid://mt0wg5uyrbxu" path="res://src/entity/scripts/generic/component/resource/stamina.gd" id="17_lt6yj"]
 [ext_resource type="Script" uid="uid://bbaq3p4pqgipp" path="res://src/entity/scripts/generic/controller/entity_damage.gd" id="18_lt6yj"]
 [ext_resource type="Script" uid="uid://dj8s2aemax4ic" path="res://src/entity/scripts/generic/component/damage/death.gd" id="19_fny7t"]
+[ext_resource type="Script" uid="uid://cpdah5h7cd8mg" path="res://src/entity/scripts/generic/controller/entity_stats.gd" id="19_g1kt0"]
 [ext_resource type="Script" uid="uid://t1w3ngfbg8oi" path="res://src/entity/scripts/generic/component/damage/fall_damage.gd" id="19_s2okv"]
 [ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/overlays/hud.tscn" id="22_iwkrf"]
 
@@ -148,6 +149,9 @@ metadata/_custom_type_script = "uid://w82fatykhd8n"
 [node name="EntityStamina" type="Node" parent="EntityResourceController" unique_id=1126720306]
 script = ExtResource("17_lt6yj")
 metadata/_custom_type_script = "uid://mt0wg5uyrbxu"
+
+[node name="EntityStatsController" type="Node" parent="." unique_id=1673985322]
+script = ExtResource("19_g1kt0")
 
 [node name="EntityDamageController" type="Node" parent="." unique_id=1101488563]
 script = ExtResource("18_lt6yj")
