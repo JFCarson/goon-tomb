@@ -1,12 +1,8 @@
+class_name Game
 extends Node3D
 
+## Root node for all scene trees.
 
-@onready var player : PlayerOrchestrator = $Player
-@onready var hud : HUD = $CanvasLayer/HUD
-
-
-func _ready() -> void:
-	player.initialise(hud)
 
 # DEBUG CODE: Closes the active game window on ESC.
 func _input(event: InputEvent) -> void:

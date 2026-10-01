@@ -8,6 +8,7 @@ extends EntityController3D
 @onready var camera : Camera3D = $PlayerCameraHead/Camera3D
 @onready var camera_head : Node3D = $PlayerCameraHead
 @onready var interact_ray : RayCast3D = $PlayerCameraHead/Camera3D/InteractRay
+@onready var drop_shape_cast : ShapeCast3D = $PlayerCameraHead/Camera3D/DropShapeCast
 @onready var camera_look : CameraLook = $PlayerCameraHead/CameraLook
 @onready var camera_bob : CameraBob = $CameraBob
 @onready var camera_sway : CameraSway = $CameraSway
@@ -54,6 +55,19 @@ func cause_damage_feedback(magnitude : float) -> void:
 	damage_feedback.feedback(magnitude)
 
 
+# Processes a request to drop an item in the world, removing it from the
+# inventory and creating a WorldItem at the DropShapeCast.
+func drop_item_at_shape_cast(item : ItemDefinition, amount : int) -> void:
+	var item_instance : WorldItem = CreateWorldItem.create_item_instance(item, amount)
+	item_instance.visible = false
+	
+	get_tree().current_scene.add_child(item_instance)
+	
+	var target_position : Vector3 = _calculate_drop_position(item_instance.collision.shape)
+	item_instance.position = target_position
+	item_instance.visible = true
+
+
 ## Private Methods
 # Processes the camera bob effect.
 func _process_bob(delta : float, player_velocity : Vector3) -> void:
@@ -67,6 +81,17 @@ func _process_sway(delta : float, player_velocity : Vector3) -> void:
 	
 	camera.rotation.x = sway_rotation.x + damage_rotation
 	camera.rotation.z = sway_rotation.z
+
+
+# Calculate the world position of where an item should be dropped.
+func _calculate_drop_position(collision : Shape3D) -> Vector3:
+	drop_shape_cast.shape = collision
+	drop_shape_cast.force_shapecast_update()
+	
+	if drop_shape_cast.is_colliding():
+		return drop_shape_cast.get_collision_point(0)
+	else:
+		return drop_shape_cast.to_global(drop_shape_cast.target_position)
 
 
 ## Validation

@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bciygdkp3srm4"]
+
+[ext_resource type="Script" uid="uid://kk0j1ugp2hru" path="res://src/interactable/scripts/world_item.gd" id="1_a4gdi"]
+[ext_resource type="Script" uid="uid://yd34qexedoow" path="res://src/interactable/class/interactable.gd" id="3_m3qlj"]
+
+[sub_resource type="PlaceholderMesh" id="PlaceholderMesh_26let"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cxyk1"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="WorldItem" type="RigidBody3D" unique_id=1917960286]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_a4gdi")
+
+[node name="Interactable" type="Node" parent="." unique_id=812565926]
+script = ExtResource("3_m3qlj")
+metadata/_custom_type_script = "uid://yd34qexedoow"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=744591152]
+mesh = SubResource("PlaceholderMesh_26let")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=681469510]
+shape = SubResource("BoxShape3D_cxyk1")
