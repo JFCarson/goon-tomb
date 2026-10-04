@@ -4,6 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://ko8ysfhu7tdm" path="res://assets/image/icon/item/Green Orb.png" id="1_io5vq"]
 [ext_resource type="Script" uid="uid://bjxxyexplour5" path="res://src/interactable/resources/item/item.gd" id="2_io5vq"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_a4gdi"]
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_51u57"]
 render_priority = 0
 shader = ExtResource("1_8kr8d")
@@ -39,4 +41,5 @@ icon = ExtResource("1_io5vq")
 rarity = 2
 weight = 10.0
 mesh = SubResource("SphereMesh_mreh0")
+collision_shape = SubResource("SphereShape3D_a4gdi")
 metadata/_custom_type_script = "uid://bjxxyexplour5"

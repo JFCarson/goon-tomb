@@ -25,8 +25,22 @@ func _ready() -> void:
 	mesh.mesh = data.mesh
 	
 	# Calculate collision size of the item from the mesh.
-	var collision_shape : BoxShape3D = BoxShape3D.new()
-	collision_shape.size = data.mesh.get_aabb().size
+	var collision_shape : Shape3D = data.collision_shape
+	var mesh_size : Vector3 = data.mesh.get_aabb().size
+
+	if collision_shape is BoxShape3D:
+		collision_shape.size = mesh_size
+	else:
+		var radius : float = maxf(mesh_size.x, mesh_size.z) / 2.0
+		
+		if collision_shape is CapsuleShape3D or collision_shape is CylinderShape3D:
+			collision_shape.radius = radius
+			collision_shape.height = maxf(mesh_size.y, radius * 2.0)
+		elif collision_shape is SphereShape3D:
+			collision_shape.radius = maxf(mesh_size.x, maxf(mesh_size.y, mesh_size.z)) / 2.0
+		else:
+			assert(false, "'%s' is not a good collision shape for a world item '%s'. Please reconsider." % [collision_shape.get_class(), data.name])
+	
 	collision.shape = collision_shape
 
 

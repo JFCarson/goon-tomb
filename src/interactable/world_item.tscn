@@ -5,12 +5,9 @@
 
 [sub_resource type="PlaceholderMesh" id="PlaceholderMesh_26let"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_cxyk1"]
-size = Vector3(0.1, 0.1, 0.1)
+[sub_resource type="BoxShape3D" id="BoxShape3D_3tkyv"]
 
 [node name="WorldItem" type="RigidBody3D" unique_id=1917960286]
-collision_layer = 2
-collision_mask = 2
 script = ExtResource("1_a4gdi")
 
 [node name="Interactable" type="Node" parent="." unique_id=812565926]
@@ -21,4 +18,4 @@ metadata/_custom_type_script = "uid://yd34qexedoow"
 mesh = SubResource("PlaceholderMesh_26let")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=681469510]
-shape = SubResource("BoxShape3D_cxyk1")
+shape = SubResource("BoxShape3D_3tkyv")
