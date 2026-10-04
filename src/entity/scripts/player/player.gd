@@ -117,7 +117,7 @@ func _process_movement(delta : float, action_list : Array[EntityEnums.Action]) -
 		_process_crouch(delta, action_list)
 	else:
 		velocity.x = 0.0
-		velocity.z = 0.0	
+		velocity.z = 0.0
 	
 	move_and_slide()
 
