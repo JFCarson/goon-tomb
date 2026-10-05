@@ -14,6 +14,12 @@ config/name="Goon Tomb"
 run/main_scene="uid://d32gnsmlpkkyd"
 config/features=PackedStringArray("4.7", "Forward Plus")
 
+[autoload]
+
+NetHandler="*uid://5i52qn5e16vv"
+ClientNetworkGlobals="*uid://dqg2wlds80rq5"
+ServerNetworkGlobals="*uid://vaebpxbnp4ag"
+
 [display]
 
 window/size/viewport_width=1920
@@ -32,6 +38,7 @@ folder_colors={
 "res://src/": "gray",
 "res://src/entity/": "yellow",
 "res://src/interactable/": "blue",
+"res://src/net/": "red",
 "res://src/overlays/": "green",
 "res://src/world/": "teal"
 }
