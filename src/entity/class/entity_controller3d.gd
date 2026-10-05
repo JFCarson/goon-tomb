@@ -10,8 +10,6 @@ var config : EntityConfig
 
 
 ## Runtime State
-# 
-
 # Reference to the entity's state and resource controllers. Null by default,
 # and only updated if they actually exist.
 var state : EntityStateController = null
