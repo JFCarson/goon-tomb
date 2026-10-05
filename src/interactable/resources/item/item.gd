@@ -32,3 +32,6 @@ extends Resource
 @export_group("World")
 # Declaration of the mesh for the item when in the world.
 @export var mesh : Mesh
+
+# Declaration of the collision shape for the item.
+@export var collision_shape : Shape3D

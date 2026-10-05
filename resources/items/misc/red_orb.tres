@@ -4,6 +4,8 @@
 [ext_resource type="Shader" uid="uid://c8lynvqfysgqq" path="res://shaders/cel/cel_alpha_blend.gdshader" id="1_ywoxc"]
 [ext_resource type="Script" uid="uid://bjxxyexplour5" path="res://src/interactable/resources/item/item.gd" id="2_m8fwj"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_3hw7v"]
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cxyk1"]
 render_priority = 0
 shader = ExtResource("1_ywoxc")
@@ -39,4 +41,5 @@ icon = ExtResource("1_m8fwj")
 weight = 0.1
 can_stack = true
 mesh = SubResource("SphereMesh_kt448")
+collision_shape = SubResource("SphereShape3D_3hw7v")
 metadata/_custom_type_script = "uid://bjxxyexplour5"
