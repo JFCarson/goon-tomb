@@ -11,6 +11,12 @@ extends Node
 # packet peer.
 const meta_id : String = "id"
 
+# Standard byte in a packet used to store the event type.
+const event_type_byte_index : int = 0
+
+# Standard byte in a packet used to store the peer ID.
+const peer_byte_index : int = 1
+
 
 ## Signals: Server
 # Signals that a peer has connected to the server.
@@ -52,9 +58,9 @@ var is_server : bool = false
 # Stores peer IDs that are currently available to assign to connecting
 # clients.
 #
-# IDs are assigned from this array when a peer connects and returned to the
+# IDs are assigned from this array when a peer connects and returned to the           
 # array when that peer disconnects.
-var available_peer_ids : Array[int] = range(255, -1, -1)
+var available_peer_ids : Array = range(255, -1, -1)
 
 # Stores all currently connected client peers indexed by their assigned
 # application peer ID.
@@ -129,10 +135,10 @@ func disconnect_client() -> void:
 # systems do not need to interact directly with ENet.
 func _handle_events() -> void:
 	var packet_event : Array = connection.service()
-	var event_type : ENetConnection.EventType = packet_event[0]
+	var event_type : ENetConnection.EventType = packet_event[event_type_byte_index]
 	
 	while event_type != ENetConnection.EVENT_NONE:
-		var peer : ENetPacketPeer = packet_event[1]
+		var peer : ENetPacketPeer = packet_event[peer_byte_index]
 		
 		match event_type:
 			ENetConnection.EVENT_ERROR:
@@ -154,16 +160,13 @@ func _handle_events() -> void:
 			
 			ENetConnection.EVENT_RECEIVE:
 				if is_server:
-					on_server_packet.emit(
-						peer.get_meta(meta_id),
-						peer.get_packet()
-					)
+					on_server_packet.emit(peer.get_meta(meta_id), peer.get_packet())
 				else:
 					on_client_packet.emit(peer.get_packet())
 		
 		# Request the next pending ENet event.
 		packet_event = connection.service()
-		event_type = packet_event[0]
+		event_type = packet_event[event_type_byte_index]
 
 
 ## Private Methods: Server
