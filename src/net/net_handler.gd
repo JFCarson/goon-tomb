@@ -142,7 +142,7 @@ func _handle_events() -> void:
 		
 		match event_type:
 			ENetConnection.EVENT_ERROR:
-				push_warning("Packet resulted in an error.")
+				push_warning("ENet connection resulted in an error: %s" % packet_event)
 				return
 			
 			ENetConnection.EVENT_CONNECT:
