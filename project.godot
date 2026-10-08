@@ -17,8 +17,7 @@ config/features=PackedStringArray("4.7", "Forward Plus")
 [autoload]
 
 NetHandler="*uid://5i52qn5e16vv"
-ClientNetworkGlobals="*uid://dqg2wlds80rq5"
-ServerNetworkGlobals="*uid://vaebpxbnp4ag"
+NetworkGlobals="*uid://fiu1vag41aun"
 
 [display]
 

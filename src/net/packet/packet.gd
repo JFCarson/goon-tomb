@@ -63,5 +63,11 @@ func encode() -> PackedByteArray:
 #
 # Derived packet classes can call this method before decoding their own
 # packet-specific data.
-func decode(data : PackedByteArray) -> void:
+func decode(data : PackedByteArray) -> bool:
+	if data.size() < packet_size:
+		push_error("Packet data is too small to decode.")
+		return false
+
 	packet_type = data.decode_u8(type_byte) as PacketType
+
+	return true
