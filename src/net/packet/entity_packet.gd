@@ -44,9 +44,11 @@ func encode() -> PackedByteArray:
 	return data
 
 # Decode the common entity packet data.
-func decode(data : PackedByteArray) -> void:
-	super.decode(data)
-	_set_entity_id(data.decode_u16(entity_id_byte))
+func decode(data : PackedByteArray) -> bool:
+	if not super.decode(data):
+		return false
+
+	return _set_entity_id(data.decode_u16(entity_id_byte))
 
 
 ## Private Methods
