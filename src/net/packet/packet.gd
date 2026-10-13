@@ -1,73 +1,109 @@
+@tool
 class_name Packet
-extends RefCounted
+extends Resource
 
-## Base class for network packets.
-##
-## Provides the common packet type and transmission settings shared by all
-## packet types, as well as methods for encoding and decoding packet data
-## through Godot's MultiplayerAPI.
-
-
-## Packet Types
-# Identifies the type of data contained within a packet.
-#
-# The numeric value is written into the first byte of every packet so that the
-# receiving application can determine which packet class should decode it.
-enum PacketType {
-	EMPTY,
-	ENTITY_POSITION
-}
+## Defines the wire format for a network packet.
 
 
 ## Config
-# Index of the byte which stores packet type data.
-const type_byte : int = 0
+# Number of bytes used to identify the packet type in the header.
+const type_byte_size : int = 1
 
+# Number of bytes used to identify the entity associated with an entity packet.
+const entity_id_byte_size : int = 2
 
-## Runtime
-# Size in bytes of the packet.
-var packet_size : int = 1
+# Unique identifier for this packet type, transmitted in the packet header.
+@export var packet_type_id : PacketEnums.Type = PacketEnums.Type.EMPTY
 
-# Stores the type of packet represented by this instance. Defaults to an
-# empty packet, and can be redeclared in the init of derived packet classes.
-var packet_type : PacketType = PacketType.EMPTY
+# Determines the header structure and whether the packet is associated with
+# a specific entity.
+@export var category : PacketEnums.Category = PacketEnums.Category.GLOBAL
 
-# Stores the packet transfer mode used when transmitting this packet.
-var transfer_mode : MultiplayerPeer.TransferMode
+# ENet transfer mode used when sending this packet type.
+@export var transfer_mode : MultiplayerPeer.TransferMode = MultiplayerPeer.TRANSFER_MODE_RELIABLE
 
-
-## Process
-# Initialise the common properties shared by all packet types.
-#
-# Derived packet classes can call this method through super._init() to
-# initialise the properties introduced by this class.
-func _init(type : PacketType = PacketType.EMPTY) -> void:
-	packet_type = type
+# Ordered list of fields that make up the packet payload.
+@export var fields : Array[PacketField] = []
 
 
 ## Public Interface
-# Encode the packet's common data into a byte array.
-#
-# Derived packet classes can extend the returned byte array with their own
-# packet-specific data.
-func encode() -> PackedByteArray:
-	var data : PackedByteArray
-	
-	data.resize(packet_size)
-	data.encode_u8(type_byte, int(packet_type))
-	
-	return data
+# Returns the size of the packet header in bytes, including the packet type ID
+# and, for entity packets, the entity ID.
+func get_header_size() -> int:
+	match category:
+		PacketEnums.Category.GLOBAL:
+			return type_byte_size
+		
+		PacketEnums.Category.ENTITY:
+			return type_byte_size + entity_id_byte_size
+
+	# A zero size indicates an unsupported category.
+	return 0
 
 
-# Decode the packet's common data from an encoded packet payload.
-#
-# Derived packet classes can call this method before decoding their own
-# packet-specific data.
-func decode(data : PackedByteArray) -> bool:
-	if data.size() < packet_size:
-		push_error("Packet data is too small to decode.")
+# Calculates the combined size of all payload fields in bytes.
+func get_payload_size() -> int:
+	var size : int = 0
+
+	for field : PacketField in fields:
+		# Ignore null entries here; validation reports them separately.
+		if field == null:
+			continue
+
+		size += field.get_byte_size()
+
+	return size
+
+
+# Returns the total packet size: header plus payload, in bytes.
+func get_packet_size() -> int:
+	return get_header_size() + get_payload_size()
+
+
+# Checks that this definition can be registered and used by the PacketProcessor.
+func is_valid_definition() -> bool:
+	# Ensure the packet type is declared and is not the reserved EMPTY value.
+	if not PacketEnums.Type.values().has(packet_type_id) or packet_type_id == PacketEnums.Type.EMPTY:
+		push_error("Packet definition has an invalid packet type.")
 		return false
 
-	packet_type = data.decode_u8(type_byte) as PacketType
+	# A valid category must produce a recognised header size.
+	if get_header_size() == 0:
+		push_error("Packet definition has an invalid category.")
+		return false
+
+	# Track field names to ensure each payload field can be uniquely identified.
+	var field_names : Dictionary = {}
+
+	for field : PacketField in fields:
+		# Every entry must reference a valid field definition.
+		if field == null:
+			push_error("Packet definition contains a null field.")
+			return false
+
+		# Each field needs a name so its value can be supplied and retrieved
+		# through the payload dictionary.
+		if field.field_name.is_empty():
+			push_error("Packet definition contains a field with no name.")
+			return false
+
+		# Duplicate names would make payload values ambiguous.
+		if field_names.has(field.field_name):
+			push_error(
+				"Packet definition contains duplicate field '%s'."
+				% field.field_name
+			)
+			return false
+
+		# Every supported field type must have a known, positive byte size.
+		if field.get_byte_size() <= 0:
+			push_error(
+				"Packet field '%s' has an unsupported type."
+				% field.field_name
+			)
+			return false
+
+		# Record this name so subsequent fields can be checked against it.
+		field_names[field.field_name] = true
 
 	return true
