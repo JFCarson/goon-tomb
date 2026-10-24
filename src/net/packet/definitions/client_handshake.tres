@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Packet" format=3 uid="uid://dmiuoi4agkcjs"]
+
+[ext_resource type="Script" uid="uid://dj64obnp58yui" path="res://src/net/packet/packet_field.gd" id="1_h5i0h"]
+[ext_resource type="Script" uid="uid://dbq5fnuxeoaf3" path="res://src/net/packet/packet.gd" id="2_2vs6k"]
+
+[sub_resource type="Resource" id="Resource_6ovc2"]
+script = ExtResource("1_h5i0h")
+field_name = 2
+field_type = 2
+metadata/_custom_type_script = "uid://dj64obnp58yui"
+
+[resource]
+script = ExtResource("2_2vs6k")
+packet_type_id = 1
+fields = Array[ExtResource("1_h5i0h")]([SubResource("Resource_6ovc2")])
+metadata/_custom_type_script = "uid://dbq5fnuxeoaf3"

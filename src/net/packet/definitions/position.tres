@@ -1,17 +1,17 @@
-[gd_resource type="Resource" script_class="PacketDefinition" format=3 uid="uid://btwgbroafo3o6"]
+[gd_resource type="Resource" script_class="Packet" format=3 uid="uid://btwgbroafo3o6"]
 
 [ext_resource type="Script" uid="uid://dj64obnp58yui" path="res://src/net/packet/packet_field.gd" id="1_pxh6q"]
 [ext_resource type="Script" uid="uid://dbq5fnuxeoaf3" path="res://src/net/packet/packet.gd" id="2_wndgl"]
 
 [sub_resource type="Resource" id="Resource_mhuxf"]
 script = ExtResource("1_pxh6q")
-field_name = &"position"
-field_type = 4
+field_name = 3
+field_type = 6
 metadata/_custom_type_script = "uid://dj64obnp58yui"
 
 [resource]
 script = ExtResource("2_wndgl")
-packet_type_id = 1
+packet_type_id = 3
 category = 1
 transfer_mode = 1
 fields = Array[ExtResource("1_pxh6q")]([SubResource("Resource_mhuxf")])
