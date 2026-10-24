@@ -7,7 +7,9 @@ extends EntityController
 ## Components
 @onready var fall_damage : EntityFallDamage = $EntityFallDamage
 @onready var death : EntityDeath = $EntityDeath
+@onready var stats_controller: EntityStatsController = $"../EntityStatsController"
 
+@onready var entity: CharacterBody3D = get_parent() as CharacterBody3D
 
 ## Signals
 signal damage_taken(amount : float)
@@ -15,12 +17,16 @@ signal health_restored(amount : float)
 
 
 func _initialise_hook() -> void:
-	fall_damage.damage_per_velocity = config.stats.max_health
+	fall_damage.damage_per_velocity = stats_controller.get_max_health()
 	death.initialise(state)
 
 
 ## Public Interface
 # Applies damage to the entity.
+# Processes damage detection for the entity.
+func process_damage() -> void:
+	update_fall_damage(entity.is_on_floor(), entity.velocity)
+	
 func take_damage(amount : float) -> void:
 	if amount <= 0.0:
 		return

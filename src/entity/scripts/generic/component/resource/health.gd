@@ -5,21 +5,23 @@ extends Node
 
 
 ## Configuration
-var stats : EntityStatsController
 
 ## Runtime State
 var health : float = 0.0
-
+var stats_controller: EntityStatsController
 
 ## Public Interface
 # Returns the current health amount.
+func setup(stats: EntityStatsController) -> void:
+	stats_controller = stats
+	
 func get_health() -> float:
 	return health
 
 
 # Returns the maximum health amount defined by the configuration.
 func get_max_health() -> float:
-	return stats.get_max_health()
+	return stats_controller.get_max_health()
 
 
 # Returns whether the entity is alive.
@@ -50,7 +52,7 @@ func heal(amount : float) -> void:
 
 # Resets health to its configured maximum.
 func reset() -> void:
-	health = stats.get_max_health()
+	health = get_max_health()
 
 
 ## Internal Calculations
@@ -61,5 +63,5 @@ func _clamp_health(value : float) -> float:
 
 ## Validation
 func validate() -> void:
-	assert(stats != null, "EntityHealth requires an EntityStatsController.")
-	assert(stats.get_max_health() > 0.0, "EntityHealth requires max_health to be greater than zero.")
+	#assert(stats != null, "EntityHealth requires an EntityStatsController.")
+	assert(stats_controller.get_max_health() > 0.0, "EntityHealth requires max_health to be greater than zero.")
