@@ -22,7 +22,7 @@ func _initialise_hook() -> void:
 		states[i] = EntityState.new(EntityStateEnums.state_components[i])
 
 
-## Public Interface
+# Public Interface
 # Updates the target state's value to a new one.
 func update(target_state : STATES, value : int) -> void:
 	if target_state not in states:
@@ -43,7 +43,6 @@ func check(target_state : STATES) -> int:
 		return -1
 	
 	return states[target_state].get_state()
-
 
 ## Validation
 func _validate() -> void:

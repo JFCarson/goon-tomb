@@ -13,5 +13,6 @@ enum PlayerControllers {
 	INVENTORY,
 	STATE,
 	RESOURCE,
-	DAMAGE
+	DAMAGE,
+	STATS
 }

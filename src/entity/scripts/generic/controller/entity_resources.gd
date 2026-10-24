@@ -7,29 +7,46 @@ extends EntityController
 ## Components
 @onready var health : EntityHealth = $EntityHealth
 @onready var stamina : EntityStamina = $EntityStamina
+@onready var stats_controller: EntityStatsController = $"../EntityStatsController"
+@onready var last_emitted_stamina: float
 
+const STAMINA_SIGNAL_THRESHOLD: float = 1.0
+
+##Signals
+signal health_changed(current_health: float, max_health: float);
+signal stamina_changed(current_stamina: float, max_stamina: float);
 
 ## Runtime State
 var sprint_locked : bool = false
 
-
 func _initialise_hook() -> void:
-	health.stat_sheet = config.stats
-	stamina.stat_sheet = config.stats
-	
+	health.setup(stats_controller)
+	stamina.setup(stats_controller)
+	last_emitted_stamina = stamina.get_stamina()
 	_validate_components()
-	
 	health.reset()
 	stamina.reset()
 
-
 ## Public Interface
 # Updates all resource components for the current frame.
-func update(delta : float, is_sprinting : bool) -> void:
-	stamina.update(delta, is_sprinting, state.check(EntityStateEnums.States.MOTION) == EntityStateEnums.Motion.SPRINTING)
+
+# Processes the entity's resource systems.
+func process_resources(delta : float, action_list : Array[EntityEnums.Action]) -> void:
+	var is_sprinting : bool = action_list.has(EntityEnums.Action.SPRINT)
+	update_stamina(delta, is_sprinting)
 	
+	health_changed.emit(get_health(), get_max_health())
+	
+	
+func update_stamina(delta : float, is_sprinting : bool) -> void:
+	stamina.update(delta, is_sprinting, state.check(EntityStateEnums.States.MOTION) == EntityStateEnums.Motion.SPRINTING)
+	if abs(stamina.get_stamina() - last_emitted_stamina) >= STAMINA_SIGNAL_THRESHOLD:
+		stamina_changed.emit(stamina.get_stamina(), stamina.get_max_stamina())
+		last_emitted_stamina = stamina.get_stamina()
+		
 	if not is_sprinting:
 		sprint_locked = false
+		
 	elif not stamina.can_sprint():
 		sprint_locked = true
 
@@ -102,7 +119,6 @@ func consume_jump() -> bool:
 func _validate() -> void:
 	assert(health != null, "EntityResourceController requires an EntityHealth component.")
 	assert(stamina != null, "EntityResourceController requires an EntityStamina component.")
-	assert(config.stats != null, "EntityResourceController requires an EntityStatSheet.")
 	
 	_validate_components()
 

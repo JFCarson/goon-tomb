@@ -19,6 +19,11 @@ signal interaction_request(response : InteractionRequest)
 
 ## Public Interface
 # Updates the current interaction target and its prompt.
+# Processes interaction requests for the entity.
+func process_interaction(action_list : Array[EntityEnums.Action]) -> void:
+	if action_list.has(EntityEnums.Action.INTERACT):
+		try_interact()
+
 func update_interaction() -> void:
 	current_target = _get_target()
 	

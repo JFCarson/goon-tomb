@@ -9,11 +9,15 @@ extends EntityController
 @onready var sprint : Sprint = $Sprint
 @onready var jump : Jump = $Jump
 @onready var crouch : Crouch = $Crouch
+@onready var entity: CharacterBody3D = get_parent() as CharacterBody3D
 
+@onready var collision: CollisionShape3D = $"../CollisionShape3D"
+@onready var action_controller = $"../PlayerActionController"
+@onready var resource_controller = $"../EntityResourceController"
+@onready var state_controller = $"../EntityStateController"
 
 ## Runtime State
 var is_on_floor : bool = true
-
 
 func _initialise_hook() -> void:
 	movement.movement_settings = config.movement
@@ -21,10 +25,71 @@ func _initialise_hook() -> void:
 	jump.movement_settings = config.movement
 	crouch.movement_settings = config.movement
 
-
 ## Public Interface
+# Controls all physics movement updates for entity
+func physics_update (
+	delta: float,
+	action_list: Array[EntityEnums.Action]
+) -> void:
+	process_gravity(delta)
+
+	if _is_alive() and entity.can_control_self:
+		process_velocity(delta, action_list)
+		process_jump(action_list)
+		process_crouch(delta, action_list)
+	else:
+		entity.velocity.x = 0.0
+		entity.velocity.z = 0.0
+
+	entity.move_and_slide()
+
+# Process the velocity of the entity
+func process_velocity(delta: float, action_list: Array[EntityEnums.Action]) -> void:
+	var movement_action: Vector2 = action_controller.get_move_action()
+
+	entity.velocity = process_movement_physics(
+		delta,
+		entity.velocity,
+		entity.transform.basis,
+		movement_action,
+		action_list
+	)
+
+# Processes jumping, whether entity can jump
+func process_jump (
+	action_list: Array[EntityEnums.Action]
+) -> void:
+	if not action_list.has(EntityEnums.Action.JUMP):
+		return
+
+	if not can_jump():
+		return
+
+	if not resource_controller.can_jump():
+		return
+
+	entity.velocity = process_jump_physics(entity.velocity)
+	resource_controller.consume_jump()
+
+# Processes gravity and calculates fall speed
+func process_gravity(delta: float) -> void:
+	if not entity.is_on_floor():
+		entity.velocity += entity.get_gravity() * delta
+
+# Processes crouching and crouch physics
+func process_crouch(
+	delta: float,
+	action_list: Array[EntityEnums.Action]
+) -> void:
+	collision.shape.height = process_crouch_physics (
+		delta,
+		collision.shape.height,
+		entity.standing_height,
+		action_list
+	)
+	
 # Calculates the player's resulting velocity from a movement action.
-func process_movement(delta : float, current_velocity : Vector3, player_basis : Basis, movement_vector : Vector2, requested_actions : Array[EntityEnums.Action]) -> Vector3:
+func process_movement_physics(delta : float, current_velocity : Vector3, player_basis : Basis, movement_vector : Vector2, requested_actions : Array[EntityEnums.Action]) -> Vector3:
 	var local_direction := Vector3(movement_vector.x, 0.0, movement_vector.y)
 	var world_direction : Vector3 = player_basis * local_direction
 	
@@ -55,7 +120,7 @@ func process_movement(delta : float, current_velocity : Vector3, player_basis : 
 
 
 # Calculates the player's resulting vertical velocity from a jump action.
-func process_jump(current_velocity : Vector3) -> Vector3:
+func process_jump_physics(current_velocity : Vector3) -> Vector3:
 	var new_velocity : Vector3 = current_velocity
 	
 	if jump.can_jump(is_on_floor):
@@ -68,9 +133,14 @@ func process_jump(current_velocity : Vector3) -> Vector3:
 func can_jump() -> bool:
 	return jump.can_jump(is_on_floor)
 
+# Returns whether the entity is currently alive.
+func _is_alive() -> bool:
+	return state_controller.check(
+		EntityStateEnums.States.LIFECYCLE
+	) == EntityStateEnums.Lifecycle.ALIVE
 
 # Calculates the player's resulting collision height from a crouch action.
-func process_crouch(delta : float, current_height : float, standing_height : float, requested_actions : Array[EntityEnums.Action]) -> float:
+func process_crouch_physics(delta : float, current_height : float, standing_height : float, requested_actions : Array[EntityEnums.Action]) -> float:
 	var crouching : bool = requested_actions.has(EntityEnums.Action.CROUCH)
 	
 	return crouch.calculate_height(delta, current_height, standing_height, crouching)

@@ -2,7 +2,6 @@ class_name EntityConfig
 extends Resource
 
 ## A full instance of an entity's config values.
-
 # Sets the entity's collision height in meters when standing.
 @export var standing_height : float = 1.8
 
@@ -13,4 +12,7 @@ extends Resource
 @export var movement : EntityMovementConfig
 
 # Stat sheet for an entity's resource & stat values.
-@export var stats : EntityStatSheet
+@export var attributes : EntityAttributes
+
+# Entity level for scaling mobs stats, exp gains and difficulty.
+@export var level : int = 1;
