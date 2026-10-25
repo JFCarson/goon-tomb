@@ -10,9 +10,10 @@ extends RefCounted
 ## This enum should not exceed 256 values, including EMPTY.
 enum Type {
 	EMPTY = 0,
-	CLIENT_HANDSHAKE = 1,
-	SERVER_HANDSHAKE = 2,
-	ENTITY_POSITION = 3
+	TEST_PACKET = 1,
+	CLIENT_HANDSHAKE = 2,
+	SERVER_HANDSHAKE = 3,
+	ENTITY_POSITION = 4
 }
 
 
@@ -41,7 +42,9 @@ enum FieldType {
 ## identifiers for consistency when encoding or decoding packets.
 enum FieldName {
 	UNDEFINED = 0,
-	ACCEPTED = 1,
-	PROTOCOL_VERSION = 2,
-	POSITION = 3	
+	MESSAGE_ID = 1,
+	TEST_VALUE = 2,
+	ACCEPTED = 3,
+	PROTOCOL_VERSION = 4,
+	POSITION = 5	
 }
