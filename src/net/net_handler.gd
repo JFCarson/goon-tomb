@@ -80,24 +80,30 @@ func _ready() -> void:
 
 # Public Interface
 ## Starts an ENet server bound to the specified IP address and port.
+## Refuses to start if this instance is already hosting.
 ## Shuts down any previously configured peer before creating the server.
 func start_server(ip_address : String = "127.0.0.1", port : int = 42069) -> void:
+	if _is_server and _has_active_peer():
+		push_warning("Cannot start server: a server is already running.")
+		return
+
 	shutdown()
-	
+
 	var new_peer : ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	new_peer.set_bind_ip(ip_address)
-	
+
 	var error : Error = new_peer.create_server(port, max_clients)
-	
+
 	if error != OK:
+		new_peer.close()
 		push_error("Server failed to start: " + error_string(error))
 		return
-		
+
 	# Establish the local role before assigning the peer to the API.
 	multiplayer_peer = new_peer
 	_is_server = true
 	multiplayer.multiplayer_peer = multiplayer_peer
-	
+
 	print("Server started successfully.")
 
 

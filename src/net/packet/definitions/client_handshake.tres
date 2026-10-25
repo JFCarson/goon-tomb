@@ -5,12 +5,12 @@
 
 [sub_resource type="Resource" id="Resource_6ovc2"]
 script = ExtResource("1_h5i0h")
-field_name = 2
+field_name = 4
 field_type = 2
 metadata/_custom_type_script = "uid://dj64obnp58yui"
 
 [resource]
 script = ExtResource("2_2vs6k")
-packet_type_id = 1
+packet_type_id = 2
 fields = Array[ExtResource("1_h5i0h")]([SubResource("Resource_6ovc2")])
 metadata/_custom_type_script = "uid://dbq5fnuxeoaf3"
