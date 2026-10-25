@@ -9,7 +9,7 @@ extends Node
 # Config
 ## Protocol version required by this build.
 ## Increment when a change makes the network wire protocol incompatible.
-const protocol_version : int = 2
+const protocol_version : int = 1
 
 ## Maximum time allowed for a handshake to complete, in seconds.
 const handshake_timeout_seconds : float = 5.0
