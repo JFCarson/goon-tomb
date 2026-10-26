@@ -18,6 +18,11 @@ const handshake_timeout_seconds : float = 5.0
 const rejection_grace_seconds : float = 0.5
 
 
+# Signals
+## Emitted when a peer successfully completes its protocol handshake.
+signal peer_became_ready(peer_id : int)
+
+
 # States
 ## Current state of this client's session.
 enum ClientState {
@@ -52,23 +57,23 @@ var peer_deadlines_msec : Dictionary[int, int] = {}
 # Process
 ## Connects to transport lifecycle signals to track session readiness.
 func _ready() -> void:
-	if not NetHandler.connection_succeeded.is_connected(_on_connection_succeeded):
-		NetHandler.connection_succeeded.connect(_on_connection_succeeded)
+	if not NetworkHandler.connection_succeeded.is_connected(_on_connection_succeeded):
+		NetworkHandler.connection_succeeded.connect(_on_connection_succeeded)
 		
-	if not NetHandler.connection_failed.is_connected(_on_connection_failed):
-		NetHandler.connection_failed.connect(_on_connection_failed)
+	if not NetworkHandler.connection_failed.is_connected(_on_connection_failed):
+		NetworkHandler.connection_failed.connect(_on_connection_failed)
 		
-	if not NetHandler.server_disconnected.is_connected(_on_server_disconnected):
-		NetHandler.server_disconnected.connect(_on_server_disconnected)
+	if not NetworkHandler.server_disconnected.is_connected(_on_server_disconnected):
+		NetworkHandler.server_disconnected.connect(_on_server_disconnected)
 		
-	if not NetHandler.peer_connected.is_connected(_on_peer_connected):
-		NetHandler.peer_connected.connect(_on_peer_connected)
+	if not NetworkHandler.peer_connected.is_connected(_on_peer_connected):
+		NetworkHandler.peer_connected.connect(_on_peer_connected)
 		
-	if not NetHandler.peer_disconnected.is_connected(_on_peer_disconnected):
-		NetHandler.peer_disconnected.connect(_on_peer_disconnected)
+	if not NetworkHandler.peer_disconnected.is_connected(_on_peer_disconnected):
+		NetworkHandler.peer_disconnected.connect(_on_peer_disconnected)
 		
-	if not NetHandler.networking_shutdown.is_connected(_on_networking_shutdown):
-		NetHandler.networking_shutdown.connect(_on_networking_shutdown)
+	if not NetworkHandler.networking_shutdown.is_connected(_on_networking_shutdown):
+		NetworkHandler.networking_shutdown.connect(_on_networking_shutdown)
 
 
 ## Expires incomplete handshakes and disconnects rejected peers after the
@@ -82,10 +87,10 @@ func _process(_delta : float) -> void:
 			push_warning("Handshake timed out while connecting to the server.")
 			client_state = ClientState.DISCONNECTED
 			client_handshake_deadline_msec = 0
-			NetHandler.disconnect_client()
+			NetworkHandler.disconnect_client()
 			
 	# Server-side deadlines are meaningful only while hosting.
-	if NetHandler.multiplayer_peer == null or not multiplayer.is_server():
+	if NetworkHandler.multiplayer_peer == null or not multiplayer.is_server():
 		return
 		
 	# Duplicate the keys so disconnecting peers cannot affect iteration.
@@ -102,11 +107,11 @@ func _process(_delta : float) -> void:
 		match state:
 			PeerState.PENDING:
 				push_warning("Peer %s handshake timed out." % peer_id)
-				NetHandler.disconnect_peer(peer_id)
+				NetworkHandler.disconnect_peer(peer_id)
 				_remove_peer(peer_id)
 				
 			PeerState.REJECTED:
-				NetHandler.disconnect_peer(peer_id)
+				NetworkHandler.disconnect_peer(peer_id)
 				_remove_peer(peer_id)
 
 
@@ -115,24 +120,24 @@ func _process(_delta : float) -> void:
 ## Returns true only when the packet may be emitted to gameplay listeners.
 func route_client_packet(packet : DecodedPacket) -> bool:
 	# Only accept packets from the server peer.
-	if packet.sender_peer_id != NetHandler.server_id:
+	if packet.sender_peer_id != NetworkHandler.server_id:
 		push_warning("Received a packet from an unexpected peer.")
 		_reject_server_traffic()
 		return false
-	
+		
 	var packet_type_id : int = packet.packet_type_id
 	
 	# Handshake packets are consumed by the session layer.
 	if packet_type_id == PacketEnums.Type.SERVER_HANDSHAKE:
 		_handle_server_handshake(packet)
 		return false
-	
+		
 	# Reject client handshake packets received from the server.
 	if packet_type_id == PacketEnums.Type.CLIENT_HANDSHAKE:
 		push_warning("Received a client handshake from the server.")
 		_reject_server_traffic()
 		return false
-	
+		
 	# No gameplay packet is permitted until the server has accepted us.
 	if client_state != ClientState.READY:
 		push_warning("Received a gameplay packet before the client session was ready.")
@@ -152,18 +157,18 @@ func route_server_packet(packet : DecodedPacket) -> bool:
 	if packet_type_id == PacketEnums.Type.CLIENT_HANDSHAKE:
 		_handle_client_handshake(peer_id, packet)
 		return false
-	
+		
 	# Reject server handshake packets received from a client.
 	if packet_type_id == PacketEnums.Type.SERVER_HANDSHAKE:
 		push_warning("Peer %s sent a server handshake." % peer_id)
-		NetHandler.disconnect_peer(peer_id)
+		NetworkHandler.disconnect_peer(peer_id)
 		_remove_peer(peer_id)
 		return false
-	
+		
 	# Reject gameplay traffic from peers that have not completed negotiation.
 	if peer_states.get(peer_id, PeerState.PENDING) != PeerState.READY:
 		push_warning("Peer %s sent a gameplay packet before completing its handshake." % peer_id)
-		NetHandler.disconnect_peer(peer_id)
+		NetworkHandler.disconnect_peer(peer_id)
 		_remove_peer(peer_id)
 		return false
 		
@@ -202,17 +207,16 @@ func is_peer_ready(peer_id : int) -> bool:
 
 
 # Private Methods
-
 ## Processes the client's handshake request on the server.
 func _handle_client_handshake(peer_id : int, packet : DecodedPacket) -> void:
 	# Only a known peer in the pending state may initiate the handshake.
 	if not peer_states.has(peer_id):
-		NetHandler.disconnect_peer(peer_id)
+		NetworkHandler.disconnect_peer(peer_id)
 		return
 		
 	if peer_states[peer_id] != PeerState.PENDING:
 		push_warning("Peer %s sent a duplicate or unexpected handshake." % peer_id)
-		NetHandler.disconnect_peer(peer_id)
+		NetworkHandler.disconnect_peer(peer_id)
 		_remove_peer(peer_id)
 		return
 		
@@ -237,11 +241,11 @@ func _handle_client_handshake(peer_id : int, packet : DecodedPacket) -> void:
 		
 		# Disconnect immediately if the rejection could not be sent.
 		if not rejection_sent:
-			NetHandler.disconnect_peer(peer_id)
+			NetworkHandler.disconnect_peer(peer_id)
 			_remove_peer(peer_id)
 			
 		return
-		
+
 	# Send acceptance while the peer is still pending.
 	var acceptance_sent : bool = NetworkGlobals.send_packet_to_peer(
 		PacketEnums.Type.SERVER_HANDSHAKE,
@@ -255,15 +259,17 @@ func _handle_client_handshake(peer_id : int, packet : DecodedPacket) -> void:
 	# Never mark the peer ready if the acceptance send failed.
 	if not acceptance_sent:
 		push_warning("Failed to send handshake acceptance to peer %s." % peer_id)
-		NetHandler.disconnect_peer(peer_id)
+		NetworkHandler.disconnect_peer(peer_id)
 		_remove_peer(peer_id)
 		return
 		
 	peer_states[peer_id] = PeerState.READY
 	peer_deadlines_msec.erase(peer_id)
 	
+	# Notify gameplay systems that this peer may now participate in the session.
+	peer_became_ready.emit(peer_id)
+	
 	print("Peer %s completed the protocol handshake." % peer_id)
-
 
 
 ## Processes the server's handshake response on the client.
@@ -282,8 +288,7 @@ func _handle_server_handshake(packet : DecodedPacket) -> void:
 		push_warning("Server rejected the handshake or reported an incompatible protocol version.")
 		client_state = ClientState.REJECTED
 		client_handshake_deadline_msec = 0
-		NetHandler.disconnect_client()
-		
+		NetworkHandler.disconnect_client()
 		return
 		
 	client_state = ClientState.READY
@@ -296,7 +301,7 @@ func _handle_server_handshake(packet : DecodedPacket) -> void:
 func _reject_server_traffic() -> void:
 	client_state = ClientState.REJECTED
 	client_handshake_deadline_msec = 0
-	NetHandler.disconnect_client()
+	NetworkHandler.disconnect_client()
 
 
 ## Removes all server-side tracking for a peer.
@@ -309,8 +314,10 @@ func _remove_peer(peer_id : int) -> void:
 ## Starts the client handshake after ENet reports a successful connection.
 func _on_connection_succeeded() -> void:
 	client_state = ClientState.HANDSHAKING
-	client_handshake_deadline_msec = (Time.get_ticks_msec() + int(handshake_timeout_seconds * 1000.0))
-	NetworkGlobals.send_packet_to_server(PacketEnums.Type.CLIENT_HANDSHAKE, { PacketEnums.FieldName.PROTOCOL_VERSION: protocol_version })
+	client_handshake_deadline_msec = Time.get_ticks_msec() + int(handshake_timeout_seconds * 1000.0)
+	NetworkGlobals.send_packet_to_server(PacketEnums.Type.CLIENT_HANDSHAKE,
+		{ PacketEnums.FieldName.PROTOCOL_VERSION: protocol_version }
+	)
 
 
 ## Resets client state after a failed connection attempt.
@@ -329,16 +336,16 @@ func _on_server_disconnected() -> void:
 
 ## Creates pending handshake state when a remote peer connects to the server.
 func _on_peer_connected(peer_id : int) -> void:
-	if NetHandler.multiplayer_peer == null or not multiplayer.is_server():
+	if NetworkHandler.multiplayer_peer == null or not multiplayer.is_server():
 		return
 		
 	peer_states[peer_id] = PeerState.PENDING
-	peer_deadlines_msec[peer_id] = (Time.get_ticks_msec() + int(handshake_timeout_seconds * 1000.0))
+	peer_deadlines_msec[peer_id] = Time.get_ticks_msec() + int(handshake_timeout_seconds * 1000.0)
 
 
 ## Removes peer readiness state after a remote peer disconnects.
 func _on_peer_disconnected(peer_id : int) -> void:
-	if NetHandler.multiplayer_peer == null or not multiplayer.is_server():
+	if NetworkHandler.multiplayer_peer == null or not multiplayer.is_server():
 		return
 		
 	_remove_peer(peer_id)

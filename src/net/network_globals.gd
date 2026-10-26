@@ -1,221 +1,226 @@
 extends Node
 
-## Coordinates packet encoding, decoding, and dispatch for the client and server.
+
+# Signals
+## Emitted when a decoded packet has been received by the client, passed
+## direction validation, and been accepted by the session layer.
+signal handle_client_packet(packet: DecodedPacket)
+
+## Emitted when a decoded packet has been received by the server, passed
+## direction validation, and been accepted by the session layer.
+signal handle_server_packet(sender_peer_id: int, packet: DecodedPacket)
 
 
 # Config
-## Directory containing the packet definition resources.
-const packet_definition_directory : String = "res://src/net/packet/definitions/"
+## Directory containing the .tres resources that define the network packet
+## types supported by this build.
+const packet_definitions_path : String = "res://src/net/packet/definitions/"
 
 
-# Signals
-## Emitted when the client receives a valid, decoded packet from the server.
-signal handle_client_packet(packet : DecodedPacket)
-
-## Emitted when the server receives a valid, decoded packet from a client.
-signal handle_server_packet(peer_id : int, packet : DecodedPacket)
+# State
+## Packet processor responsible for registering packet definitions and
+## encoding outgoing packets or decoding incoming packet data.
+var packet_processor : PacketProcessor
 
 
-# Runtime
-## Persistent processor instance that stores registered packet definitions
-## and handles encoding and decoding for the lifetime of this node.
-var packet_processor : PacketProcessor = PacketProcessor.new()
-
-## Indicates that all packet definitions have loaded successfully, and the
-## application is ready for networking.
-var is_ready_for_networking : bool = false
-
-
-# Process
-## Loads packet definitions and connects to both transport packet signals.
+## Initializes packet handling by loading all packet definitions and
+## subscribing to the transport layer's incoming packet signals.
 func _ready() -> void:
-	if not _load_packet_definitions():
-		push_error("NetworkGlobals initialisation failed: packet definitions could not be loaded.")
-		return
-		
-	is_ready_for_networking = true
+	_load_packet_definitions()
 	
-	if not NetHandler.on_server_packet.is_connected(_on_server_packet):
-		NetHandler.on_server_packet.connect(_on_server_packet)
-		
-	if not NetHandler.on_client_packet.is_connected(_on_client_packet):
-		NetHandler.on_client_packet.connect(_on_client_packet)
+	NetworkHandler.on_client_packet.connect(_on_client_packet)
+	NetworkHandler.on_server_packet.connect(_on_server_packet)
 
 
 # Public Interface
-## Encodes and sends a packet from a client to the server.
-func send_packet_to_server(packet_type_id : int, values : Dictionary, entity_id : int = 0) -> void:
-	if not is_ready_for_networking:
-		push_error("Cannot send packet: NetworkGlobals is not ready for networking.")
-		return
-	
-	if not NetSession.can_send_packet_to_server(packet_type_id):
-		push_warning("Cannot send packet: client session is not ready.")
-		return
-	
-	var data : PackedByteArray = _encode_packet(packet_type_id, values, entity_id)
-	if data.is_empty():
+## Loads packet definitions into a temporary processor.
+##
+## The processor is only assigned after every definition has loaded and
+## registered successfully, preventing a partially loaded packet registry.
+func _load_packet_definitions() -> void:
+	var loaded_processor := PacketProcessor.new()
+	var dir := DirAccess.open(packet_definitions_path)
+	if dir == null:
+		push_error("Failed to open packet definitions directory: %s" % packet_definitions_path)
 		return
 		
-	var definition : Packet = packet_processor.get_definition(packet_type_id)
-	NetHandler.send_bytes_to_server(data, definition.transfer_mode)
-
-
-## Encodes and sends a packet from the server to one client.
-## Returns true only when the transport successfully sends the packet.
-func send_packet_to_peer(packet_type_id : int, values : Dictionary, target_peer_id : int, entity_id : int = 0) -> bool:
-	if not is_ready_for_networking:
-		push_error("Cannot send packet: NetworkGlobals is not ready for networking.")
-		return false
-		
-	if not NetSession.can_send_packet_to_peer(packet_type_id, target_peer_id):
-		push_warning("Cannot send packet: target peer has not completed its handshake.")
-		return false
+	dir.list_dir_begin()
 	
-	var data : PackedByteArray = _encode_packet(packet_type_id, values, entity_id)
-	if data.is_empty():
-		return false
-		
-	var definition : Packet = packet_processor.get_definition(packet_type_id)
-	if definition == null:
-		return false
-		
-	return NetHandler.send_bytes_to_peer(data, target_peer_id, definition.transfer_mode)
-
-
-## Encodes and sends a packet to every client that has completed its handshake.
-func broadcast_packet(packet_type_id : int, values : Dictionary, entity_id : int = 0) -> void:
-	if not is_ready_for_networking:
-		push_error("Cannot send packet: NetworkGlobals is not ready for networking.")
-		return
-		
-	if NetHandler.multiplayer_peer == null or not multiplayer.is_server():
-		push_error("Cannot broadcast packet: this instance is not an active server.")
-		return
-		
-	# Handshake packets must always be sent to a specific peer.
-	if packet_type_id == PacketEnums.Type.CLIENT_HANDSHAKE or packet_type_id == PacketEnums.Type.SERVER_HANDSHAKE:
-		push_error("Cannot broadcast handshake packets.")
-		return
-		
-	var definition : Packet = packet_processor.get_definition(packet_type_id)
-	if definition == null:
-		push_error("Cannot broadcast an unregistered packet type.")
-		return
-		
-	for peer_id : int in multiplayer.get_peers():
-		if NetSession.is_peer_ready(peer_id):
-			send_packet_to_peer(packet_type_id, values, peer_id, entity_id)
-
-
-# Private Methods
-## Encodes a packet using its registered definition.
-## Returns an empty array if the packet cannot be encoded.
-func _encode_packet(packet_type_id : int, values : Dictionary, entity_id : int) -> PackedByteArray:
-	var definition : Packet = packet_processor.get_definition(packet_type_id)
-	
-	if definition == null:
-		push_error("Cannot send an unregistered packet type.")
-		return PackedByteArray()
-		
-	return packet_processor.encode(packet_type_id, values, entity_id)
-
-
-## Loads and registers all packet definition resources in the configured directory.
-## Replaces the active processor only if every definition loads successfully.
-func _load_packet_definitions() -> bool:
-	var directory : DirAccess = DirAccess.open(packet_definition_directory)
-	
-	# Stop loading definitions if the directory cannot be opened.
-	if directory == null:
-		push_error("Failed to open packet definition directory: " + packet_definition_directory)
-		return false
-		
-	var error : Error = directory.list_dir_begin()
-	if error != OK:
-		push_error("Failed to list packet definition directory: " + packet_definition_directory)
-		return false
-		
-	# Register definitions in a temporary processor to prevent partial registration.
-	var temporary_processor : PacketProcessor = PacketProcessor.new()
-	
-	# Track whether all definitions load and register successfully.
-	var all_definitions_valid : bool = true
-	var definition_count : int = 0
-	
-	var file_name : String = directory.get_next()
-	
-	while not file_name.is_empty():
-		# Load .tres resources only; ignore directories and other file types.
-		if not directory.current_is_dir() and file_name.ends_with(".tres"):
-			var path : String = packet_definition_directory.path_join(file_name)
-			var definition : Packet = load(path) as Packet
-			
-			# Report resources that fail to load.
+	var file_name := dir.get_next()
+	while file_name != "":
+		if not dir.current_is_dir() and file_name.ends_with(".tres"):
+			var resource_path : String = packet_definitions_path + file_name
+			var definition := load(resource_path) as Packet
 			if definition == null:
-				push_error("Failed to load packet definition: " + path)
-				all_definitions_valid = false
+				push_error("Failed to load packet definition: %s" % resource_path)
+				dir.list_dir_end()
+				return
 				
-			# Register successfully loaded definitions with the temporary processor.
-			elif not temporary_processor.register_definition(definition):
-				push_error("Failed to register packet definition: " + path)
-				all_definitions_valid = false
+			if not loaded_processor.register_definition(definition):
+				push_error("Failed to register packet definition: %s" % resource_path)
+				dir.list_dir_end()
+				return
 				
-			else:
-				definition_count += 1
-				
-		# Advance to the next directory entry.
-		file_name = directory.get_next()
+		file_name = dir.get_next()
 		
-	# Finish scanning and release the directory listing.
-	directory.list_dir_end()
+	dir.list_dir_end()
 	
-	# Reject an empty directory rather than starting without packet definitions.
-	if definition_count == 0:
-		push_error("No packet definitions were loaded from: " + packet_definition_directory)
-		all_definitions_valid = false
-	
-	# Keep the existing processor unchanged if any definition failed.
-	if not all_definitions_valid:
+	packet_processor = loaded_processor
+
+
+## Encodes and sends a packet from the client to the server.
+##
+## Only packets permitted by their configured direction and the current
+## session state may be sent.
+func send_packet_to_server(packet_type_id : PacketEnums.Type, values : Dictionary, entity_id : int = 0) -> void:
+	if packet_processor == null:
+		push_warning("Cannot send packet: packet processor is not initialized.")
+		return
+		
+	var definition := packet_processor.get_definition(packet_type_id)
+	if definition == null:
+		push_warning("Cannot send packet: unknown packet type '%s'." % packet_type_id)
+		return
+		
+	if not _is_direction_allowed(definition, PacketEnums.Direction.CLIENT_TO_SERVER, PacketEnums.DirectionContext.SEND_TO_SERVER):
+		return
+		
+	if not NetworkSession.can_send_packet_to_server(packet_type_id):
+		return
+		
+	var encoded_packet := packet_processor.encode(packet_type_id, values, entity_id)
+	if encoded_packet.is_empty():
+		return
+		
+	NetworkHandler.send_bytes_to_server(encoded_packet, definition.transfer_mode)
+
+
+## Encodes and sends a packet from the server to a specific peer.
+##
+## Returns true when the packet is accepted for sending, or false if
+## validation, session readiness, or encoding prevents transmission.
+func send_packet_to_peer(packet_type_id : PacketEnums.Type, values : Dictionary, target_peer_id : int, entity_id : int = 0) -> bool:
+	if packet_processor == null:
+		push_warning("Cannot send packet: packet processor is not initialized.")
 		return false
 		
-	# Commit the complete registry only after every definition succeeds.
-	packet_processor = temporary_processor
+	var definition := packet_processor.get_definition(packet_type_id)
+	if definition == null:
+		push_warning("Cannot send packet: unknown packet type '%s'." % packet_type_id)
+		return false
+		
+	if not _is_direction_allowed(definition, PacketEnums.Direction.SERVER_TO_CLIENT, PacketEnums.DirectionContext.SEND_TO_PEER):
+		return false
+		
+	if not NetworkSession.can_send_packet_to_peer(packet_type_id, target_peer_id):
+		return false
+		
+	var encoded_packet := packet_processor.encode(packet_type_id, values, entity_id)
+	if encoded_packet.is_empty():
+		return false
+		
+	NetworkHandler.send_bytes_to_peer(encoded_packet, target_peer_id, definition.transfer_mode)
+	
 	return true
 
 
-# Signal Methods
-## Decodes an incoming packet received by a client and routes it through
-## the session layer before emitting it for gameplay systems.
-func _on_client_packet(sender_peer_id : int, data : PackedByteArray) -> void:
-	if not is_ready_for_networking:
-		push_error("Cannot process packet: NetworkGlobals is not ready for networking.")
+## Encodes a packet once and sends it to every ready peer.
+##
+## Handshake readiness is checked per peer, so pending or rejected peers
+## do not receive gameplay broadcasts.
+func broadcast_packet(packet_type_id : PacketEnums.Type, values : Dictionary, entity_id : int = 0) -> void:
+	if packet_processor == null:
+		push_warning("Cannot broadcast packet: packet processor is not initialized.")
 		return
 		
-	var packet : DecodedPacket = packet_processor.decode(data)
+	var definition := packet_processor.get_definition(packet_type_id)
+	if definition == null:
+		push_warning("Cannot broadcast packet: unknown packet type '%s'." % packet_type_id)
+		return
+		
+	if not _is_direction_allowed(definition, PacketEnums.Direction.SERVER_TO_CLIENT, PacketEnums.DirectionContext.BROADCAST):
+		return
+		
+	var encoded_packet := packet_processor.encode(packet_type_id, values, entity_id)
+	if encoded_packet.is_empty():
+		return
+		
+	if NetworkHandler.multiplayer_peer == null or not multiplayer.is_server():
+		return
+		
+	# Iterate over tracked peers and only send to peers that are ready.
+	for peer_id : int in NetworkSession.peer_states:
+		if not NetworkSession.can_send_packet_to_peer(packet_type_id, peer_id):
+			continue
+			
+		NetworkHandler.send_bytes_to_peer(encoded_packet, peer_id, definition.transfer_mode)
+
+
+# Private Methods
+## Checks whether a packet's configured direction permits the operation.
+##
+## AGNOSTIC packets may travel in either direction. All other packets must
+## match the expected direction for the send or receive operation.
+func _is_direction_allowed(definition : Packet, expected_direction : PacketEnums.Direction, context : PacketEnums.DirectionContext) -> bool:
+	if definition == null:
+		push_warning("Rejected packet: packet definition is missing.")
+		return false
+		
+	if definition.direction == PacketEnums.Direction.AGNOSTIC:
+		return true
+		
+	if definition.direction == expected_direction:
+		return true
+		
+	push_warning("Rejected packet type '%s': direction mismatch in context '%s'." % [definition.packet_type_id, PacketEnums.DirectionContext.keys()[context]])
+	
+	return false
+
+
+# Signal Methods
+## Handles bytes received by the client.
+##
+## Decodes the packet, validates its direction and routes it through the
+## session layer before exposing it to gameplay listeners.
+func _on_client_packet(sender_peer_id : int, data : PackedByteArray) -> void:
+	if packet_processor == null:
+		push_warning("Rejected incoming packet: packet processor is not initialized.")
+		return
+		
+	var packet := packet_processor.decode(data)
 	if packet == null:
 		return
-	
-	# Preserve the sender identity supplied by the transport layer.
+		
 	packet.sender_peer_id = sender_peer_id
 	
-	if NetSession.route_client_packet(packet):
-		handle_client_packet.emit(packet)
-
-
-## Decodes an incoming packet received by the server and attaches the sender's
-## peer ID before routing it to the session layer.
-func _on_server_packet(peer_id : int, data : PackedByteArray) -> void:
-	if not is_ready_for_networking:
-		push_error("Cannot process packet: NetworkGlobals is not ready for networking.")
+	if not _is_direction_allowed(packet_processor.get_definition(packet.packet_type_id), PacketEnums.Direction.SERVER_TO_CLIENT, PacketEnums.DirectionContext.RECEIVE_FROM_SERVER):
 		return
+		
+	if not NetworkSession.route_client_packet(packet):
+		return
+		
+	handle_client_packet.emit(packet)
 
-	var packet : DecodedPacket = packet_processor.decode(data)
+
+## Handles bytes received by the server.
+##
+## Decodes the packet, validates its direction and routes it through the
+## session layer before exposing it to gameplay listeners.
+func _on_server_packet(sender_peer_id : int, data : PackedByteArray) -> void:
+	if packet_processor == null:
+		push_warning("Rejected incoming packet: packet processor is not initialized.")
+		return
+		
+	var packet := packet_processor.decode(data)
 	if packet == null:
 		return
-
-	# Preserve the sender identity supplied by the transport layer.
-	packet.sender_peer_id = peer_id
-
-	if NetSession.route_server_packet(packet):
-		handle_server_packet.emit(packet.sender_peer_id, packet)
+		
+	packet.sender_peer_id = sender_peer_id
+	
+	if not _is_direction_allowed(packet_processor.get_definition(packet.packet_type_id), PacketEnums.Direction.CLIENT_TO_SERVER, PacketEnums.DirectionContext.RECEIVE_FROM_CLIENT):
+		return
+		
+	if not NetworkSession.route_server_packet(packet):
+		return
+		
+	handle_server_packet.emit(sender_peer_id, packet)

@@ -16,9 +16,10 @@ config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
 
-NetHandler="*uid://5i52qn5e16vv"
+NetworkHandler="*uid://5i52qn5e16vv"
 NetworkGlobals="*uid://fiu1vag41aun"
-NetSession="*uid://ch0d67usx2vwe"
+NetworkSession="*uid://ch0d67usx2vwe"
+NetworkEntityManager="*uid://doabdxmturd1d"
 
 [display]
 

@@ -285,7 +285,7 @@ func _disconnect_packet_signals() -> void:
 # Connection Actions
 ## Starts a server and logs whether the operation appears successful.
 func _on_server_pressed() -> void:
-	NetHandler.start_server()
+	NetworkHandler.start_server()
 	
 	# Uses the reported network role to check whether the server started.
 	if _get_network_role() == "Server":
@@ -298,7 +298,7 @@ func _on_server_pressed() -> void:
 
 ## Requests a client connection.
 func _on_client_pressed() -> void:
-	NetHandler.start_client()
+	NetworkHandler.start_client()
 	_log_event("Client connection requested.")
 	_refresh_status()
 
@@ -310,7 +310,7 @@ func _on_stop_server_pressed() -> void:
 		_log_event("Cannot stop server: this instance is not the server.")
 		return
 		
-	NetHandler.stop_server()
+	NetworkHandler.stop_server()
 	_log_event("Server stopped.")
 	_refresh_status()
 
@@ -321,7 +321,7 @@ func _on_disconnect_pressed() -> void:
 	if multiplayer.multiplayer_peer == null:
 		return
 		
-	NetHandler.disconnect_client()
+	NetworkHandler.disconnect_client()
 	_log_event("Disconnected.")
 	_refresh_status()
 
@@ -401,7 +401,7 @@ func _on_send_to_peer_pressed() -> void:
 	var target_peer_id : int = int(_target_peer_input.text)
 	
 	# Rejects the server's own ID and any lower or invalid peer IDs.
-	if target_peer_id <= NetHandler.server_id:
+	if target_peer_id <= NetworkHandler.server_id:
 		_log_event("Target peer ID must be greater than 1.")
 		return
 		
@@ -550,19 +550,19 @@ func _on_reset_statistics_pressed() -> void:
 
 
 # Status
-## Determines the local network role from the current peer and NetHandler state.
+## Determines the local network role from the current peer and NetworkHandler state.
 func _get_network_role() -> String:
 	# Retrieves the peer configured on the SceneTree multiplayer API.
 	var peer : MultiplayerPeer = multiplayer.multiplayer_peer
 	
 	# Treats missing or inactive peer state as disconnected.
-	if peer == null or not NetHandler._has_active_peer():
+	if peer == null or not NetworkHandler._has_active_peer():
 		return "Not Connected"
 		
 	# Only the ENet peer implementation is classified by this harness.
 	if peer is ENetMultiplayerPeer:
-		# The NetHandler flag identifies this instance as the server.
-		if NetHandler._is_server:
+		# The NetworkHandler flag identifies this instance as the server.
+		if NetworkHandler._is_server:
 			return "Server"
 			
 		# Distinguishes a client that is still attempting to connect.
@@ -602,7 +602,7 @@ func _refresh_status() -> void:
 	var peer : MultiplayerPeer = multiplayer.multiplayer_peer
 	
 	# Shows the disconnected state and hides controls that require a connection.
-	if peer == null or not NetHandler._has_active_peer():
+	if peer == null or not NetworkHandler._has_active_peer():
 		_status_label.text = "Role: Not Connected | Status: Disconnected"
 		_peer_id_label.text = "Local peer ID: Unassigned"
 		_connected_peers_label.text = "Connected peers: None"
@@ -633,7 +633,7 @@ func _refresh_status() -> void:
 	if is_server:
 		_connected_peers_label.text = "Connected client IDs: %s" % str(multiplayer.get_peers())
 	else:
-		_connected_peers_label.text = "Server peer ID: %s" % NetHandler.server_id
+		_connected_peers_label.text = "Server peer ID: %s" % NetworkHandler.server_id
 		
 	# Applies UI visibility and enabled states for the current connection.
 	_update_buttons(true, is_server, connection_established, is_connecting)

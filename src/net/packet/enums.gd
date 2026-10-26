@@ -13,7 +13,31 @@ enum Type {
 	TEST_PACKET = 1,
 	CLIENT_HANDSHAKE = 2,
 	SERVER_HANDSHAKE = 3,
-	ENTITY_POSITION = 4
+	
+	# Entity Types
+	ENTITY_SPAWN = 50,
+	ENTITY_DESPAWN = 51,
+	PLAYER_MOVEMENT_INPUT = 52,
+	PLAYER_MOVEMENT_STATE = 53
+}
+
+
+## Value to determine whether a packet's sender should be restricted to either
+## server or client, or if both are allowed to send it.
+enum Direction {
+	AGNOSTIC = 0,
+	CLIENT_TO_SERVER = 1,
+	SERVER_TO_CLIENT = 2
+}
+
+
+## Value to provide context into the direction of a packet.
+enum DirectionContext {
+	SEND_TO_SERVER,
+	SEND_TO_PEER,
+	BROADCAST,
+	RECEIVE_FROM_CLIENT,
+	RECEIVE_FROM_SERVER
 }
 
 
@@ -42,9 +66,16 @@ enum FieldType {
 ## identifiers for consistency when encoding or decoding packets.
 enum FieldName {
 	UNDEFINED = 0,
-	MESSAGE_ID = 1,
-	TEST_VALUE = 2,
-	ACCEPTED = 3,
-	PROTOCOL_VERSION = 4,
-	POSITION = 5	
+	PLAYER_PEER_ID = 1,
+	MESSAGE_ID = 2,
+	TEST_VALUE = 3,
+	ACCEPTED = 4,
+	PROTOCOL_VERSION = 5,
+	
+	# Entity Fields
+	ACTION_FLAGS = 50,
+	INPUT_SEQUENCE = 51,
+	MOVEMENT_DIRECTION = 60,
+	VELOCITY = 61,
+	POSITION = 62
 }

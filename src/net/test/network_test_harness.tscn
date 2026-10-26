@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://f0aqsxjhbh3a"]
 
-[ext_resource type="Script" uid="uid://ddvfkvsgysr6l" path="res://src/net/ui/network_test_harness.gd" id="1_mhuxf"]
+[ext_resource type="Script" uid="uid://ddvfkvsgysr6l" path="res://src/net/test/network_test_harness.gd" id="1_2jenp"]
 
 [node name="NetworkTestHarness" type="Control" unique_id=1282177659]
 layout_mode = 3
@@ -9,4 +9,4 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_mhuxf")
+script = ExtResource("1_2jenp")

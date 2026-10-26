@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Packet" format=3 uid="uid://dddqa3e4u074s"]
+
+[ext_resource type="Script" uid="uid://dj64obnp58yui" path="res://src/net/packet/packet_field.gd" id="1_ydb2x"]
+[ext_resource type="Script" uid="uid://dbq5fnuxeoaf3" path="res://src/net/packet/packet.gd" id="2_qh21g"]
+
+[resource]
+script = ExtResource("2_qh21g")
+packet_type_id = 51
+description = "Notifies clients that a networked entity has been removed from the game world and should be unregistered and despawned."
+direction = 2
+category = 1
+metadata/_custom_type_script = "uid://dbq5fnuxeoaf3"

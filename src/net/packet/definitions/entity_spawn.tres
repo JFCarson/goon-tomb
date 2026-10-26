@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Packet" format=3 uid="uid://dqlrwhlrerlfx"]
+
+[ext_resource type="Script" uid="uid://dj64obnp58yui" path="res://src/net/packet/packet_field.gd" id="1_g8l6n"]
+[ext_resource type="Script" uid="uid://dbq5fnuxeoaf3" path="res://src/net/packet/packet.gd" id="2_hivgr"]
+
+[sub_resource type="Resource" id="Resource_m47ov"]
+script = ExtResource("1_g8l6n")
+field_name = 62
+field_type = 6
+metadata/_custom_type_script = "uid://dj64obnp58yui"
+
+[resource]
+script = ExtResource("2_hivgr")
+packet_type_id = 50
+description = "Notifies clients that a networked entity has been created and provides the initial data required to spawn and register it."
+direction = 2
+category = 1
+fields = Array[ExtResource("1_g8l6n")]([SubResource("Resource_m47ov")])
+metadata/_custom_type_script = "uid://dbq5fnuxeoaf3"

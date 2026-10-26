@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Packet" format=3 uid="uid://bul4bgn4uy4nx"]
+
+[ext_resource type="Script" uid="uid://dj64obnp58yui" path="res://src/net/packet/packet_field.gd" id="1_71ify"]
+[ext_resource type="Script" uid="uid://dbq5fnuxeoaf3" path="res://src/net/packet/packet.gd" id="2_y386q"]
+
+[sub_resource type="Resource" id="Resource_tc4ee"]
+script = ExtResource("1_71ify")
+field_name = 51
+field_type = 2
+metadata/_custom_type_script = "uid://dj64obnp58yui"
+
+[sub_resource type="Resource" id="Resource_l37e7"]
+script = ExtResource("1_71ify")
+field_name = 60
+field_type = 5
+metadata/_custom_type_script = "uid://dj64obnp58yui"
+
+[sub_resource type="Resource" id="Resource_yjr45"]
+script = ExtResource("1_71ify")
+field_name = 50
+metadata/_custom_type_script = "uid://dj64obnp58yui"
+
+[resource]
+script = ExtResource("2_y386q")
+packet_type_id = 52
+description = "Sent by a player's owning client to submit sequenced movement inputs and requested actions to the server for validation and authoritative simulation."
+direction = 1
+category = 1
+transfer_mode = 1
+fields = Array[ExtResource("1_71ify")]([SubResource("Resource_tc4ee"), SubResource("Resource_l37e7"), SubResource("Resource_yjr45")])
+metadata/_custom_type_script = "uid://dbq5fnuxeoaf3"
