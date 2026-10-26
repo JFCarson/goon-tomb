@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://dkp1qp2dq15xk"]
+
+[ext_resource type="Script" uid="uid://cn3cm7auqktqj" path="res://src/entity/scripts/player/multiplayer/remote_character_controller.gd" id="1_af1hj"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_aveou"]
+radius = 0.05
+height = 0.5
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_af1hj"]
+radius = 0.3
+height = 1.8
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jd71q"]
+radius = 0.3
+height = 1.8
+
+[node name="MultiplayerPeerCharacter" type="CharacterBody3D" unique_id=1455175709]
+
+[node name="TEMP LIGHT" type="OmniLight3D" parent="." unique_id=892714377]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6077492, -0.0035186112)
+light_color = Color(1.4831108, 1.1, 0, 1)
+light_energy = 1.5
+light_volumetric_fog_energy = 3.0
+shadow_enabled = true
+distance_fade_enabled = true
+distance_fade_begin = 50.0
+distance_fade_shadow = 60.0
+distance_fade_length = 15.0
+
+[node name="TEMP PEANITS" type="MeshInstance3D" parent="." unique_id=952273366]
+transform = Transform3D(1, 0, 0, 0, 0.57357645, 0.81915206, 0, -0.81915206, 0.57357645, 0, 0.66371965, -0.28497654)
+mesh = SubResource("CapsuleMesh_aveou")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=446750400]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_af1hj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1242256364]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_jd71q")
+
+[node name="RemoteCharacterController" type="Node" parent="." unique_id=164079176]
+script = ExtResource("1_af1hj")
+metadata/_custom_type_script = "uid://cn3cm7auqktqj"

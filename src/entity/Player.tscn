@@ -26,10 +26,6 @@
 [ext_resource type="Script" uid="uid://t1w3ngfbg8oi" path="res://src/entity/scripts/generic/component/damage/fall_damage.gd" id="19_s2okv"]
 [ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/overlays/hud.tscn" id="22_iwkrf"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_26let"]
-radius = 0.05
-height = 0.5
-
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_8sy0d"]
 radius = 0.3
 height = 1.8
@@ -55,10 +51,6 @@ distance_fade_enabled = true
 distance_fade_begin = 50.0
 distance_fade_shadow = 60.0
 distance_fade_length = 15.0
-
-[node name="TEMP PEANITS" type="MeshInstance3D" parent="." unique_id=1602727189]
-transform = Transform3D(1, 0, 0, 0, 0.57357645, 0.81915206, 0, -0.81915206, 0.57357645, 0, 0.66371965, -0.28497654)
-mesh = SubResource("CapsuleMesh_26let")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1373673167]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)

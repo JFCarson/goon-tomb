@@ -15,11 +15,20 @@ enum Type {
 	SERVER_HANDSHAKE = 3,
 	
 	# Entity Types
+	PLAYER_SPAWN = 49,
 	ENTITY_SPAWN = 50,
 	ENTITY_DESPAWN = 51,
 	PLAYER_MOVEMENT_INPUT = 52,
 	PLAYER_MOVEMENT_STATE = 53
 }
+
+
+## Packet types that manage entity creation or removal.
+const entity_lifecycle_types : Array[Type] = [
+	Type.PLAYER_SPAWN,
+	Type.ENTITY_SPAWN,
+	Type.ENTITY_DESPAWN
+]
 
 
 ## Value to determine whether a packet's sender should be restricted to either
@@ -73,9 +82,11 @@ enum FieldName {
 	PROTOCOL_VERSION = 5,
 	
 	# Entity Fields
+	ENTITY_TYPE = 49,
 	ACTION_FLAGS = 50,
 	INPUT_SEQUENCE = 51,
 	MOVEMENT_DIRECTION = 60,
 	VELOCITY = 61,
-	POSITION = 62
+	POSITION = 62,
+	ROTATION = 63
 }

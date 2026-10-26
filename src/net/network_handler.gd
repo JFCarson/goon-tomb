@@ -52,7 +52,7 @@ var multiplayer_peer : ENetMultiplayerPeer
 ##
 ## Tracks the role established during peer setup rather than querying the
 ## multiplayer API during packet routing or teardown.
-var _is_server : bool = false
+var is_server : bool = false
 
 
 # Process
@@ -82,34 +82,36 @@ func _ready() -> void:
 ## Starts an ENet server bound to the specified IP address and port.
 ## Refuses to start if this instance is already hosting.
 ## Shuts down any previously configured peer before creating the server.
-func start_server(ip_address : String = "127.0.0.1", port : int = 42069) -> void:
-	if _is_server and _has_active_peer():
+func start_server(ip_address : String = "127.0.0.1", port : int = 42069) -> bool:
+	if is_server and _has_active_peer():
 		push_warning("Cannot start server: a server is already running.")
-		return
-
+		return false
+		
 	shutdown()
-
+	
 	var new_peer : ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	new_peer.set_bind_ip(ip_address)
-
+	
 	var error : Error = new_peer.create_server(port, max_clients)
-
+	
 	if error != OK:
 		new_peer.close()
 		push_error("Server failed to start: " + error_string(error))
-		return
-
+		return false
+		
 	# Establish the local role before assigning the peer to the API.
 	multiplayer_peer = new_peer
-	_is_server = true
+	is_server = true
 	multiplayer.multiplayer_peer = multiplayer_peer
-
+	
 	print("Server started successfully.")
+	
+	return true
 
 
 ## Connects to an ENet server at the specified IP address and port.
 ## Shuts down any previously configured peer before creating the client.
-func start_client(ip_address : String = "127.0.0.1", port : int = 42069) -> void:
+func start_client(ip_address : String = "127.0.0.1", port : int = 42069) -> bool:
 	shutdown()
 	
 	var new_peer : ENetMultiplayerPeer = ENetMultiplayerPeer.new()
@@ -117,13 +119,15 @@ func start_client(ip_address : String = "127.0.0.1", port : int = 42069) -> void
 	
 	if error != OK:
 		push_error("Client failed to start: " + error_string(error))
-		return
+		return false
 		
 	multiplayer_peer = new_peer
-	_is_server = false
+	is_server = false
 	multiplayer.multiplayer_peer = multiplayer_peer
 	
 	print("Client connection initiated; awaiting server response.")
+	
+	return true
 
 
 ## Disconnects the client from its server.
@@ -132,7 +136,7 @@ func disconnect_client() -> void:
 	if multiplayer_peer == null:
 		return
 		
-	if _is_server:
+	if is_server:
 		push_warning("Cannot disconnect client: this instance is hosting a server.")
 		return
 		
@@ -147,7 +151,7 @@ func disconnect_peer(peer_id : int) -> void:
 		push_error("Cannot disconnect peer: no active networking peer is configured.")
 		return
 		
-	if not _is_server:
+	if not is_server:
 		push_error("Cannot disconnect peer: this instance is not the server.")
 		return
 		
@@ -168,7 +172,7 @@ func stop_server() -> void:
 	if multiplayer_peer == null:
 		return
 		
-	if not _is_server:
+	if not is_server:
 		push_warning("Cannot stop server: this instance is not hosting a server.")
 		return
 		
@@ -193,7 +197,7 @@ func send_bytes_to_server(data : PackedByteArray, transfer_mode : MultiplayerPee
 		push_error("Cannot send packet: no active networking peer is configured.")
 		return
 		
-	if _is_server:
+	if is_server:
 		push_error("Cannot send a client request: this instance is the server.")
 		return
 		
@@ -211,7 +215,7 @@ func send_bytes_to_peer(data : PackedByteArray, target_peer_id : int, transfer_m
 		push_error("Cannot send packet: no active networking peer is configured.")
 		return false
 		
-	if not _is_server:
+	if not is_server:
 		push_error("Cannot send packet to a peer: this instance is not the server.")
 		return false
 		
@@ -233,7 +237,7 @@ func broadcast_bytes(data : PackedByteArray, transfer_mode : MultiplayerPeer.Tra
 		push_error("Cannot broadcast packet: no active networking peer is configured.")
 		return
 		
-	if not _is_server:
+	if not is_server:
 		push_error("Cannot broadcast packet: this instance is not the server.")
 		return
 		
@@ -254,7 +258,7 @@ func _close_peer() -> void:
 	# Clear local state first so any late callbacks cannot treat this peer
 	# as the active connection.
 	multiplayer_peer = null
-	_is_server = false
+	is_server = false
 	
 	if peer_to_close == null:
 		return
@@ -298,7 +302,7 @@ func _send_bytes(data : PackedByteArray, target_peer_id : int, transfer_mode : M
 # Signal Methods
 ## Handles a successful client connection.
 func _on_connection_succeeded() -> void:
-	if _is_server:
+	if is_server:
 		push_warning("Received a client connection-success event on the server.")
 		return
 		
@@ -343,14 +347,14 @@ func _on_packet_received(sender_peer_id : int, data : PackedByteArray) -> void:
 		return
 		
 	if sender_peer_id == server_id:
-		if _is_server:
+		if is_server:
 			push_warning("Ignoring packet from the server peer ID on a server instance.")
 			return
 			
 		on_client_packet.emit(sender_peer_id, data)
 		return
 		
-	if not _is_server:
+	if not is_server:
 		push_warning("Ignoring packet from unexpected peer ID %s on a client instance." % sender_peer_id)
 		return
 		

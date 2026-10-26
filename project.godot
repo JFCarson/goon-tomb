@@ -20,12 +20,12 @@ NetworkHandler="*uid://5i52qn5e16vv"
 NetworkGlobals="*uid://fiu1vag41aun"
 NetworkSession="*uid://ch0d67usx2vwe"
 NetworkEntityManager="*uid://doabdxmturd1d"
+NetworkPlayerManager="*uid://cvulkdfsvp1gn"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/mode=3
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

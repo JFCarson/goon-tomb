@@ -59,7 +59,7 @@ func encode(packet_type_id : int, values : Dictionary, entity_id : int = 0) -> P
 		
 	# Validate the entity ID against the packet category.
 	if definition.category == PacketEnums.Category.ENTITY:
-		if entity_id < 1 or entity_id > 65535:
+		if entity_id < 1 or entity_id > NetworkEntityManager.max_entity_id:
 			push_error("Entity packet has an invalid entity ID.")
 			return PackedByteArray()
 	elif entity_id != 0:
@@ -284,5 +284,11 @@ func _decode_field(data : PackedByteArray, offset : int, field : PacketField) ->
 
 ## Reports a field value that cannot be represented by its configured wire type.
 func _invalid_field_value(field : PacketField) -> bool:
-	push_error("Invalid value for packet field '%s'." % field.field_name)
+	push_error(
+		"Invalid value for packet field '%s' (ID: %s, type: %s)." % [
+			field.field_name,
+			field.field_name,
+			field.field_type
+		]
+	)
 	return false

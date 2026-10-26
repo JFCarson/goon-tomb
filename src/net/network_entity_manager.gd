@@ -7,6 +7,11 @@ extends Node
 ## to the appropriate entity through its handle_network_packet() method.
 
 
+# Config
+## Maximum entity ID supported by the packet protocol.
+const max_entity_id : int = 65535
+
+
 # Runtime
 ## Network entities indexed by their unique entity ID.
 var entities : Dictionary[int, Node] = {}
@@ -85,6 +90,10 @@ func dispatch_packet(packet : DecodedPacket) -> bool:
 		return false
 		
 	if packet.category != PacketEnums.Category.ENTITY:
+		return false
+		
+	# Lifecycle packets are handled by their respective managers.
+	if packet.packet_type_id in PacketEnums.entity_lifecycle_types:
 		return false
 		
 	if packet.entity_id < 1:
