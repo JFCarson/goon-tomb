@@ -1,5 +1,5 @@
 class_name EntityState
-extends Node
+extends RefCounted
 
 ## Base class for entity states.
 

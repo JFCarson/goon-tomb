@@ -269,7 +269,6 @@ func _close_peer() -> void:
 	peer_to_close.close()
 
 
-
 ## Sends bytes after validating the active peer, payload and transfer mode.
 ## Returns true when the transport accepts the packet.
 func _send_bytes(data : PackedByteArray, target_peer_id : int, transfer_mode : MultiplayerPeer.TransferMode) -> bool:
@@ -296,7 +295,6 @@ func _send_bytes(data : PackedByteArray, target_peer_id : int, transfer_mode : M
 		return false
 		
 	return true
-
 
 
 # Signal Methods

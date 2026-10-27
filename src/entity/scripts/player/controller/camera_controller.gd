@@ -1,37 +1,60 @@
 class_name GameCameraController
-extends EntityController3D
+extends PlayerController3D
 
 ## Controller for all components of the player's game camera.
 
 
-## Components
-@onready var camera : Camera3D = $PlayerCameraHead/Camera3D
-@onready var camera_head : Node3D = $PlayerCameraHead
-@onready var interact_ray : RayCast3D = $PlayerCameraHead/Camera3D/InteractRay
-@onready var drop_shape_cast : ShapeCast3D = $PlayerCameraHead/Camera3D/DropShapeCast
-@onready var camera_look : CameraLook = $PlayerCameraHead/CameraLook
-@onready var camera_bob : CameraBob = $CameraBob
-@onready var camera_sway : CameraSway = $CameraSway
-@onready var damage_feedback : CameraDamageFeedback = $CameraDamageFeedback
+# Components
+## Keeps reference to the player's game camera.
+@export var camera : Camera3D
+
+## Keeps reference to the pivot that the camera is attached to.
+@export var camera_head : Node3D
+
+## Keeps reference to the interact ray.
+@export var interact_ray : RayCast3D
+
+## Keeps reference to the shape cast that is used to determine the location in
+## which the player drops items.
+@export var drop_shape_cast : ShapeCast3D
+
+## Keeps reference to the component that handles look calculations.
+@export var camera_look : CameraLook
+
+## Keeps reference to the component that handles camera bob calculations.
+@export var camera_bob : CameraBob
+
+## Keeps reference to the component that handles camera sway calculations.
+@export var camera_sway : CameraSway
+
+## Keeps reference to the component that handles damage feedback motion
+## calculations.
+@export var damage_feedback : CameraDamageFeedback
 
 
-## Runtime State
+# Runtime
+## Keeps reference to the camera's resting position relative to the player.
 @onready var camera_default_position : Vector3 = camera.position
 
 
-func _initialise_hook() -> void:
-	camera_look.camera_config = config.camera
+# Process
+## Intitialise the controller.
+func initialise(entity_orchestrator : CharacterEntity) -> void:
+	super.initialise(entity_orchestrator)
 	
-	camera_bob.config = config
-	camera_bob.state = state
+	# REFACTOR: THIS IS MESSY
+	camera_look.camera_config = player.player_config.camera
 	
-	camera_sway.config = config
+	camera_bob.config = player.player_config
+	camera_bob.state = player.state
 	
-	damage_feedback.config = config
+	camera_sway.config = player.player_config
+	
+	damage_feedback.config = player.player_config
 
 
-## Public Interface
-# Processes camera look input and returns the resulting yaw rotation.
+# Public Interface
+## Processes camera look input and returns the resulting yaw rotation.
 func process_look(input_delta : Vector2) -> float:
 	var look_rotation : Vector2 = camera_look.look(input_delta)
 	camera_head.rotation.x = look_rotation.y
@@ -39,24 +62,24 @@ func process_look(input_delta : Vector2) -> float:
 	return look_rotation.x
 
 
-# Processes camera effects for the current frame.
+## Processes camera effects for the current frame.
 func process_camera_effects(delta : float, player_velocity : Vector3) -> void:
 	_process_bob(delta, player_velocity)
 	_process_sway(delta, player_velocity)
 
 
-# Gets reference to the InteractRay attached to the camera.
+## Gets reference to the InteractRay attached to the camera.
 func get_interact_ray() -> RayCast3D:
 	return interact_ray
 
 
-# Triggers camera feedback when the player takes damage.
+## Triggers camera feedback when the player takes damage.
 func cause_damage_feedback(magnitude : float) -> void:
 	damage_feedback.feedback(magnitude)
 
 
-# Processes a request to drop an item in the world, removing it from the
-# inventory and creating a WorldItem at the DropShapeCast.
+## Processes a request to drop an item in the world, removing it from the
+## inventory and creating a WorldItem at the DropShapeCast.
 func drop_item_at_shape_cast(item : ItemDefinition, amount : int) -> void:
 	var item_instance : WorldItem = CreateWorldItem.create_item_instance(item, amount)
 	item_instance.visible = false
@@ -68,13 +91,13 @@ func drop_item_at_shape_cast(item : ItemDefinition, amount : int) -> void:
 	item_instance.visible = true
 
 
-## Private Methods
-# Processes the camera bob effect.
+# Private Methods
+## Processes the camera bob effect.
 func _process_bob(delta : float, player_velocity : Vector3) -> void:
 	camera.position = camera_default_position + camera_bob.calculate(delta, player_velocity)
 
 
-# Processes the camera sway and damage feedback effects.
+## Processes the camera sway and damage feedback effects.
 func _process_sway(delta : float, player_velocity : Vector3) -> void:
 	var sway_rotation : Vector3 = camera_sway.calculate(delta, player_velocity, camera.global_transform.basis)
 	var damage_rotation : float = damage_feedback.update(delta)
@@ -83,7 +106,7 @@ func _process_sway(delta : float, player_velocity : Vector3) -> void:
 	camera.rotation.z = sway_rotation.z
 
 
-# Calculate the world position of where an item should be dropped.
+## Calculate the world position of where an item should be dropped.
 func _calculate_drop_position(collision : Shape3D) -> Vector3:
 	drop_shape_cast.shape = collision
 	drop_shape_cast.force_shapecast_update()
@@ -92,21 +115,3 @@ func _calculate_drop_position(collision : Shape3D) -> Vector3:
 		return drop_shape_cast.get_collision_point(0)
 	else:
 		return drop_shape_cast.to_global(drop_shape_cast.target_position)
-
-
-## Validation
-func validate() -> void:
-	assert(camera != null, "GameCameraController requires a Camera3D component.")
-	assert(camera_head != null, "GameCameraController requires a PlayerCameraHead Node3D.")
-	assert(interact_ray != null, "GameCameraController requires an InteractRay RayCast3D.")
-	assert(camera_look != null, "GameCameraController requires a CameraLook component.")
-	assert(camera_bob != null, "GameCameraController requires a CameraBob component.")
-	assert(camera_sway != null, "GameCameraController requires a CameraSway component.")
-	assert(damage_feedback != null, "GameCameraController requires a CameraDamageFeedback component.")
-	assert(config.camera != null, "GameCameraController requires a PlayerCameraConfig.")
-	assert(state != null, "GameCameraController requires an EntityStateController.")
-	
-	camera_look.validate()
-	camera_bob.validate()
-	camera_sway.validate()
-	damage_feedback.validate()

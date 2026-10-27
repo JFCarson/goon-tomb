@@ -4,27 +4,31 @@ extends EntityController
 ## Controller for all of an entity's state components.
 
 
-const STATES := EntityStateEnums.States
+# Runtime
+## Keeps reference to each initialised and tracked state belonging to the entity.
+var states : Dictionary[EntityStateEnums.States, EntityState] = {}
 
 
-## Runtime State
-var states : Dictionary[STATES, EntityState] = {}
+# Signals
+## Emitted when a state is updating, containing a payload which indicates which
+## state changed, and to what new value.
+signal state_changed(target_state : EntityStateEnums.States, value : int)
 
 
-## Signals
-signal state_changed(target_state : STATES, value : int)
-
-
-func _initialise_hook() -> void:
+# Process
+## Intitialise the controller.
+func initialise(entity_orchestrator : CharacterEntity) -> void:
+	super.initialise(entity_orchestrator)
+	
 	states.clear()
 	
-	for i in config.state.tracked_states:
+	for i in entity.config.state.tracked_states:
 		states[i] = EntityState.new(EntityStateEnums.state_components[i])
 
 
 # Public Interface
-# Updates the target state's value to a new one.
-func update(target_state : STATES, value : int) -> void:
+## Updates the target state's value to a new one.
+func update(target_state : EntityStateEnums.States, value : int) -> void:
 	if target_state not in states:
 		push_warning("Update attempted on invalid state: %s" % target_state)
 		return
@@ -36,18 +40,10 @@ func update(target_state : STATES, value : int) -> void:
 	state_changed.emit(target_state, value)
 
 
-# Returns the value of the requested state.
-func check(target_state : STATES) -> int:
+## Returns the value of the requested state.
+func check(target_state : EntityStateEnums.States) -> int:
 	if target_state not in states:
 		push_warning("Check request attempted on invalid state: %s" % target_state)
 		return -1
 	
 	return states[target_state].get_state()
-
-## Validation
-func _validate() -> void:
-	assert(config.state != null, "EntityStateController requires an EntityStateConfig.")
-	assert(config.state.tracked_states != null, "EntityStateController requires tracked states to be configured.")
-	
-	for target_state in config.state.tracked_states:
-		assert(target_state in EntityStateEnums.state_components, "EntityStateController contains an invalid tracked state: %s." % target_state)

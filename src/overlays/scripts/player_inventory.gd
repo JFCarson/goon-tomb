@@ -8,7 +8,9 @@ extends Control
 @onready var item_container : VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/InventoryScroll/Items
 @onready var weight_label : Label = $PanelContainer/MarginContainer/VBoxContainer/Footer/WeightProgressBar/WeightValue/Weight
 @onready var weight_max_label : Label = $PanelContainer/MarginContainer/VBoxContainer/Footer/WeightProgressBar/WeightValue/WeightMax
-@onready var inventory_controller : PlayerInventoryController = $"../../PlayerInventoryController"
+
+# REFACTOR: THIS SHOULD BE MORE DYNAMIC
+@export var inventory_controller : PlayerInventoryController
 
 # Config
 # Stores reference the the item row scene.

@@ -1,29 +1,44 @@
 class_name PlayerInteractionController
-extends EntityController
+extends PlayerController
 
 ## Handles player interaction detection, prompts and interaction execution.
 
 
-## Components
+# Components
+## Keeps reference to the player's interact ray.
 var interact_ray : RayCast3D
+
+## Keeps reference to the player's HUD prompt label.
 var prompt : Label
 
 
-## Runtime State
+# Runtime
+## Keeps reference to the currently 'selected' Interactable.
 var current_target : Interactable = null
 
 
-## Signals
+# Signals
+## Emmitted when a special interaction is triggered.
 signal interaction_request(response : InteractionRequest)
 
 
-## Public Interface
-# Updates the current interaction target and its prompt.
-# Processes interaction requests for the entity.
+# Process
+## Intitialise the controller.
+func initialise(entity_orchestrator : CharacterEntity) -> void:
+	super.initialise(entity_orchestrator)
+	
+	interact_ray = player.camera.get_interact_ray()
+	prompt = player.overlay.hud.get_interact_prompt()
+
+
+# Public Interface
+## Processes interaction requests for the entity.
 func process_interaction(action_list : Array[EntityEnums.Action]) -> void:
 	if action_list.has(EntityEnums.Action.INTERACT):
 		try_interact()
 
+
+## Updates the current interaction target and its prompt.
 func update_interaction() -> void:
 	current_target = _get_target()
 	
@@ -33,9 +48,9 @@ func update_interaction() -> void:
 		prompt.text = current_target.get_prompt()
 
 
-# Attempts to interact with the currently targeted object. If the interaction
-# returns a request, rather than finishing the interaction, send a signal
-# with the request to be finalised elsewhere.
+## Attempts to interact with the currently targeted object. If the interaction
+## returns a request, rather than finishing the interaction, send a signal
+## with the request to be finalised elsewhere.
 func try_interact() -> void:
 	if current_target == null:
 		return
@@ -50,13 +65,13 @@ func try_interact() -> void:
 	finish_interaction(current_target)
 	
 
-# Finishes the interaction on an interactable.
+## Finishes the interaction on an interactable.
 func finish_interaction(target : Interactable) -> void:
 	target.process_interaction()
 
 
-## Private Methods
-# Returns the interactable currently targeted by the interaction ray.
+# Private Methods
+## Returns the interactable currently targeted by the interaction ray.
 func _get_target() -> Interactable:
 	if interact_ray.is_colliding():
 		var collider : Object = interact_ray.get_collider()
@@ -67,9 +82,3 @@ func _get_target() -> Interactable:
 					return child
 	
 	return null
-
-
-## Validation
-func _validate() -> void:
-	assert(interact_ray != null, "Interaction requires a RayCast3D.")
-	assert(prompt != null, "Interaction requires an interaction prompt Label.")

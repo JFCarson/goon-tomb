@@ -1,5 +1,5 @@
 class_name InteractionRequest
-extends Resource
+extends RefCounted
 
 ## Declares the base data shape required to complete an interaction.
 

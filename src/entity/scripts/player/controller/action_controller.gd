@@ -1,43 +1,44 @@
 class_name PlayerActionController
-extends EntityController
+extends PlayerController
 
 ## Converts player input into gameplay actions.
+##
 ## The 'create_action_list' method can be used to produce an array of currently
 ## requested actions, which can then be processed throughout the composition.
 
 
-## Public Interface
-# Returns the movement vector based on user input.
+# Public Interface
+## Returns the movement vector based on user input.
 func get_move_action() -> Vector2:
 	return Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
 
 
-# Returns whether the player is currently requesting to sprint.
+## Returns whether the player is currently requesting to sprint.
 func get_sprint_action() -> bool:
 	return Input.is_action_pressed("sprint")
 
 
-# Returns whether the player has requested a jump this frame.
+## Returns whether the player has requested a jump this frame.
 func get_jump_action() -> bool:
 	return Input.is_action_just_pressed("jump")
 
 
-# Returns whether the player is currently requesting to crouch.
+## Returns whether the player is currently requesting to crouch.
 func get_crouch_action() -> bool:
 	return Input.is_action_pressed("crouch")
 
 
-# Returns whether the player has requested an interaction this frame.
+## Returns whether the player has requested an interaction this frame.
 func get_interact_action() -> bool:
 	return Input.is_action_just_pressed("interact")
 
 
-# Returns whether the player has requested to toggle their inventory.
+## Returns whether the player has requested to toggle their inventory.
 func get_toggle_inventory_action() -> bool:
 	return Input.is_action_just_pressed("toggle_inventory")
 
 
-# Creates an array of active boolean actions for processing on the frame.
+## Creates an array of active boolean actions for processing on the frame.
 func create_action_list() -> Array[EntityEnums.Action]:
 	var actions_list : Array[EntityEnums.Action] = []
 	
