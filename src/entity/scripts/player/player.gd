@@ -60,33 +60,32 @@ func _ready() -> void:
 	# Initialise the inventory with the starting values by forcing an update
 	# signal to be sent.
 	inventory.force_update()
-
 	
 	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _input(event : InputEvent) -> void:
+	if action.get_toggle_inventory_action():
+		inventory.toggle_inventory()
+	
 	if can_control_self:
 		if event is InputEventMouseMotion:
 			var yaw_delta : float = camera.process_look(event.relative)
 			rotate_y(yaw_delta)
+			
+		if action.get_interact_action():
+			interaction.try_interact()
 
 
 func _process(delta : float) -> void:
 	camera.process_camera_effects(delta, velocity)
 	interaction.update_interaction()
+	damage.process_damage()
 
 
 func _physics_process(delta : float) -> void:
-	var action_list : Array[EntityEnums.Action] = action.create_action_list()
-	movement.physics_update(delta, action_list)
-	resource.process_resources(delta, action_list)
-	damage.process_damage()
-	interaction.process_interaction(action_list)
-	
-	if action_list.has(EntityEnums.Action.TOGGLE_INVENTORY):
-		inventory.toggle_inventory()
+	movement.physics_update(delta, action.create_movement_command())
 
 
 # Public Interface

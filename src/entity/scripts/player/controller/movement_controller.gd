@@ -29,41 +29,42 @@ func initialise(entity_orchestrator : CharacterEntity) -> void:
 
 # Public Interface
 ## Controls all physics movement updates for the player.
-func physics_update(delta: float, action_list: Array[EntityEnums.Action]) -> void:
+func physics_update(delta : float, movement_command : EntityMovementCommand) -> void:
 	_process_gravity(delta)
 	
 	if player.is_alive() and player.can_control_self:
-		_process_crouch(delta, action_list)
+		_process_crouch(delta, movement_command)
 		
-		if action_list.has(EntityEnums.Action.JUMP):
+		if movement_command.jump:
 			_process_jump()
 			
-		_process_velocity(delta, action_list)
+		_process_velocity(delta, movement_command)
 	else:
 		player.velocity = Vector3(0.0, player.velocity.y, 0.0)
 		
 	player.move_and_slide()
+	player.resource.process_resources(delta, movement_command)
 
 
 # Private Methods
-## Process the velocity of the player.
-func _process_velocity(delta: float, action_list: Array[EntityEnums.Action]) -> void:
-	var movement_vector: Vector2 = player.action.get_movement_vector()
+## Processes the velocity of the player.
+func _process_velocity(delta : float, command : EntityMovementCommand) -> void:
+	var movement_vector : Vector2 = command.movement_vector
 	var world_direction : Vector3 = player.transform.basis * Vector3(movement_vector.x, 0.0, movement_vector.y)
 	
-	_update_movement_state(action_list, movement_vector)
+	_update_movement_state(command, movement_vector)
 	
 	var speed_multiplier : float = player.player_config.movement.walk_multiplier
+	
 	match entity.state.check(EntityStateEnums.States.MOTION):
 		EntityStateEnums.Motion.CROUCHING:
 			speed_multiplier *= crouch.get_speed_multiplier()
 		EntityStateEnums.Motion.SPRINTING:
 			if sprint.can_sprint(movement_vector):
 				speed_multiplier *= sprint.get_speed_multiplier()
-		
+				
 	var new_velocity : Vector3 = movement.calculate_velocity(delta, player.velocity, world_direction, movement_vector, speed_multiplier)
 	new_velocity.y = player.velocity.y
-		
 	player.velocity = new_velocity
 
 
@@ -81,12 +82,12 @@ func _process_gravity(delta: float) -> void:
 
 
 ## Processes crouching and crouch physics.
-func _process_crouch(delta: float, action_list: Array[EntityEnums.Action]) -> void:
-	player.collision.shape.height = crouch.calculate_height(delta, player.collision.shape.height, player.standing_height, action_list.has(EntityEnums.Action.CROUCH))
+func _process_crouch(delta : float, command : EntityMovementCommand) -> void:
+	player.collision.shape.height = crouch.calculate_height(delta, player.collision.shape.height, player.standing_height, command.crouch)
 
 
 ## Determines and updates the active movement state.
-func _update_movement_state(action_list : Array[EntityEnums.Action], movement_vector : Vector2) -> void:
+func _update_movement_state(command : EntityMovementCommand, movement_vector : Vector2) -> void:
 	if player.state == null:
 		return
 		
@@ -94,17 +95,17 @@ func _update_movement_state(action_list : Array[EntityEnums.Action], movement_ve
 	if not player.is_on_floor():
 		new_state = EntityStateEnums.Motion.AIRBORNE
 		
-	elif action_list.has(EntityEnums.Action.CROUCH) or (entity.state.check(EntityStateEnums.States.MOTION) == EntityStateEnums.Motion.CROUCHING and not crouch.can_stand()):
+	elif command.crouch or (entity.state.check(EntityStateEnums.States.MOTION) == EntityStateEnums.Motion.CROUCHING and not crouch.can_stand()):
 		new_state = EntityStateEnums.Motion.CROUCHING
 		
 	elif Vector3(player.velocity.x, 0.0, player.velocity.z).length_squared() <= 0.01:
 		new_state = EntityStateEnums.Motion.IDLE
 		
-	elif action_list.has(EntityEnums.Action.SPRINT) and sprint.can_sprint(movement_vector):
+	elif command.sprint and sprint.can_sprint(movement_vector):
 		new_state = EntityStateEnums.Motion.SPRINTING
 		
 	else:
 		new_state = EntityStateEnums.Motion.WALKING
-	
+		
 	if new_state != player.state.check(EntityStateEnums.States.MOTION):
 		player.state.update(EntityStateEnums.States.MOTION, new_state)

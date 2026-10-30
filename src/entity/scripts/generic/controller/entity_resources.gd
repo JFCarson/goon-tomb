@@ -51,9 +51,8 @@ func initialise(entity_orchestrator : CharacterEntity) -> void:
 
 # Public Interface
 ## Processes the entity's resource systems.
-func process_resources(delta : float, action_list : Array[EntityEnums.Action]) -> void:
-	var is_sprinting : bool = action_list.has(EntityEnums.Action.SPRINT)
-	update_stamina(delta, is_sprinting)
+func process_resources(delta : float, command : EntityMovementCommand) -> void:
+	update_stamina(delta, command.sprint)
 	
 	# REFACTOR: THIS IS ALMOST DEFINITELY IN THE WRONG PLACE
 	health_changed.emit(get_health(), get_max_health())
