@@ -35,12 +35,15 @@ extends CharacterBody3D
 ## Keeps reference to the entity's stats controller component.
 @export var stats : EntityStatsController
 
+## Keeps reference to the entity's networking controller component.
+@export var networking : EntityNetworkingController
+
 
 # Process
 ## Initialise the entire CharacterEntity composition when ready.
 func _ready() -> void:
 	# Initialise each controller.
-	for controller : EntityController in [state, resource, damage, stats]:
+	for controller : EntityController in [state, resource, damage, stats, networking]:
 		controller.initialise(self)
 	
 	# Connect signals to listener functions.

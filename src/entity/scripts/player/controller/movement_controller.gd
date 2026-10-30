@@ -32,7 +32,7 @@ func initialise(entity_orchestrator : CharacterEntity) -> void:
 func physics_update(delta : float, movement_command : EntityMovementCommand) -> void:
 	_process_gravity(delta)
 	
-	if player.is_alive() and player.can_control_self:
+	if player.is_alive() and player.can_simulate_movement:
 		_process_crouch(delta, movement_command)
 		
 		if movement_command.jump:

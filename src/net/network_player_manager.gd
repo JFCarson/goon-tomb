@@ -31,10 +31,14 @@ var player_instances : Dictionary[int, Node3D] = {}
 # Process
 ## Connects to networking lifecycle signals.
 func _ready() -> void:
-	NetworkSession.peer_became_ready.connect(_on_peer_became_ready)
-	NetworkHandler.peer_disconnected.connect(_on_peer_disconnected)
-	NetworkHandler.networking_shutdown.connect(_on_networking_shutdown)
-	NetworkGlobals.handle_client_packet.connect(_on_client_packet)
+	if not NetworkSession.peer_became_ready.is_connected(_on_peer_became_ready):
+		NetworkSession.peer_became_ready.connect(_on_peer_became_ready)
+	if not NetworkHandler.peer_disconnected.is_connected(_on_peer_disconnected):
+		NetworkHandler.peer_disconnected.connect(_on_peer_disconnected)
+	if not NetworkHandler.networking_shutdown.is_connected(_on_networking_shutdown):
+		NetworkHandler.networking_shutdown.connect(_on_networking_shutdown)
+	if not NetworkGlobals.handle_client_packet.is_connected(_on_client_packet):
+		NetworkGlobals.handle_client_packet.connect(_on_client_packet)
 
 
 # Public Interface

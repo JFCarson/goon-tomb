@@ -129,9 +129,23 @@ func prune_invalid_entities() -> void:
 # Signal Methods
 ## Routes packets received by a client from the server.
 func _on_client_packet(packet : DecodedPacket) -> void:
+	if packet == null:
+		return
+	
 	dispatch_packet(packet)
 
 
 ## Routes packets received by the server from a client.
-func _on_server_packet(_peer_id : int, packet : DecodedPacket) -> void:
+## Verifies that the sender owns the target entity before dispatching.
+func _on_server_packet(sender_peer_id : int, packet : DecodedPacket) -> void:
+	if packet == null:
+		return
+		
+	if packet.category == PacketEnums.Category.ENTITY:
+		var owner_peer_id : int = NetworkPlayerManager.get_entity_owner(packet.entity_id)
+		
+		if owner_peer_id != sender_peer_id:
+			push_warning("Rejected entity packet: peer %s does not own entity %s." % [sender_peer_id, packet.entity_id])
+			return
+
 	dispatch_packet(packet)

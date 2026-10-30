@@ -36,8 +36,8 @@ var player_config : PlayerConfig:
 
 
 # Runtime
-## Flags whether the player currently can control their character's movement.
-var can_control_self : bool = true
+## Stores whether the player is permitted to simulate movement.
+var can_simulate_movement : bool = true
 
 ## Stores the height of the player's hitbox when in the standing state.
 @onready var standing_height : float = collision.shape.height
@@ -69,7 +69,7 @@ func _input(event : InputEvent) -> void:
 	if action.get_toggle_inventory_action():
 		inventory.toggle_inventory()
 	
-	if can_control_self:
+	if can_simulate_movement:
 		if event is InputEventMouseMotion:
 			var yaw_delta : float = camera.process_look(event.relative)
 			rotate_y(yaw_delta)
@@ -86,6 +86,7 @@ func _process(delta : float) -> void:
 
 func _physics_process(delta : float) -> void:
 	movement.physics_update(delta, action.create_movement_command())
+	networking.send_movement_state()
 
 
 # Public Interface

@@ -124,11 +124,12 @@ func send_packet_to_peer(packet_type_id : PacketEnums.Type, values : Dictionary,
 	return true
 
 
-## Encodes a packet once and sends it to every ready peer.
+## Encodes a packet once and sends it to every ready peer, optionally
+## excluding a specific peer.
 ##
 ## Handshake readiness is checked per peer, so pending or rejected peers
 ## do not receive gameplay broadcasts.
-func broadcast_packet(packet_type_id : PacketEnums.Type, values : Dictionary, entity_id : int = 0) -> void:
+func broadcast_packet(packet_type_id : PacketEnums.Type, values : Dictionary, entity_id : int = 0, excluded_peer_id : int = 0) -> void:
 	if packet_processor == null:
 		push_warning("Cannot broadcast packet: packet processor is not initialized.")
 		return
@@ -145,11 +146,14 @@ func broadcast_packet(packet_type_id : PacketEnums.Type, values : Dictionary, en
 	if encoded_packet.is_empty():
 		return
 		
-	if NetworkHandler.multiplayer_peer == null or not multiplayer.is_server():
+	if NetworkHandler.multiplayer_peer == null or not NetworkHandler.is_server:
 		return
 		
-	# Iterate over tracked peers and only send to peers that are ready.
+	# Send to every ready peer except the excluded peer.
 	for peer_id : int in NetworkSession.peer_states:
+		if peer_id == excluded_peer_id:
+			continue
+			
 		if not NetworkSession.can_send_packet_to_peer(packet_type_id, peer_id):
 			continue
 			

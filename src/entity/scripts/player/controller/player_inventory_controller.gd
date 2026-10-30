@@ -28,10 +28,10 @@ func initialise(entity_orchestrator : CharacterEntity) -> void:
 func toggle_inventory() -> void:
 	player.overlay.toggle_inventory()
 	if player.overlay.inventory.inventory_is_open:
-		entity.can_control_self = false
+		entity.can_simulate_movement = false
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	else:
-		entity.can_control_self = true
+		entity.can_simulate_movement = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 

@@ -26,6 +26,7 @@
 [ext_resource type="Script" uid="uid://cpdah5h7cd8mg" path="res://src/entity/scripts/generic/controller/entity_stats.gd" id="19_g1kt0"]
 [ext_resource type="Script" uid="uid://t1w3ngfbg8oi" path="res://src/entity/scripts/generic/component/damage/fall_damage.gd" id="19_s2okv"]
 [ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/overlays/hud.tscn" id="22_iwkrf"]
+[ext_resource type="Script" uid="uid://cw5j6iiekv5cw" path="res://src/entity/scripts/generic/controller/entity_networking.gd" id="27_o1dd6"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_8sy0d"]
 radius = 0.3
@@ -37,7 +38,7 @@ height = 1.8
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lvook"]
 
-[node name="Player" type="CharacterBody3D" unique_id=1390332273 node_paths=PackedStringArray("camera", "action", "interaction", "movement", "inventory", "overlay", "state", "resource", "damage", "stats")]
+[node name="Player" type="CharacterBody3D" unique_id=1390332273 node_paths=PackedStringArray("camera", "action", "interaction", "movement", "inventory", "overlay", "state", "resource", "damage", "stats", "networking")]
 script = ExtResource("1_8sy0d")
 camera = NodePath("GameCameraController")
 action = NodePath("PlayerActionController")
@@ -50,6 +51,7 @@ state = NodePath("EntityStateController")
 resource = NodePath("EntityResourceController")
 damage = NodePath("EntityDamageController")
 stats = NodePath("EntityStatsController")
+networking = NodePath("EntityNetworkingController")
 
 [node name="TEMP LIGHT" type="OmniLight3D" parent="." unique_id=55569172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6077492, -0.0035186112)
@@ -197,3 +199,7 @@ metadata/_custom_type_script = "uid://dj8s2aemax4ic"
 [node name="EntityFallDamage" type="Node" parent="EntityDamageController" unique_id=1168486243]
 script = ExtResource("19_s2okv")
 metadata/_custom_type_script = "uid://t1w3ngfbg8oi"
+
+[node name="EntityNetworkingController" type="Node" parent="." unique_id=1062674948]
+script = ExtResource("27_o1dd6")
+metadata/_custom_type_script = "uid://cw5j6iiekv5cw"
