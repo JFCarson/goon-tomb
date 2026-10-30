@@ -9,7 +9,7 @@ extends PlayerController
 
 # Public Interface
 ## Returns the movement vector based on user input.
-func get_move_action() -> Vector2:
+func get_movement_vector() -> Vector2:
 	return Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
 
 

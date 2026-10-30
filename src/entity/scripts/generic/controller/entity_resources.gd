@@ -108,7 +108,7 @@ func update_stamina(delta : float, is_sprinting : bool) -> void:
 	if not is_sprinting:
 		sprint_locked = false
 		
-	elif not stamina.can_sprint():
+	elif not can_afford_sprint():
 		sprint_locked = true
 
 
@@ -123,13 +123,13 @@ func get_max_stamina() -> float:
 
 
 ## Returns whether the entity currently has enough stamina to sprint.
-func can_sprint() -> bool:
-	return stamina.can_sprint() and not sprint_locked
+func can_afford_sprint() -> bool:
+	return stamina.can_afford_sprint() and not sprint_locked
 
 
 ## Returns whether the entity has enough stamina to jump.
-func can_jump() -> bool:
-	return stamina.can_jump()
+func can_afford_jump() -> bool:
+	return stamina.can_afford_jump()
 
 
 ## Consumes the stamina cost associated with jumping.

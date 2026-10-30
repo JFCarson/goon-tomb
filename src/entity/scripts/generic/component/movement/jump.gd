@@ -1,25 +1,37 @@
 class_name Jump
-extends Node
+extends EntityComponent
 
 ## Handles jump calculations for the player.
 
 
-## Configuration
+# Configuration
+## Keeps reference to the entity's movement configuration.
 var movement_settings : EntityMovementConfig
 
 
-## Public Interface
-# Determines whether the player can currently jump.
-func can_jump(is_on_floor : bool) -> bool:
-	return is_on_floor
+# Process
+## Initialises the component.
+func initialise(controller_component : EntityController) -> void:
+	super.initialise(controller_component)
+	
+	movement_settings = controller.entity.config.movement
 
 
-# Calculates the vertical velocity required to reach the configured jump height.
+# Public Interface
+## Determines whether the entity is eligible to jump.
+func can_jump() -> bool:
+	if not controller.entity.is_on_floor():
+		return false
+		
+	if not controller.entity.resource.can_afford_jump():
+		return false 
+	
+	if controller.entity.state.check(EntityStateEnums.States.MOTION) == EntityStateEnums.Motion.CROUCHING:
+		return false
+	
+	return true
+
+
+## Calculates the vertical velocity required to reach the configured jump height.
 func calculate_jump_velocity() -> float:
 	return sqrt(2.0 * movement_settings.jump_height)
-
-
-## Validation
-func validate() -> void:
-	assert(movement_settings != null, "Jump requires an EntityMovementConfig.")
-	assert(movement_settings.jump_height > 0.0, "Jump requires jump_height to be greater than zero.")

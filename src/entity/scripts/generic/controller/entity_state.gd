@@ -47,3 +47,8 @@ func check(target_state : EntityStateEnums.States) -> int:
 		return -1
 	
 	return states[target_state].get_state()
+
+
+## Returns whether the requested state is being tracked by this controller.
+func is_tracking(target_state : EntityStateEnums.States) -> bool:
+	return target_state in states

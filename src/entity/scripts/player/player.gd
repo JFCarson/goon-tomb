@@ -40,7 +40,7 @@ var player_config : PlayerConfig:
 var can_control_self : bool = true
 
 ## Stores the height of the player's hitbox when in the standing state.
-var standing_height : float
+@onready var standing_height : float = collision.shape.height
 
 
 # Process
@@ -60,9 +60,7 @@ func _ready() -> void:
 	# Initialise the inventory with the starting values by forcing an update
 	# signal to be sent.
 	inventory.force_update()
-	
-	# Store default height as the standing height.
-	standing_height = collision.shape.height
+
 	
 	# Capture the player's mouse.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -91,6 +89,15 @@ func _physics_process(delta : float) -> void:
 		inventory.toggle_inventory()
 
 
+# Public Interface
+## Returns whether the player is alive.
+func is_alive() -> bool:
+	if not state.is_tracking(EntityStateEnums.States.LIFECYCLE):
+		return false
+	
+	return state.check(EntityStateEnums.States.LIFECYCLE) == EntityStateEnums.Lifecycle.ALIVE
+
+
 # Private Methods
 ## Connect signals to listener functions.
 func _connect_signals() -> void:
@@ -99,6 +106,7 @@ func _connect_signals() -> void:
 
 
 # Signal Methods
+# REFACTOR: CAN BOTH OF THESE METHODS (AND THE ONE ON THE BASE CLASS) BE MADE TO BE PART OF THE CONTROLLERS?
 ## Listen for requests to pick up an item.
 func _on_interaction_request(request : InteractionRequest) -> void:
 	if request is PickUpItemRequest:

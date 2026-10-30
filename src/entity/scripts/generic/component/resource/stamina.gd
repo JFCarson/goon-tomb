@@ -28,7 +28,7 @@ func get_max_stamina() -> float:
 
 
 # Returns whether the entity has enough stamina to sprint.
-func can_sprint() -> bool:
+func can_afford_sprint() -> bool:
 	return stamina > 0.0
 
 
@@ -38,7 +38,7 @@ func can_afford(cost : float) -> bool:
 
 
 # Returns whether the entity has enough stamina to jump.
-func can_jump() -> bool:
+func can_afford_jump() -> bool:
 	return can_afford(stats_controller.get_jump_cost())
 
 
