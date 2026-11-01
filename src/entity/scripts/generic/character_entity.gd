@@ -26,9 +26,6 @@ extends CharacterBody3D
 ## Keeps reference to the entity's state controller component.
 @export var state : EntityStateController
 
-## Keeps reference to the entity's resource controller component.
-@export var resource : EntityResourceController
-
 ## Keeps reference to the entity's damage controller component.
 @export var damage : EntityDamageController
 
@@ -43,20 +40,14 @@ extends CharacterBody3D
 ## Initialise the entire CharacterEntity composition when ready.
 func _ready() -> void:
 	# Initialise each controller.
-	for controller : EntityController in [state, resource, damage, stats, networking]:
+	for controller : EntityController in [state, damage, stats, networking]:
 		controller.initialise(self)
+
+
+# Public Interface
+## Returns whether the player is alive.
+func is_alive() -> bool:
+	if not state.is_tracking(EntityStateEnums.States.LIFECYCLE):
+		return false
 	
-	# Connect signals to listener functions.
-	_connect_signals()
-
-
-# Private Methods
-## Connect signals to listener functions.
-func _connect_signals() -> void:
-	damage.damage_taken.connect(_on_damage_taken)
-
-
-# Signal Methods
-## Listen for requests to process incoming damage.
-@abstract
-func _on_damage_taken(amount: float) -> void
+	return state.check(EntityStateEnums.States.LIFECYCLE) == EntityStateEnums.Lifecycle.ALIVE

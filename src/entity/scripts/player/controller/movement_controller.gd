@@ -43,7 +43,6 @@ func physics_update(delta : float, movement_command : EntityMovementCommand) -> 
 		player.velocity = Vector3(0.0, player.velocity.y, 0.0)
 		
 	player.move_and_slide()
-	player.resource.process_resources(delta, movement_command)
 
 
 # Private Methods
@@ -60,7 +59,7 @@ func _process_velocity(delta : float, command : EntityMovementCommand) -> void:
 		EntityStateEnums.Motion.CROUCHING:
 			speed_multiplier *= crouch.get_speed_multiplier()
 		EntityStateEnums.Motion.SPRINTING:
-			if sprint.can_sprint(movement_vector):
+			if sprint.activate(movement_vector):
 				speed_multiplier *= sprint.get_speed_multiplier()
 				
 	var new_velocity : Vector3 = movement.calculate_velocity(delta, player.velocity, world_direction, movement_vector, speed_multiplier)
@@ -72,7 +71,7 @@ func _process_velocity(delta : float, command : EntityMovementCommand) -> void:
 func _process_jump() -> void:
 	if jump.can_jump():
 		player.velocity.y = jump.calculate_jump_velocity()
-		player.resource.consume_jump()
+		player.stats.stamina.spend(entity.config.movement.jump_cost)
 
 
 ## Processes gravity and calculates fall speed.

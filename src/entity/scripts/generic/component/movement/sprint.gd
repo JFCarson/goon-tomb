@@ -18,15 +18,25 @@ func initialise(controller_component : EntityController) -> void:
 
 
 # Public Interface
+## Spend stamina on sprinting, after checking (and returning) if the entity can sprint.
+func activate(movement_vector : Vector2) -> bool:
+	var entity_can_sprint : bool = can_sprint(movement_vector)
+	
+	if entity_can_sprint:
+		controller.entity.stats.stamina.spend(controller.entity.config.movement.sprint_cost)
+	
+	return entity_can_sprint
+
+
 ## Determines whether the entity is eligible to sprint.
-func can_sprint(movement_vector) -> bool:
+func can_sprint(movement_vector : Vector2) -> bool:
 	if movement_vector.is_zero_approx():
 		return false
 	
 	if not controller.entity.is_on_floor():
 		return false
 	
-	if not controller.entity.resource.can_afford_sprint():
+	if not controller.entity.stats.stamina.has_at_least(controller.entity.config.movement.sprint_cost):
 		return false
 	
 	var forwardness : float = (-movement_vector.y + 1.0) / 2.0

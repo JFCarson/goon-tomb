@@ -12,72 +12,62 @@ extends EntityController
 @export var death : EntityDeath
 
 
-# Signals
-## Emitted when damage is taken by the entity.
-signal damage_taken(amount : float)
-
-## Emitted when health is restored to the entity.
-signal health_restored(amount : float)
-
-
 # Process
 ## Intitialise the controller.
 func initialise(entity_orchestrator : CharacterEntity) -> void:
 	super.initialise(entity_orchestrator)
 	
-	fall_damage.damage_per_velocity = entity.stats.get_max_health()
-	death.initialise(entity.state)
+	for component : EntityComponent in [fall_damage, death]:
+		component.initialise(self)
 
 
 # Public Interface
 ## Processes damage detection for the entity.
-func process_damage() -> void:
-	update_fall_damage(entity.is_on_floor(), entity.velocity)
+func process_damage() -> float:
+	var total : float = 0.0
+	
+	total += fall_damage.calculate_damage()
+	
+	return take_damage(total)
 
 
 ## Applies damage to the entity.
-func take_damage(amount : float) -> void:
+func take_damage(amount : float) -> float:
 	if amount <= 0.0:
-		return
+		return 0.0
 	
-	if entity.resource == null or not entity.resource.is_alive():
-		return
+	if not entity.is_alive():
+		return 0.0
 	
-	var previous_health : float = entity.resource.get_health()
+	var previous_health : float = entity.stats.health.current
 	
-	entity.resource.take_damage(amount)
+	entity.stats.health.damage(amount)
 	
-	var actual_damage : float = previous_health - entity.resource.get_health()
-	
+	var actual_damage : float = previous_health - entity.stats.health.current
 	if actual_damage <= 0.0:
-		return
+		return 0.0
 	
-	damage_taken.emit(actual_damage)
-	
-	if not entity.resource.is_alive():
+	if entity.stats.health.current == entity.stats.health.min_value:
 		death.down()
+	
+	return amount
 
 
 ## Restores health to the entity.
-func heal(amount : float) -> void:
+func heal(amount : float) -> float:
 	if amount <= 0.0:
-		return
+		return 0.0
 	
-	if entity.resource == null or not entity.resource.is_alive():
-		return
+	if not entity.is_alive():
+		return 0.0
 	
-	var previous_health : float = entity.resource.get_health()
+	var previous_health : float = entity.stats.health.current
 	
-	entity.resource.heal(amount)
+	entity.stats.health.heal(amount)
 	
-	var actual_healing : float = entity.resource.get_health() - previous_health
+	var actual_healing : float = entity.stats.health.current - previous_health
 	
 	if actual_healing <= 0.0:
-		return
+		return 0.0
 	
-	health_restored.emit(actual_healing)
-
-
-## Updates fall damage detection.
-func update_fall_damage(is_on_floor : bool, velocity : Vector3) -> void:
-	fall_damage.update(is_on_floor, velocity)
+	return amount

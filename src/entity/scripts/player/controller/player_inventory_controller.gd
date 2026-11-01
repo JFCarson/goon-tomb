@@ -14,11 +14,8 @@ extends PlayerController
 func initialise(entity_orchestrator : CharacterEntity) -> void:
 	super.initialise(entity_orchestrator)
 	
-	# Listen for changes to the actual inventory data.
 	if not inventory.inventory_updated.is_connected(on_inventory_updated):
 		inventory.inventory_updated.connect(on_inventory_updated)
-		
-	# Listen for item drop requests from the overlay.
 	if not player.overlay.inventory.drop_item.is_connected(on_drop_item):
 		player.overlay.inventory.drop_item.connect(on_drop_item)
 
@@ -26,7 +23,7 @@ func initialise(entity_orchestrator : CharacterEntity) -> void:
 # Public Methods
 ## Processes the toggling of the player's inventory overlay.
 func toggle_inventory() -> void:
-	player.overlay.toggle_inventory()
+	player.overlay.toggle_inventory_display()
 	if player.overlay.inventory.inventory_is_open:
 		entity.can_simulate_movement = false
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

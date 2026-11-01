@@ -65,60 +65,31 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
+## Handles isolated player control inputs.
 func _input(event : InputEvent) -> void:
-	if action.get_toggle_inventory_action():
-		inventory.toggle_inventory()
-	
-	if can_simulate_movement:
-		if event is InputEventMouseMotion:
-			var yaw_delta : float = camera.process_look(event.relative)
-			rotate_y(yaw_delta)
-			
-		if action.get_interact_action():
-			interaction.try_interact()
+	if is_alive():
+		if action.get_toggle_inventory_action():
+			inventory.toggle_inventory()
+		
+		if can_simulate_movement:
+			if event is InputEventMouseMotion:
+				rotate_y(camera.process_look(event.relative))
+				
+			if action.get_interact_action():
+				interaction.try_interact()
 
 
-func _process(delta : float) -> void:
-	camera.process_camera_effects(delta, velocity)
+## Handles non-physics updates on tick.
+func _process(_delta : float) -> void:
 	interaction.update_interaction()
-	damage.process_damage()
+	
+	var damage_taken : float = damage.process_damage()
+	if damage_taken > 0.0:
+		camera.cause_damage_feedback(damage_taken / stats.health.base)
 
 
+## Handles physics updates on tick.
 func _physics_process(delta : float) -> void:
 	movement.physics_update(delta, action.create_movement_command())
+	camera.process_camera_effects(delta, velocity)
 	networking.send_movement_state()
-
-
-# Public Interface
-## Returns whether the player is alive.
-func is_alive() -> bool:
-	if not state.is_tracking(EntityStateEnums.States.LIFECYCLE):
-		return false
-	
-	return state.check(EntityStateEnums.States.LIFECYCLE) == EntityStateEnums.Lifecycle.ALIVE
-
-
-# Private Methods
-## Connect signals to listener functions.
-func _connect_signals() -> void:
-	super._connect_signals()
-	interaction.interaction_request.connect(_on_interaction_request)
-
-
-# Signal Methods
-# REFACTOR: CAN BOTH OF THESE METHODS (AND THE ONE ON THE BASE CLASS) BE MADE TO BE PART OF THE CONTROLLERS?
-## Listen for requests to pick up an item.
-func _on_interaction_request(request : InteractionRequest) -> void:
-	if request is PickUpItemRequest:
-		if inventory.add_item(request.item, request.amount):
-			interaction.finish_interaction(request.ref)
-
-
-## Listen for requests to process incoming damage.
-func _on_damage_taken(amount: float) -> void:
-	var max_health: float = resource.get_max_health()
-	if max_health <= 0.0:
-		return
-		
-	var magnitude: float = amount / max_health
-	camera.cause_damage_feedback(magnitude)

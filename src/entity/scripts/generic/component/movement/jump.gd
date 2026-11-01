@@ -22,13 +22,13 @@ func initialise(controller_component : EntityController) -> void:
 func can_jump() -> bool:
 	if not controller.entity.is_on_floor():
 		return false
-		
-	if not controller.entity.resource.can_afford_jump():
-		return false 
 	
 	if controller.entity.state.check(EntityStateEnums.States.MOTION) == EntityStateEnums.Motion.CROUCHING:
 		return false
 	
+	if not controller.entity.stats.stamina.has_at_least(controller.entity.config.movement.jump_cost):
+		return false 
+		
 	return true
 
 

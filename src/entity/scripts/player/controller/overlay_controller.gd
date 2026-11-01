@@ -17,11 +17,10 @@ extends PlayerController
 func initialise(entity_orchestrator : CharacterEntity) -> void:
 	super.initialise(entity_orchestrator)
 	
-	# Initialise the HUD with the player's resource values.
-	hud.initialise(player.resource, player.damage, player.state)
+	hud.initialise(self)
 
 
 # Public Interface
 ## Toggles display for the player's inventory.
-func toggle_inventory() -> void:
+func toggle_inventory_display() -> void:
 	inventory.toggle_inventory()

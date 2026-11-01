@@ -1,51 +1,44 @@
 class_name EntityStatsController
 extends EntityController
 
+## Controller for handling an entity's stats.
+
+
+# Components
+## Keeps reference to the Health stat component.
+@export var health : Health
+
+## Keeps reference to the Stamina stat component.
+@export var stamina : Stamina
+
+## Keeps reference to the Stamina Regeneration stat component.
+@export var stamina_regeneration : StaminaRegeneration
+
+
+# Config
+## Defines the minimum level that an entity can be.
+const minimum_level : int = 1
+
+## Defines the maximum level that an entity can be.
+const maximum_level : int = 20
+
+## Keeps reference to the entity's attribute sheet.
+var attributes : EntityAttributes
+
 
 # Runtime
-var attributes := EntityAttributes.new()
-var stat_coefficient = 75;
-var level : int
+## Keeps reference to the entity's current level.
+var level : int:
+	set(new_level):
+		level = clampi(new_level, minimum_level, maximum_level)
 
 
 # Process
+## Initialise the controller.
 func initialise(entity_orchestrator : CharacterEntity) -> void:
 	super.initialise(entity_orchestrator)
 	
-	level = entity.config.level
-
-
-# Health calculations
-func get_max_health() -> float:
-	return (stat_coefficient + (level * 5) + (attributes.vigour * 5) + (attributes.might * 2.5))
-
-
-func get_heal_efficiency() -> float:
-	return (2 * attributes.vigour);
-
-
-# Stamina calculations
-## Entity's maximum stamina value.
-func get_max_stamina() -> float:
-	return (stat_coefficient + (level * 5) + (attributes.finesse * 5) +  (attributes.might * 2.5))
-
-
-# Entity baselines
-## The rate at which the entity spends stamina when sprinting.
-func get_sprint_drain_rate() -> float:
-	return (attributes.stamina_drain_rate)
-
-
-# The amount of stamina taking the jump action costs.
-func get_jump_cost() -> float:
-	return (attributes.jump_cost);
-
-
-# The rate per second at which the entity recovers stamina naturally.
-func get_regeneration_rate() -> float:
-	return (attributes.stamina_regeneration_rate)
-
-
-# The delay in seconds before natural stamina regeneration begins.
-func get_regeneration_delay() -> float:
-	return (attributes.stamina_regeneration_delay)
+	attributes = entity.config.attributes
+	
+	for component : EntityStat in [health, stamina, stamina_regeneration]:
+		component.initialise(self)

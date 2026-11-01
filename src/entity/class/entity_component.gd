@@ -12,7 +12,7 @@ var controller : EntityController
 
 
 # Process
-## Initialises the movement component.
+## Initialises the component.
 func initialise(controller_component : EntityController) -> void:
 	controller = controller_component
 	
