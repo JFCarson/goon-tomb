@@ -1,37 +1,42 @@
 class_name Crouch
-extends Node
+extends EntityComponent
 
 ## Handles crouch calculations for the entity.
 
 
-## Configuration
+# Configuration
+## Keeps reference to the entity's movement configuration.
 var movement_settings : EntityMovementConfig
 
 
-## Public Interface
-# Returns the movement speed multiplier applied while crouching.
-func get_speed_multiplier() -> float:
-	return movement_settings.crouch_multiplier
+# Process
+## Initialises the component.
+func initialise(controller_component : EntityController) -> void:
+	super.initialise(controller_component)
+	
+	movement_settings = controller.entity.config.movement
 
 
-# Returns the target height of the entity's collision while crouching.
-func get_target_height(standing_height : float) -> float:
-	return standing_height - movement_settings.crouch_height_reduction
-
-
-# Calculates the target height of the entity when crouching.
+# Public Interface
+## Returns the target height of the entity when changing crouching state.
 func calculate_height(delta : float, current_height : float, standing_height : float, crouching : bool) -> float:
 	var target_height : float = standing_height
 	
 	if crouching:
-		target_height = get_target_height(standing_height)
+		target_height = standing_height - movement_settings.crouch_height_reduction
 	
+	if target_height == standing_height and not can_stand():
+		return current_height
+		
 	return move_toward(current_height, target_height, movement_settings.crouch_speed * delta)
 
 
-## Validation
-func validate() -> void:
-	assert(movement_settings != null, "Crouch requires an EntityMovementConfig.")
-	assert(movement_settings.crouch_multiplier > 0.0, "Crouch requires crouch_multiplier to be greater than zero.")
-	assert(movement_settings.crouch_height_reduction >= 0.0, "Crouch requires crouch_height_reduction to be zero or greater.")
-	assert(movement_settings.crouch_speed > 0.0, "Crouch requires crouch_speed to be greater than zero.")
+## Returns whether the entity would be able to stand from crouched.
+func can_stand() -> bool:
+	## PLACEHOLDER: THIS NEEDS TO BE IMPLEMENTED
+	return true
+
+
+## Returns the movement speed multiplier applied while crouching.
+func get_speed_multiplier() -> float:
+	return movement_settings.crouch_multiplier

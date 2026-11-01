@@ -5,7 +5,7 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cj2uf"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
-[node name="PlayerInventory" type="Control" unique_id=709069274]
+[node name="PlayerInventory" type="Control" unique_id=709069274 node_paths=PackedStringArray("item_container", "weight_label", "weight_max_label")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -15,6 +15,9 @@ grow_vertical = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
 script = ExtResource("1_85jy0")
+item_container = NodePath("PanelContainer/MarginContainer/VBoxContainer/InventoryScroll/Items")
+weight_label = NodePath("PanelContainer/MarginContainer/VBoxContainer/Footer/WeightProgressBar/WeightValue/Weight")
+weight_max_label = NodePath("PanelContainer/MarginContainer/VBoxContainer/Footer/WeightProgressBar/WeightValue/WeightMax")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1978248709]
 layout_mode = 1

@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://do7gj7cl1efvm"]
+
+[ext_resource type="Script" uid="uid://d3pbkklnvliio" path="res://src/overlays/scripts/main_menu.gd" id="1_6fikx"]
+
+[node name="MainMenu" type="Control" unique_id=685193889]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6fikx")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1256816665]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1145051258]
+layout_mode = 2
+
+[node name="HostButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=796683907]
+layout_mode = 2
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=643233046]
+layout_mode = 2
+text = "Join"
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=13722293]
+layout_mode = 2

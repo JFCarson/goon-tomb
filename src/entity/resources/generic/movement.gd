@@ -50,6 +50,12 @@ extends Resource
 
 
 @export_group("Config")
+# Determines how much stamina the entity spends per tick while sprinting.
+@export var sprint_cost : float = 0.25
+
+# Determines how much stamina the entity spends to jump
+@export var jump_cost : float = 20.0
+
 # Minimum horizontal velocity magnitude used when determining whether
 # the entity is considered effectively stationary.
 @export var movement_threshold : float = 0.01

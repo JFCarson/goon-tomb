@@ -1,4 +1,3 @@
-@tool
 class_name Packet
 extends Resource
 
@@ -7,29 +6,37 @@ extends Resource
 
 # Config
 ## Number of bytes used to identify the packet type in the header.
-const type_byte_size : int = 1
+const type_byte_size: int = 1
 
 ## Number of bytes used to identify the entity associated with an entity packet.
-const entity_id_byte_size : int = 2
+const entity_id_byte_size: int = 2
 
 ## Maximum number of fields permitted in a single packet definition.
-const max_field_count : int = 32
+const max_field_count: int = 32
 
 ## Maximum permitted packet size, including the header and payload, in bytes.
-const max_packet_size : int = 1024
+const max_packet_size: int = 1024
 
+
+# Definition
 ## Unique identifier for this packet type, transmitted in the packet header.
-@export var packet_type_id : PacketEnums.Type = PacketEnums.Type.EMPTY
+@export var packet_type_id: PacketEnums.Type = PacketEnums.Type.EMPTY
+
+## Cosmetic description field for documentation in each resource instance.
+@export_multiline var description: String = "Please document this packet's purpose here."
+
+## Determines who is allowed to send the packet.
+@export var direction: PacketEnums.Direction = PacketEnums.Direction.AGNOSTIC
 
 ## Determines the header structure and whether the packet is associated with
 ## a specific entity.
-@export var category : PacketEnums.Category = PacketEnums.Category.GLOBAL
+@export var category: PacketEnums.Category = PacketEnums.Category.GLOBAL
 
 ## ENet transfer mode used when sending this packet type.
-@export var transfer_mode : MultiplayerPeer.TransferMode = MultiplayerPeer.TRANSFER_MODE_RELIABLE
+@export var transfer_mode: MultiplayerPeer.TransferMode = MultiplayerPeer.TRANSFER_MODE_RELIABLE
 
 ## Ordered list of fields that make up the packet payload.
-@export var fields : Array[PacketField] = []
+@export var fields: Array[PacketField] = []
 
 
 # Public Interface
@@ -43,14 +50,14 @@ func get_header_size() -> int:
 		PacketEnums.Category.ENTITY:
 			return type_byte_size + entity_id_byte_size
 			
-	return 0  # A zero size indicates an unsupported category.
+	return 0
 
 
 ## Calculates the combined size of all payload fields in bytes.
 func get_payload_size() -> int:
-	var size : int = 0
+	var size: int = 0
 	
-	for field : PacketField in fields:
+	for field: PacketField in fields:
 		# Ignore null entries here; validation reports them separately.
 		if field == null:
 			continue
@@ -77,6 +84,11 @@ func is_valid_definition() -> bool:
 		push_error("Packet definition ID must fit within an unsigned 8-bit value.")
 		return false
 		
+	# Ensure the direction is a declared enum value.
+	if not PacketEnums.Direction.values().has(direction):
+		push_error("Packet definition has an invalid direction.")
+		return false
+		
 	# A valid category must produce a recognised header size.
 	if get_header_size() == 0:
 		push_error("Packet definition has an invalid category.")
@@ -97,9 +109,9 @@ func is_valid_definition() -> bool:
 		return false
 		
 	# Track field names to ensure each payload field can be uniquely identified.
-	var field_names : Dictionary = {}
+	var field_names: Dictionary = {}
 	
-	for field : PacketField in fields:
+	for field: PacketField in fields:
 		# Every entry must reference a valid field definition.
 		if field == null:
 			push_error("Packet definition contains a null field.")
@@ -137,5 +149,5 @@ func is_valid_definition() -> bool:
 	if get_packet_size() > max_packet_size:
 		push_error("Packet definition exceeds the maximum packet size of %d bytes." % max_packet_size)
 		return false
-		
+
 	return true

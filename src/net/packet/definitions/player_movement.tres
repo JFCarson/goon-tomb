@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Packet" format=3 uid="uid://doek7kdppml5m"]
+
+[ext_resource type="Script" uid="uid://dj64obnp58yui" path="res://src/net/packet/packet_field.gd" id="1_oqohf"]
+[ext_resource type="Script" uid="uid://dbq5fnuxeoaf3" path="res://src/net/packet/packet.gd" id="2_v7ihs"]
+
+[sub_resource type="Resource" id="Resource_jg54e"]
+script = ExtResource("1_oqohf")
+field_name = 62
+field_type = 6
+metadata/_custom_type_script = "uid://dj64obnp58yui"
+
+[sub_resource type="Resource" id="Resource_b07xt"]
+script = ExtResource("1_oqohf")
+field_name = 63
+field_type = 4
+metadata/_custom_type_script = "uid://dj64obnp58yui"
+
+[sub_resource type="Resource" id="Resource_diomr"]
+script = ExtResource("1_oqohf")
+field_name = 61
+field_type = 6
+metadata/_custom_type_script = "uid://dj64obnp58yui"
+
+[resource]
+script = ExtResource("2_v7ihs")
+packet_type_id = 52
+description = "Sent to represent the movement of a player. The player's client is authoritative over the movement, and is only replicated by the server."
+category = 1
+transfer_mode = 0
+fields = Array[ExtResource("1_oqohf")]([SubResource("Resource_jg54e"), SubResource("Resource_b07xt"), SubResource("Resource_diomr")])
+metadata/_custom_type_script = "uid://dbq5fnuxeoaf3"

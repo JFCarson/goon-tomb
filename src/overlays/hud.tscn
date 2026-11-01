@@ -8,7 +8,7 @@ bg_color = Color(0.7176471, 0, 0, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cj2uf"]
 bg_color = Color(0.52394295, 0.64905894, 0.38123968, 1)
 
-[node name="HUD" type="Control" unique_id=190508894]
+[node name="HUD" type="Control" unique_id=190508894 node_paths=PackedStringArray("health_bar", "current_health_label", "max_health_label", "stamina_bar", "current_stamina_label", "max_stamina_label", "interact_prompt", "health_change_flash", "downed_screen", "downed_timer_label", "death_screen")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,6 +17,17 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_t0re6")
+health_bar = NodePath("MarginContainer/InfoBars/Health/HealthBar")
+current_health_label = NodePath("MarginContainer/InfoBars/Health/HealthBar/HBoxContainer/CurrentHealth")
+max_health_label = NodePath("MarginContainer/InfoBars/Health/HealthBar/HBoxContainer/MaxHealth")
+stamina_bar = NodePath("MarginContainer/InfoBars/Stamina/StaminaBar")
+current_stamina_label = NodePath("MarginContainer/InfoBars/Stamina/StaminaBar/HBoxContainer/CurrentStamina")
+max_stamina_label = NodePath("MarginContainer/InfoBars/Stamina/StaminaBar/HBoxContainer/MaxStamina")
+interact_prompt = NodePath("InteractPrompt")
+health_change_flash = NodePath("HealthChangeFlash")
+downed_screen = NodePath("DownedScreen")
+downed_timer_label = NodePath("DownedScreen/DownedTimer")
+death_screen = NodePath("DeathScreen")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1729135307]
 propagate_maximum_size = false
@@ -54,9 +65,38 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_styles/fill = SubResource("StyleBoxFlat_t0re6")
+max_value = 0.0
 step = 0.1
-value = 100.0
 show_percentage = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/InfoBars/Health/HealthBar" unique_id=409762963]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -17.5
+offset_top = -11.5
+offset_right = 17.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CurrentHealth" type="Label" parent="MarginContainer/InfoBars/Health/HealthBar/HBoxContainer" unique_id=1104442511]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "0"
+
+[node name="Slash" type="Label" parent="MarginContainer/InfoBars/Health/HealthBar/HBoxContainer" unique_id=1047834658]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "/"
+
+[node name="MaxHealth" type="Label" parent="MarginContainer/InfoBars/Health/HealthBar/HBoxContainer" unique_id=1853007376]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "0"
 
 [node name="Stamina" type="HBoxContainer" parent="MarginContainer/InfoBars" unique_id=711649247]
 layout_mode = 2
@@ -74,9 +114,38 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_styles/fill = SubResource("StyleBoxFlat_cj2uf")
+max_value = 0.0
 step = 0.1
-value = 100.0
 show_percentage = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/InfoBars/Stamina/StaminaBar" unique_id=2109485392]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -17.5
+offset_top = -11.5
+offset_right = 17.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CurrentStamina" type="Label" parent="MarginContainer/InfoBars/Stamina/StaminaBar/HBoxContainer" unique_id=1786680535]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "0"
+
+[node name="Slash" type="Label" parent="MarginContainer/InfoBars/Stamina/StaminaBar/HBoxContainer" unique_id=1517825160]
+layout_mode = 2
+size_flags_horizontal = 6
+text = "/"
+
+[node name="MaxStamina" type="Label" parent="MarginContainer/InfoBars/Stamina/StaminaBar/HBoxContainer" unique_id=376946632]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "0"
 
 [node name="InteractPrompt" type="Label" parent="." unique_id=2019153623]
 layout_mode = 1
@@ -100,7 +169,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(1, 0, 0, 1)
+color = Color(1, 0, 0, 0)
 
 [node name="DownedScreen" type="ColorRect" parent="." unique_id=1118783590]
 z_index = -1
@@ -111,10 +180,25 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.11372549, 0, 0, 0.42745098)
+color = Color(0.11372549, 0, 0, 0.39215687)
+
+[node name="DownedTimer" type="Label" parent="DownedScreen" unique_id=966537595]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "0.0"
 
 [node name="DeathScreen" type="ColorRect" parent="." unique_id=1185356705]
-z_index = -1
+z_index = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

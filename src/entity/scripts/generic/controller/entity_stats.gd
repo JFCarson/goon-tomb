@@ -1,38 +1,31 @@
 class_name EntityStatsController
 extends EntityController
 
-## Configuration
-# Runtime Code
-var attributes := EntityAttributes.new()
-var stat_coefficient = 75;
-var level : int
-## Health calculations
+## Controller for handling an entity's stats.
 
-func _initialise_hook() -> void:
-	level = config.level
 
-## Stat based modifiers
-# Health calculations
-func get_max_health() -> float:
-	return (stat_coefficient + (level * 5) + (attributes.vigour * 5) + (attributes.might * 2.5));
-func get_heal_efficiency() -> float:
-	return (2 * attributes.vigour);
+# Components
+## Keeps reference to the Health stat component.
+@export var health : Health
 
-## Stamina calculations
-# Entity's maximum stamina value.
-func get_max_stamina() -> float:
-	return (stat_coefficient + (level * 5) + (attributes.finesse * 5) +  (attributes.might * 2.5));
+## Keeps reference to the Stamina stat component.
+@export var stamina : Stamina
 
-## Entity baselines
-# The rate at which the entity spends stamina when sprinting.
-func get_sprint_drain_rate() -> float:
-	return (attributes.stamina_drain_rate)
-# The amount of stamina taking the jump action costs.
-func get_jump_cost() -> float:
-	return (attributes.jump_cost);
-# The rate per second at which the entity recovers stamina naturally.
-func get_regeneration_rate() -> float:
-	return (attributes.stamina_regeneration_rate);
-# The delay in seconds before natural stamina regeneration begins.
-func get_regeneration_delay() -> float:
-	return (attributes.stamina_regeneration_delay);
+## Keeps reference to the Stamina Regeneration stat component.
+@export var stamina_regeneration : StaminaRegeneration
+
+
+# Config
+## Keeps reference to the entity's attribute sheet.
+var attributes : EntityAttributes
+
+
+# Process
+## Initialise the controller.
+func initialise(entity_orchestrator : CharacterEntity) -> void:
+	super.initialise(entity_orchestrator)
+	
+	attributes = entity.config.attributes
+	
+	for component : EntityStat in [health, stamina, stamina_regeneration]:
+		component.initialise(self)

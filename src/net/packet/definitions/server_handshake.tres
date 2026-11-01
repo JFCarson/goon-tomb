@@ -5,18 +5,20 @@
 
 [sub_resource type="Resource" id="Resource_ix8r1"]
 script = ExtResource("1_insk5")
-field_name = 4
+field_name = 5
 field_type = 2
 metadata/_custom_type_script = "uid://dj64obnp58yui"
 
 [sub_resource type="Resource" id="Resource_idaan"]
 script = ExtResource("1_insk5")
-field_name = 3
+field_name = 4
 field_type = 0
 metadata/_custom_type_script = "uid://dj64obnp58yui"
 
 [resource]
 script = ExtResource("2_4r068")
 packet_type_id = 3
+description = "Sent by the server in response to a client handshake to communicate whether the connection has been accepted or rejected."
+direction = 2
 fields = Array[ExtResource("1_insk5")]([SubResource("Resource_ix8r1"), SubResource("Resource_idaan")])
 metadata/_custom_type_script = "uid://dbq5fnuxeoaf3"

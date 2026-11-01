@@ -1,109 +1,91 @@
 class_name EntityDeath
-extends Node
+extends EntityComponent
 
 ## Handles lifecycle behaviour caused by damage and other gameplay events.
 ## The current lifecycle value is stored by EntityStateController.
 
 
-## Configuration
+# Configuration
+## Flags whether an entity can be downed, or just immediately dies.
 @export var downed_enabled : bool = false
-const BLEED_OUT_DURATION : float = 30.0
+
+## Defines how long it takes to bleed out if downed.
+@export var bleed_out_duration : float = 30.0
 
 
-## Runtime State
-var bleed_out_timer : float = 0.0
-
-var state : EntityStateController
-
-
-## Signals
-signal state_changed(new_state : EntityStateEnums.Lifecycle)
-signal bled_out
+# Runtime
+## Timer used to track how long an entity has before bleeding out.
+@onready var bleed_out_timer : Timer
 
 
-func initialise(state_controller : EntityStateController) -> void:
-	state = state_controller
+# Process
+## Configure the bleed out timer if enabled.
+func _ready() -> void:
+	if downed_enabled:
+		bleed_out_timer = Timer.new()
+		bleed_out_timer.one_shot = true
+		bleed_out_timer.timeout.connect(bleed_out)
+		
+		add_child(bleed_out_timer)
+
+
+## Initialises the component.
+func initialise(controller_component : EntityController) -> void:
+	super.initialise(controller_component)
 	
-	_validate()
+	controller.entity.stats.health.stat_value_changed.connect(_entity_health_changed)
 
 
-func _process(delta : float) -> void:
-	if get_state() != EntityStateEnums.Lifecycle.DOWNED:
-		return
-	
-	bleed_out_timer -= delta
-	
-	if bleed_out_timer <= 0.0:
-		bleed_out()
-
-
-## Public Interface
-# Returns the current lifecycle state.
-func get_state() -> EntityStateEnums.Lifecycle:
-	return state.check(EntityStateEnums.States.LIFECYCLE) as EntityStateEnums.Lifecycle
-
-
-# Transitions the entity into the downed state.
+# Public Interface
+## Transitions the entity into the downed state.
 func down() -> void:
-	if get_state() != EntityStateEnums.Lifecycle.ALIVE:
+	if controller.entity.state.check(EntityStateEnums.States.LIFECYCLE) != EntityStateEnums.Lifecycle.ALIVE:
 		return
-	
+		
 	if not downed_enabled:
 		die()
-		return
-	
-	bleed_out_timer = BLEED_OUT_DURATION
-	_set_state(EntityStateEnums.Lifecycle.DOWNED)
+	else:
+		controller.entity.state.update(EntityStateEnums.States.LIFECYCLE, EntityStateEnums.Lifecycle.DOWNED)
+		bleed_out_timer.start(bleed_out_duration)
 
 
-# Transitions the entity into the dead state.
+## Transitions the entity into the dead state.
 func die() -> void:
-	if get_state() == EntityStateEnums.Lifecycle.DEAD:
+	if controller.entity.state.check(EntityStateEnums.States.LIFECYCLE) == EntityStateEnums.Lifecycle.DEAD:
 		return
-	
-	bleed_out_timer = 0.0
-	_set_state(EntityStateEnums.Lifecycle.DEAD)
+		
+	bleed_out_timer.stop()
+	controller.entity.state.update(EntityStateEnums.States.LIFECYCLE, EntityStateEnums.Lifecycle.DEAD)
 
 
-# Recovers the entity from the downed state.
+## Recovers the entity from the downed state.
 func recover() -> void:
-	if get_state() != EntityStateEnums.Lifecycle.DOWNED:
+	if controller.entity.state.check(EntityStateEnums.States.LIFECYCLE) != EntityStateEnums.Lifecycle.DOWNED:
 		return
-	
-	bleed_out_timer = 0.0
-	_set_state(EntityStateEnums.Lifecycle.ALIVE)
+		
+	bleed_out_timer.stop()
+	controller.entity.state.update(EntityStateEnums.States.LIFECYCLE, EntityStateEnums.Lifecycle.ALIVE)
 
 
-# Resets the entity to its initial alive state.
-func reset() -> void:
-	bleed_out_timer = 0.0
-	_set_state(EntityStateEnums.Lifecycle.ALIVE)
-
-
-# Returns the remaining bleed-out time.
-func get_bleed_out_time() -> float:
-	return max(bleed_out_timer, 0.0)
-
-
-# Transitions a downed entity into the dead state.
+## Transitions a downed entity into the dead state.
 func bleed_out() -> void:
-	if get_state() != EntityStateEnums.Lifecycle.DOWNED:
-		return
-	
-	bled_out.emit()
-	die()
+	if controller.entity.state.check(EntityStateEnums.States.LIFECYCLE) == EntityStateEnums.Lifecycle.DOWNED:
+		die()
 
 
-## Internal State Management
-func _set_state(new_state : EntityStateEnums.Lifecycle) -> void:
-	if state.check(EntityStateEnums.States.LIFECYCLE) == new_state:
-		return
-	
-	state.update(EntityStateEnums.States.LIFECYCLE, new_state)
-	state_changed.emit(new_state)
+## Resets the entity to its initial alive state.
+func reset() -> void:
+	bleed_out_timer.stop()
+	controller.entity.state.update(EntityStateEnums.States.LIFECYCLE, EntityStateEnums.Lifecycle.ALIVE)
 
 
-## Validation
-func _validate() -> void:
-	assert(state != null, "EntityDeath requires an EntityStateController.")
-	assert(state.check(EntityStateEnums.States.LIFECYCLE) != -1, "EntityDeath requires the LIFECYCLE state to be tracked.")
+## Returns the remaining bleed-out time.
+func get_bleed_out_time() -> float:
+	return bleed_out_timer.time_left
+
+
+# Signal Methods
+## Figures out if the entity has died.
+func _entity_health_changed(_change_amount : float, new_amount : float) -> void:
+	if new_amount == controller.entity.stats.health.min_value:
+		down()

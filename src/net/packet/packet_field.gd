@@ -1,4 +1,3 @@
-@tool
 class_name PacketField
 extends Resource
 
@@ -25,11 +24,11 @@ func get_byte_size() -> int:
 		# Boolean value and unsigned 8-bit integer: one byte each.
 		PacketEnums.FieldType.BOOL, PacketEnums.FieldType.UINT8:
 			return 1
-
+			
 		# Unsigned 16-bit integer: two bytes.
 		PacketEnums.FieldType.UINT16:
 			return 2
-
+			
 		# Signed 32-bit integer and 32-bit float: four bytes each.
 		PacketEnums.FieldType.INT32, PacketEnums.FieldType.FLOAT32:
 			return 4
@@ -41,6 +40,6 @@ func get_byte_size() -> int:
 		# Vector3: three 32-bit floats (x, y, and z), totalling twelve bytes.
 		PacketEnums.FieldType.VECTOR3:
 			return 12
-
+			
 	# A zero size indicates an unsupported field type.
 	return 0

@@ -4,80 +4,70 @@ extends EntityController
 ## Handles damage and healing requests made against an entity.
 
 
-## Components
-@onready var fall_damage : EntityFallDamage = $EntityFallDamage
-@onready var death : EntityDeath = $EntityDeath
-@onready var stats_controller: EntityStatsController = $"../EntityStatsController"
+# Components
+## Keeps reference to the component which handles fall damage calculations.
+@export var fall_damage : EntityFallDamage
 
-@onready var entity: CharacterBody3D = get_parent() as CharacterBody3D
-
-## Signals
-signal damage_taken(amount : float)
-signal health_restored(amount : float)
+## Keeps reference to the component which handles death.
+@export var death : EntityDeath
 
 
-func _initialise_hook() -> void:
-	fall_damage.damage_per_velocity = stats_controller.get_max_health()
-	death.initialise(state)
-
-
-## Public Interface
-# Applies damage to the entity.
-# Processes damage detection for the entity.
-func process_damage() -> void:
-	update_fall_damage(entity.is_on_floor(), entity.velocity)
+# Process
+## Intitialise the controller.
+func initialise(entity_orchestrator : CharacterEntity) -> void:
+	super.initialise(entity_orchestrator)
 	
-func take_damage(amount : float) -> void:
+	for component : EntityComponent in [fall_damage, death]:
+		component.initialise(self)
+
+
+# Public Interface
+## Processes damage detection for the entity.
+func process_damage() -> float:
+	var total : float = 0.0
+	
+	total += fall_damage.calculate_damage()
+	
+	return take_damage(total)
+
+
+## Applies damage to the entity.
+func take_damage(amount : float) -> float:
 	if amount <= 0.0:
-		return
+		return 0.0
 	
-	if resource == null or not resource.is_alive():
-		return
+	if not entity.is_alive():
+		return 0.0
 	
-	var previous_health : float = resource.get_health()
+	var previous_health : float = entity.stats.health.current
 	
-	resource.take_damage(amount)
+	entity.stats.health.damage(amount)
 	
-	var actual_damage : float = previous_health - resource.get_health()
-	
+	var actual_damage : float = previous_health - entity.stats.health.current
 	if actual_damage <= 0.0:
-		return
+		return 0.0
 	
-	damage_taken.emit(actual_damage)
-	
-	if not resource.is_alive():
+	if entity.stats.health.current == entity.stats.health.min_value:
 		death.down()
+	
+	return amount
 
 
-# Restores health to the entity.
-func heal(amount : float) -> void:
+## Restores health to the entity.
+func heal(amount : float) -> float:
 	if amount <= 0.0:
-		return
+		return 0.0
 	
-	if resource == null or not resource.is_alive():
-		return
+	if not entity.is_alive():
+		return 0.0
 	
-	var previous_health : float = resource.get_health()
+	var previous_health : float = entity.stats.health.current
 	
-	resource.heal(amount)
+	entity.stats.health.heal(amount)
 	
-	var actual_healing : float = resource.get_health() - previous_health
+	var actual_healing : float = entity.stats.health.current - previous_health
 	
 	if actual_healing <= 0.0:
-		return
+		return 0.0
 	
-	health_restored.emit(actual_healing)
-
-
-# Updates fall damage detection.
-func update_fall_damage(is_on_floor : bool, velocity : Vector3) -> void:
-	fall_damage.update(is_on_floor, velocity)
-
-
-## Validation
-func _validate() -> void:
-	assert(state != null, "EntityDamageController requires an EntityStateController.")
-	assert(resource != null, "EntityDamageController requires an EntityResourceController.")
-	assert(fall_damage != null, "EntityDamageController requires an EntityFallDamage component.")
-	assert(death != null, "EntityDamageController requires an EntityDeath component.")
-	assert(fall_damage.damage_per_velocity > 0.0, "EntityDamageController requires fall damage to have a positive damage_per_velocity.")
+	return amount

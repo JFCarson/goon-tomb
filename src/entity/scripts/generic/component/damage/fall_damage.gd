@@ -1,63 +1,68 @@
 class_name EntityFallDamage
-extends Node
+extends EntityComponent
 
-## Detects damaging falls and requests damage through the parent damage controller.
-
-
-## Configuration
-const MINIMUM_FALL_VELOCITY : float = 8.0
-const DAMAGE_PERCENTAGE_PER_VELOCITY : float = 0.1
-
-var damage_per_velocity : float:
-	set(value):
-		assert(value > 0.0, "EntityFallDamage requires maximum health to be greater than zero.")
-		damage_per_velocity = value * DAMAGE_PERCENTAGE_PER_VELOCITY
+## Calculates fall damage based on the distance an entity falls.
 
 
-## Runtime State
-var was_airborne : bool = false
-var maximum_fall_velocity : float = 0.0
+# Configuration
+@export var minimum_fall_distance : float = 3.0
+@export var maximum_fall_distance : float = 10.0
 
 
-## References
-@onready var damage : EntityDamageController = get_parent()
+# Runtime
+## Records the starting height of a fall.
+var fall_start_height : float = 0.0
+
+## Records the landing height of a fall.
+var fall_landing_height : float = 0.0
+
+## Determines whether the entity is currently falling.
+var is_falling : bool = false
+
+## Determines whether a fall has been completed and is awaiting damage processing.
+var fall_completed : bool = false
 
 
-## Public Interface
-# Tracks the entity's fall and requests damage when it lands.
-func update(is_on_floor : bool, velocity : Vector3) -> void:
-	if not is_on_floor:
-		was_airborne = true
+# Public Interface
+## Calculates damage from the completed fall.
+func calculate_damage() -> float:
+	_physics_update()
+	
+	if not fall_completed:
+		return 0.0
+	
+	var fall_distance : float = fall_start_height - fall_landing_height
+	
+	fall_completed = false
+	
+	if fall_distance < minimum_fall_distance:
+		return 0.0
 		
-		if velocity.y < maximum_fall_velocity:
-			maximum_fall_velocity = velocity.y
+	var fall_percentage : float = clampf((fall_distance - minimum_fall_distance) / (maximum_fall_distance - minimum_fall_distance), 0.0, 1.0)
+	
+	return (controller.entity.stats.health.base * fall_percentage)
+
+
+# Private Methods
+## Detects the beginning and end of falls.
+func _physics_update() -> void:
+	var grounded : bool = controller.entity.is_on_floor()
+	if not grounded and not is_falling:
+		_start_fall(controller.entity.global_position.y)
 		
-		return
-	
-	if not was_airborne:
-		return
-	
-	_apply_fall_damage()
-	
-	was_airborne = false
-	maximum_fall_velocity = 0.0
+	elif grounded and is_falling:
+		_land(controller.entity.global_position.y)
 
 
-## Internal Calculations
-# Calculates damage based on the entity's maximum downward velocity.
-func _apply_fall_damage() -> void:
-	var fall_velocity : float = abs(maximum_fall_velocity)
-	
-	if fall_velocity <= MINIMUM_FALL_VELOCITY:
-		return
-	
-	var excess_velocity : float = fall_velocity - MINIMUM_FALL_VELOCITY
-	var damage_amount : float = excess_velocity * damage_per_velocity
-	
-	damage.take_damage(damage_amount)
+## Records the starting height of a fall.
+func _start_fall(height : float) -> void:
+	fall_start_height = height
+	is_falling = true
+	fall_completed = false
 
 
-## Validation
-func _validate() -> void:
-	assert(damage != null, "EntityFallDamage requires an EntityDamageController parent.")
-	assert(damage_per_velocity > 0.0, "EntityFallDamage requires damage_per_velocity to be greater than zero.")
+## Records the landing height and completes the fall.
+func _land(height : float) -> void:
+	fall_landing_height = height
+	is_falling = false
+	fall_completed = true

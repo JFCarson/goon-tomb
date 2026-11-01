@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://0gif5pekrtx3" path="res://src/entity/scripts/player/player.gd" id="1_8sy0d"]
 [ext_resource type="Script" uid="uid://br2w7nocspmwk" path="res://src/entity/scripts/player/controller/camera_controller.gd" id="2_e57x2"]
 [ext_resource type="Resource" uid="uid://bhbbbb38cjipb" path="res://resources/settings/DEFAULT_PLAYER.tres" id="2_t62fx"]
+[ext_resource type="Script" uid="uid://bnafah1ua5fs5" path="res://src/entity/scripts/player/controller/overlay_controller.gd" id="3_7rrp4"]
 [ext_resource type="Script" uid="uid://bcuhr28pctwqc" path="res://src/entity/scripts/player/controller/action_controller.gd" id="3_ebxi0"]
 [ext_resource type="Script" uid="uid://dlhxwp2vaj7c8" path="res://src/entity/scripts/player/controller/movement_controller.gd" id="4_leo7d"]
 [ext_resource type="PackedScene" uid="uid://cpqxkg7mffikj" path="res://src/overlays/player_inventory.tscn" id="4_lvook"]
@@ -17,14 +18,15 @@
 [ext_resource type="Script" uid="uid://c1n5w6vy3dvmx" path="res://src/entity/scripts/player/component/camera/camera_bob.gd" id="11_ysr7t"]
 [ext_resource type="Script" uid="uid://6nfcogygm4cw" path="res://src/entity/scripts/player/controller/interaction_controller.gd" id="12_t3aey"]
 [ext_resource type="Script" uid="uid://cq3nj4g08g7c4" path="res://src/entity/scripts/player/component/camera/camera_feedback.gd" id="13_fny7t"]
-[ext_resource type="Script" uid="uid://dq4tevijwlxi2" path="res://src/entity/scripts/generic/controller/entity_resources.gd" id="15_k3p6q"]
-[ext_resource type="Script" uid="uid://w82fatykhd8n" path="res://src/entity/scripts/generic/component/resource/health.gd" id="16_p5i57"]
-[ext_resource type="Script" uid="uid://mt0wg5uyrbxu" path="res://src/entity/scripts/generic/component/resource/stamina.gd" id="17_lt6yj"]
 [ext_resource type="Script" uid="uid://bbaq3p4pqgipp" path="res://src/entity/scripts/generic/controller/entity_damage.gd" id="18_lt6yj"]
 [ext_resource type="Script" uid="uid://dj8s2aemax4ic" path="res://src/entity/scripts/generic/component/damage/death.gd" id="19_fny7t"]
-[ext_resource type="Script" uid="uid://cpdah5h7cd8mg" path="res://src/entity/scripts/generic/controller/entity_stats.gd" id="19_g1kt0"]
+[ext_resource type="Script" uid="uid://cwrfj7tbk4x25" path="res://src/entity/scripts/generic/controller/entity_stats.gd" id="19_g1kt0"]
 [ext_resource type="Script" uid="uid://t1w3ngfbg8oi" path="res://src/entity/scripts/generic/component/damage/fall_damage.gd" id="19_s2okv"]
 [ext_resource type="PackedScene" uid="uid://17agj227064a" path="res://src/overlays/hud.tscn" id="22_iwkrf"]
+[ext_resource type="Script" uid="uid://qo641nljrs7j" path="res://src/entity/scripts/generic/component/stats/health.gd" id="22_u83id"]
+[ext_resource type="Script" uid="uid://fpagwh3mxbss" path="res://src/entity/scripts/generic/component/stats/stamina.gd" id="23_ed27a"]
+[ext_resource type="Script" uid="uid://c2jx3yd3esrf" path="res://src/entity/scripts/generic/component/stats/stamina_regeneration.gd" id="24_24j3v"]
+[ext_resource type="Script" uid="uid://cw5j6iiekv5cw" path="res://src/entity/scripts/generic/controller/entity_networking.gd" id="27_o1dd6"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_8sy0d"]
 radius = 0.3
@@ -36,10 +38,19 @@ height = 1.8
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lvook"]
 
-[node name="Player" type="CharacterBody3D" unique_id=1390332273]
+[node name="Player" type="CharacterBody3D" unique_id=1390332273 node_paths=PackedStringArray("camera", "action", "interaction", "movement", "inventory", "overlay", "state", "damage", "stats", "networking")]
 script = ExtResource("1_8sy0d")
-debug = true
+camera = NodePath("GameCameraController")
+action = NodePath("PlayerActionController")
+interaction = NodePath("PlayerInteractionController")
+movement = NodePath("PlayerMovementController")
+inventory = NodePath("PlayerInventoryController")
+overlay = NodePath("PlayerOverlayController")
 config = ExtResource("2_t62fx")
+state = NodePath("EntityStateController")
+damage = NodePath("EntityDamageController")
+stats = NodePath("EntityStatsController")
+networking = NodePath("EntityNetworkingController")
 
 [node name="TEMP LIGHT" type="OmniLight3D" parent="." unique_id=55569172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6077492, -0.0035186112)
@@ -60,16 +71,39 @@ mesh = SubResource("CapsuleMesh_8sy0d")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_68jae")
 
-[node name="ScreenOverlays" type="CanvasLayer" parent="." unique_id=893429738]
+[node name="EntityNetworkingController" type="Node" parent="." unique_id=1062674948]
+script = ExtResource("27_o1dd6")
+metadata/_custom_type_script = "uid://cw5j6iiekv5cw"
 
-[node name="HUD" parent="ScreenOverlays" unique_id=190508894 instance=ExtResource("22_iwkrf")]
+[node name="EntityStateController" type="Node" parent="." unique_id=1562529546]
+script = ExtResource("6_ebxi0")
+metadata/_custom_type_script = "uid://b46fgtkpqy6f6"
+
+[node name="PlayerOverlayController" type="Node" parent="." unique_id=1708656819 node_paths=PackedStringArray("hud", "inventory")]
+script = ExtResource("3_7rrp4")
+hud = NodePath("ScreenOverlays/HUD")
+inventory = NodePath("ScreenOverlays/PlayerInventory")
+metadata/_custom_type_script = "uid://bnafah1ua5fs5"
+
+[node name="ScreenOverlays" type="CanvasLayer" parent="PlayerOverlayController" unique_id=893429738]
+
+[node name="HUD" parent="PlayerOverlayController/ScreenOverlays" unique_id=190508894 instance=ExtResource("22_iwkrf")]
 metadata/_edit_use_anchors_ = true
 
-[node name="PlayerInventory" parent="ScreenOverlays" unique_id=168865697 instance=ExtResource("4_lvook")]
+[node name="PlayerInventory" parent="PlayerOverlayController/ScreenOverlays" unique_id=168865697 node_paths=PackedStringArray("inventory_controller") instance=ExtResource("4_lvook")]
 z_index = 1
+inventory_controller = NodePath("../../../PlayerInventoryController")
 
-[node name="GameCameraController" type="Node3D" parent="." unique_id=851555973]
+[node name="GameCameraController" type="Node3D" parent="." unique_id=851555973 node_paths=PackedStringArray("camera", "camera_head", "interact_ray", "drop_shape_cast", "camera_look", "camera_bob", "camera_sway", "damage_feedback")]
 script = ExtResource("2_e57x2")
+camera = NodePath("PlayerCameraHead/Camera3D")
+camera_head = NodePath("PlayerCameraHead")
+interact_ray = NodePath("PlayerCameraHead/Camera3D/InteractRay")
+drop_shape_cast = NodePath("PlayerCameraHead/Camera3D/DropShapeCast")
+camera_look = NodePath("PlayerCameraHead/CameraLook")
+camera_bob = NodePath("CameraBob")
+camera_sway = NodePath("CameraSway")
+damage_feedback = NodePath("CameraDamageFeedback")
 metadata/_custom_type_script = "uid://br2w7nocspmwk"
 
 [node name="CameraBob" type="Node" parent="GameCameraController" unique_id=1612084066]
@@ -109,8 +143,12 @@ metadata/_custom_type_script = "uid://bcuhr28pctwqc"
 script = ExtResource("12_t3aey")
 metadata/_custom_type_script = "uid://6nfcogygm4cw"
 
-[node name="PlayerMovementController" type="Node" parent="." unique_id=1286891233]
+[node name="PlayerMovementController" type="Node" parent="." unique_id=1286891233 node_paths=PackedStringArray("movement", "sprint", "jump", "crouch")]
 script = ExtResource("4_leo7d")
+movement = NodePath("Movement")
+sprint = NodePath("Sprint")
+jump = NodePath("Jump")
+crouch = NodePath("Crouch")
 metadata/_custom_type_script = "uid://dlhxwp2vaj7c8"
 
 [node name="Movement" type="Node" parent="PlayerMovementController" unique_id=2002181986]
@@ -133,27 +171,44 @@ metadata/_custom_type_script = "uid://dhd4kq2kuvoa0"
 script = ExtResource("11_sn87d")
 metadata/_custom_type_script = "uid://6nk4jndbhv5x"
 
-[node name="EntityStateController" type="Node" parent="." unique_id=1562529546]
-script = ExtResource("6_ebxi0")
-metadata/_custom_type_script = "uid://b46fgtkpqy6f6"
-
-[node name="EntityResourceController" type="Node" parent="." unique_id=2135704907]
-script = ExtResource("15_k3p6q")
-metadata/_custom_type_script = "uid://dq4tevijwlxi2"
-
-[node name="EntityHealth" type="Node" parent="EntityResourceController" unique_id=1738497981]
-script = ExtResource("16_p5i57")
-metadata/_custom_type_script = "uid://w82fatykhd8n"
-
-[node name="EntityStamina" type="Node" parent="EntityResourceController" unique_id=1126720306]
-script = ExtResource("17_lt6yj")
-metadata/_custom_type_script = "uid://mt0wg5uyrbxu"
-
-[node name="EntityStatsController" type="Node" parent="." unique_id=1673985322]
+[node name="EntityStatsController" type="Node" parent="." unique_id=47886741 node_paths=PackedStringArray("health", "stamina", "stamina_regeneration")]
 script = ExtResource("19_g1kt0")
+health = NodePath("Health")
+stamina = NodePath("Stamina")
+stamina_regeneration = NodePath("StaminaRegeneration")
+metadata/_custom_type_script = "uid://cwrfj7tbk4x25"
 
-[node name="EntityDamageController" type="Node" parent="." unique_id=1101488563]
+[node name="Health" type="Node" parent="EntityStatsController" unique_id=504324081]
+script = ExtResource("22_u83id")
+starting_amount = 8.0
+clamp_values = true
+base_is_maximum = true
+level_multiplier = 2.0
+might_multiplier = 1.0
+vigour_multiplier = 2.0
+metadata/_custom_type_script = "uid://qo641nljrs7j"
+
+[node name="Stamina" type="Node" parent="EntityStatsController" unique_id=115646986]
+script = ExtResource("23_ed27a")
+starting_amount = 100.0
+clamp_values = true
+base_is_maximum = true
+finesse_multiplier = 2.0
+vigour_multiplier = 1.0
+metadata/_custom_type_script = "uid://fpagwh3mxbss"
+
+[node name="StaminaRegeneration" type="Node" parent="EntityStatsController" unique_id=456975506]
+script = ExtResource("24_24j3v")
+starting_amount = 1.0
+clamp_values = true
+base_is_maximum = true
+min_value = 1.0
+metadata/_custom_type_script = "uid://c2jx3yd3esrf"
+
+[node name="EntityDamageController" type="Node" parent="." unique_id=1101488563 node_paths=PackedStringArray("fall_damage", "death")]
 script = ExtResource("18_lt6yj")
+fall_damage = NodePath("EntityFallDamage")
+death = NodePath("EntityDeath")
 metadata/_custom_type_script = "uid://bbaq3p4pqgipp"
 
 [node name="EntityDeath" type="Node" parent="EntityDamageController" unique_id=2084313780]
