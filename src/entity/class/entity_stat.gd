@@ -149,7 +149,7 @@ func has_at_least(amount : float) -> bool:
 func _calculate_base_value() -> float:
 	return (
 		starting_amount
-		+ (stats_controller.level * level_multiplier)
+		+ (stats_controller.entity.config.level * level_multiplier)
 		+ (stats_controller.attributes.might * might_multiplier)
 		+ (stats_controller.attributes.finesse * finesse_multiplier)
 		+ (stats_controller.attributes.vigour * vigour_multiplier)

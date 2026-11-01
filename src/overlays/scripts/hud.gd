@@ -20,9 +20,6 @@ const damage_feedback_colour : Color = Color(1.0, 0.0, 0.0)
 ## Defines the colour of the health flash container when health is increased.
 const healing_feedback_colour : Color = Color(0.0, 1.0, 0.0)
 
-## Defines how much a bar changes on delta when updating its value.
-const bar_speed : float = 100.0
-
 
 # Components
 ## Keeps reference to the health bar.
@@ -112,8 +109,8 @@ func initialise(overlay_controller : PlayerOverlayController) -> void:
 
 ## Process the movement of resource bars.
 func _process(delta : float) -> void:
-	displayed_health = move_toward(displayed_health, target_health, bar_speed * delta)
-	displayed_stamina = move_toward(displayed_stamina, target_stamina, bar_speed * delta)
+	displayed_health = move_toward(displayed_health, target_health, health_bar.max_value * delta)
+	displayed_stamina = move_toward(displayed_stamina, target_stamina, stamina_bar.max_value * delta)
 	
 	_update_health_display()
 	_update_stamina_display()
@@ -139,7 +136,7 @@ func _initialise_resource_bars() -> void:
 	# Stamina
 	displayed_stamina = controller.entity.stats.stamina.current
 	target_stamina = displayed_stamina
-	
+
 	stamina_bar.max_value = controller.entity.stats.stamina.base
 	stamina_bar.value = displayed_stamina
 	max_stamina_label.text = str(int(controller.entity.stats.stamina.base))

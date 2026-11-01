@@ -16,21 +16,8 @@ extends EntityController
 
 
 # Config
-## Defines the minimum level that an entity can be.
-const minimum_level : int = 1
-
-## Defines the maximum level that an entity can be.
-const maximum_level : int = 20
-
 ## Keeps reference to the entity's attribute sheet.
 var attributes : EntityAttributes
-
-
-# Runtime
-## Keeps reference to the entity's current level.
-var level : int:
-	set(new_level):
-		level = clampi(new_level, minimum_level, maximum_level)
 
 
 # Process

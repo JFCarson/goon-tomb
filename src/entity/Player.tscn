@@ -180,10 +180,10 @@ metadata/_custom_type_script = "uid://cwrfj7tbk4x25"
 
 [node name="Health" type="Node" parent="EntityStatsController" unique_id=504324081]
 script = ExtResource("22_u83id")
-starting_amount = 10.0
+starting_amount = 8.0
 clamp_values = true
 base_is_maximum = true
-level_multiplier = 1.0
+level_multiplier = 2.0
 might_multiplier = 1.0
 vigour_multiplier = 2.0
 metadata/_custom_type_script = "uid://qo641nljrs7j"
